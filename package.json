@@ -3,8 +3,10 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "dev": "concurrently \"npm run serve\" \"npm run vite\"",
+        "serve": "php artisan serve --port=8000",
+        "vite": "vite --port=8080",
+        "build": "vite build"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
