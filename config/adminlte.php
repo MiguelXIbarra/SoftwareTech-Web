@@ -197,7 +197,7 @@ return [
     'classes_content_header' => '',
     'classes_content' => '',
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
-    'classes_sidebar_nav' => '',
+    'classes_sidebar_nav' => 'nav-flat nav-legacy',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
@@ -299,98 +299,91 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
-
-        // Sidebar items:
+        // Buscador en la barra lateral
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
+
+        // --- SECCIÓN DE GESTIÓN ---
+        ['header' => 'ADMINISTRACIÓN'],
+        
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
+            'text' => 'Usuarios',
+            'icon' => 'fas fa-fw fa-users',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Listar Usuarios',
+                    'route' => 'users.index',
+                    'icon' => 'fas fa-list',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Crear Usuario',
+                    'route' => 'users.create',
+                    'icon' => 'fas fa-plus',
                 ],
             ],
         ],
-        ['header' => 'labels'],
+
+        // --- SECCIÓN DE PROYECTOS ---
+        ['header' => 'PROYECTOS Y FINANZAS'],
+
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
+            'text' => 'Proyectos',
+            'icon' => 'fas fa-fw fa-project-diagram',
+            'submenu' => [
+                [
+                    'text' => 'Ver Proyectos',
+                    'route' => 'projects.index',
+                    'icon' => 'fas fa-tasks',
+                ],
+                [
+                    'text' => 'Nuevo Proyecto',
+                    'route' => 'projects.create',
+                    'icon' => 'fas fa-plus-circle',
+                ],
+            ],
         ],
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+            'text' => 'Hitos (Milestones)',
+            'icon' => 'fas fa-fw fa-flag',
+            'route' => 'milestones.index',
         ],
         [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+            'text' => 'Pagos',
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'route' => 'payments.index',
+        ],
+
+        // --- SECCIÓN DE COMUNICACIÓN ---
+        ['header' => 'COMUNICACIÓN'],
+        [
+            'text' => 'Mensajes',
+            'icon' => 'fas fa-fw fa-envelope',
+            'route' => 'messages.index',
+            'label' => 'Nuevo', // Etiqueta visual opcional
+            'label_color' => 'success',
+        ],
+
+        // --- SECCIÓN DE INNOVACIÓN ---
+        ['header' => 'SOFTWARE TECH LAB'],
+        [
+            'text' => 'Laboratorio',
+            'icon' => 'fas fa-fw fa-flask',
+            'route' => 'lab_posts.index',
+        ],
+
+        // --- CONFIGURACIÓN DE CUENTA ---
+        ['header' => 'AJUSTES DE CUENTA'],
+        [
+            'text' => 'Perfil',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-user-cog',
+        ],
+        [
+            'text' => 'Cambiar Contraseña',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-lock',
         ],
     ],
 
