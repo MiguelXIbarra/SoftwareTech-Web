@@ -302,7 +302,7 @@ return [
         // Buscador en la barra lateral
         [
             'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Buscar',
         ],
 
         // --- SECCIÓN DE GESTIÓN ---
