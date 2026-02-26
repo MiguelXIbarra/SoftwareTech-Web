@@ -1,60 +1,52 @@
 @extends('adminlte::page')
-
 @section('title', 'Editar Proyecto')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <h2>Actualizar Proyecto: {{ $project->title }}</h2>
-    </div>
-    <div class="row">
-        <form action="{{ route('projects.update', $project->id) }}" method="post" class="col-lg-7">
-            @csrf
-            @method('PUT')
-            
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{$error}}</li>
-                        @endforeach
-                    </ul>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-outline shadow" style="border-top: 3px solid #ffc107;">
+            <div class="card-header" style="background-color: #ffc107;">
+                <h3 class="card-title text-bold text-dark">Actualizar Datos del Proyecto</h3>
+            </div>
+            <form action="{{ route('projects.update', $project->id) }}" method="post">
+                @csrf @method('PUT')
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" name="title" class="form-control" value="{{ $project->title }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Categoría</label>
+                                <select name="category" class="form-control">
+                                    <option value="Web" {{ $project->category == 'Web' ? 'selected' : '' }}>Web</option>
+                                    <option value="IA" {{ $project->category == 'IA' ? 'selected' : '' }}>IA</option>
+                                    <option value="Mobile" {{ $project->category == 'Mobile' ? 'selected' : '' }}>Mobile</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select name="status" class="form-control">
+                                    <option value="In Progress" {{ $project->status == 'In Progress' ? 'selected' : '' }}>En Progreso</option>
+                                    <option value="Completed" {{ $project->status == 'Completed' ? 'selected' : '' }}>Completado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="description" class="form-control" rows="3">{{ $project->description }}</textarea>
+                    </div>
                 </div>
-            @endif
-
-            <div class="form-group">
-                <label for="title">Título</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ $project->title }}" required />
-            </div>
-
-            <div class="form-group">
-                <label for="description">Descripción</label>
-                <textarea class="form-control" id="description" name="description" required>{{ $project->description }}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="category">Categoría</label>
-                <select name="category" class="form-control">
-                    <option value="IA" {{ $project->category == 'IA' ? 'selected' : '' }}>IA</option>
-                    <option value="Web" {{ $project->category == 'Web' ? 'selected' : '' }}>Web</option>
-                    <option value="Mobile" {{ $project->category == 'Mobile' ? 'selected' : '' }}>Mobile</option>
-                    <option value="Video Games" {{ $project->category == 'Video Games' ? 'selected' : '' }}>Video Games</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="status">Estado</label>
-                <select name="status" class="form-control">
-                    <option value="Lead" {{ $project->status == 'Lead' ? 'selected' : '' }}>Lead</option>
-                    <option value="In Progress" {{ $project->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                    <option value="Testing" {{ $project->status == 'Testing' ? 'selected' : '' }}>Testing</option>
-                    <option value="Completed" {{ $project->status == 'Completed' ? 'selected' : '' }}>Completed</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Actualizar Cambios</button>
-            <a href="{{ route('projects.index') }}" class="btn btn-danger">Cancelar</a>
-        </form>
+                <div class="card-footer text-center bg-white">
+                    <button type="submit" class="btn btn-warning px-5 text-bold shadow">Actualizar Cambios</button>
+                    <a href="{{ route('projects.index') }}" class="btn btn-default border ml-2">Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection
