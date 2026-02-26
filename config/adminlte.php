@@ -361,7 +361,7 @@ return [
             'text' => 'Mensajes',
             'icon' => 'fas fa-fw fa-envelope',
             'route' => 'messages.index',
-            'label' => 'Nuevo', // Etiqueta visual opcional
+            'label' => isset($newMessagesCount) && $newMessagesCount > 0 ? $newMessagesCount : null,
             'label_color' => 'success',
         ],
 
