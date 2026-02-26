@@ -5,90 +5,118 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    // Dentro de la clase ProjectController
     public function __construct()
     {
         $this->middleware('auth');
     }
+
     public function index()
     {
-        // Listado de todos los usuarios (clientes y administradores)
         $users = User::orderBy('name', 'asc')->get();
         return view('users.index', compact('users'));
     }
 
     public function create()
     {
-        // Formulario para crear un usuario manualmente desde el admin
         return view('users.create');
     }
 
     public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'role' => 'required'
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+        'role' => 'required',
+        // Eliminamos la validación de 'image' porque ahora es un texto Base64
+    ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+    $user = new User();
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->password = Hash::make($request->password);
+    $user->role = $request->role;
 
-        return redirect()->route('users.index')->with('message', 'Usuario creado correctamente');
+    // Lógica para procesar el recorte Base64
+    if ($request->filled('profile_photo_base64')) {
+        $imageData = $request->profile_photo_base64;
+        $image = str_replace('data:image/jpeg;base64,', '', $imageData);
+        $image = str_replace(' ', '+', $image);
+        
+        $fileName = 'profile_photos/' . time() . '.jpg';
+        \Storage::disk('public')->put($fileName, base64_decode($image));
+        
+        $user->profile_photo = $fileName;
     }
+
+    $user->save();
+
+    return redirect()->route('users.index')->with('message', 'Usuario creado correctamente');
+}
 
     public function show($id)
     {
-        // Ver el perfil detallado del usuario y sus proyectos vinculados
         $user = User::findOrFail($id);
         return view('users.show', compact('user'));
     }
 
+    // ESTE ES EL MÉTODO QUE TE DABA ERROR PORQUE NO EXISTÍA
     public function edit($id)
-    {
-        // Formulario para editar datos o cambiar el Rol
-        $user = User::findOrFail($id);
-        return view('users.edit', compact('user'));
-    }
+{
+    // Buscamos al usuario por su ID
+    $user = User::findOrFail($id);
+    // Lo enviamos a la vista
+    return view('users.edit', compact('user'));
+}
 
     public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
+{
+    $user = User::findOrFail($id);
 
-        // Validación para asegurar que el rol sea uno de los permitidos
-        $this->validate($request, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:client,admin,developer,superadmin', // Agrega superadmin aquí
-        ]);
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'role' => 'required',
+    ]);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role = $request->role;
+    // Procesar la imagen recortada (Base64)
+    if ($request->filled('profile_photo_base64')) {
+        $imageData = $request->profile_photo_base64;
+        $image = str_replace('data:image/jpeg;base64,', '', $imageData);
+        $image = str_replace(' ', '+', $image);
+    
+        // Esto guarda la imagen en storage/app/public/profile_photos
+        $fileName = 'profile_photos/' . time() . '.jpg';
+        \Storage::disk('public')->put($fileName, base64_decode($image));
+    
+        // Guardamos 'profile_photos/archivo.jpg' en la DB
+        $user->profile_photo = $fileName;
+}
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->role = $request->role;
 
-        $user->save(); // Aquí es donde fallaba en tu imagen
-
-        return redirect()->route('users.index')->with('message', 'Usuario actualizado');
+    if ($request->filled('password')) {
+        $user->password = \Hash::make($request->password);
     }
+
+    $user->save();
+
+    return redirect()->route('users.index')->with('message', 'Perfil actualizado con éxito');
+}
 
     public function destroy($id)
     {
-        // Eliminar usuario del sistema
         $user = User::findOrFail($id);
+        if ($user->profile_photo) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
         $user->delete();
-
         return redirect()->route('users.index')->with('message', 'Usuario eliminado');
     }
 }

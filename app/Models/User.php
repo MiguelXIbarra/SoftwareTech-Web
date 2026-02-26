@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,6 +16,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'profile_photo',
     ];
 
     protected $hidden = [
@@ -28,25 +28,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * Relación con los proyectos del usuario.
-     */
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class, 'client_id');
     }
 
-    /**
-     * Relación con los mensajes enviados por el usuario.
-     */
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
 
-    /**
-     * Relación con las publicaciones en el laboratorio.
-     */
     public function labPosts(): HasMany
     {
         return $this->hasMany(LabPost::class, 'author_id');
