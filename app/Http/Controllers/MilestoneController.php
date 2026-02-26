@@ -24,17 +24,23 @@ class MilestoneController extends Controller
         $projects = Project::all();
         return view('milestones.create', compact('projects'));
     }
-
+    
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'project_id' => 'required',
-            'title' => 'required',
-            'cost' => 'required|numeric'
+        $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'name'       => 'required|min:3',
+            'due_date'   => 'required|date',
         ]);
 
-        Milestone::create($request->all());
-        return redirect()->route('milestones.index')->with('message', 'Hito registrado');
+        $milestone = new Milestone();
+        $milestone->project_id = $request->project_id;
+        $milestone->name = $request->name;
+        $milestone->due_date = $request->due_date;
+        $milestone->status = 'Pendiente';
+        $milestone->save();
+
+    return redirect()->route('milestones.index')->with('message', 'Hito registrado con éxito');
     }
 
     public function show($id)
