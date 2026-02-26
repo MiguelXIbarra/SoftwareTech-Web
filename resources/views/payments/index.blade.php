@@ -1,12 +1,11 @@
 @extends('adminlte::page')
-
 @section('title', 'Pagos')
 
 @section('content_header')
-    <div class="d-flex justify-content-between">
-        <h1>Registro de Pagos</h1>
-        <a href="{{ route('payments.create') }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-file-invoice-dollar"></i> Registrar Pago
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="text-bold">Registro de Pagos</h1>
+        <a href="{{ route('payments.create') }}" class="btn text-white shadow-sm" style="background-color: #4472f1;">
+            <i class="fas fa-file-invoice-dollar mr-1"></i> Registrar Pago
         </a>
     </div>
 @stop
@@ -17,55 +16,93 @@
         <h3 class="card-title text-bold">Historial de Transacciones</h3>
     </div>
     <div class="card-body p-0">
-        @if(session('message'))
-            <div class="alert alert-success m-3">{{ session('message') }}</div>
-        @endif
-
-        <table class="table table-hover mb-0">
-            <thead class="thead-light">
-                <tr>
-                    <th class="px-4">ID Transacción</th>
-                    <th>Monto</th>
-                    <th class="text-center">Método</th>
-                    <th class="text-right px-4">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($payments as $payment)
-                <tr>
-                    <td class="align-middle px-4">
-                        <span class="text-muted small">#</span>{{ $payment->transaction_id }}
-                    </td>
-                    <td class="align-middle text-success">
-                        <strong>${{ number_format($payment->amount, 2) }}</strong>
-                    </td>
-                    <td class="align-middle text-center">
-                        {{-- Unificamos a color azul para mantener la línea visual --}}
-                        <span class="badge badge-primary px-3 py-2" style="font-weight: 500; min-width: 100px;">
-                            {{ strtoupper($payment->payment_method) }}
-                        </span>
-                    </td>
-                    <td class="text-right align-middle px-4">
-                        <div class="btn-group">
-                            <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-sm btn-default" title="Ver Detalle">
-                                <i class="fas fa-search text-info"></i>
-                            </a>
-                            <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-sm btn-default" title="Editar">
-                                <i class="fas fa-edit text-warning"></i>
-                            </a>
-                            <form action="{{ route('payments.destroy', $payment->id) }}" method="POST" style="display:inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-default" title="Eliminar" onclick="return confirm('¿Deseas eliminar este registro de pago?')">
-                                    <i class="fas fa-trash text-danger"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 text-center">
+                <thead class="bg-light">
+                    <tr>
+                        <th>ID Transacción</th>
+                        <th>Monto</th>
+                        <th>Método</th>
+                        <th>Fecha</th>
+                        <th style="width: 150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($payments as $payment)
+                    <tr>
+                        <td class="align-middle">
+                            <span class="text-muted small">#</span>{{ $payment->transaction_id }}
+                        </td>
+                        <td class="align-middle text-bold text-success">
+                            ${{ number_format($payment->amount, 2) }}
+                        </td>
+                        <td class="align-middle">
+                            <span class="badge px-3 py-2 text-white shadow-sm" style="background-color: #4472f1;">
+                                {{ strtoupper($payment->payment_method) }}
+                            </span>
+                        </td>
+                        <td class="align-middle text-muted">
+                            {{ $payment->created_at->format('d/m/Y') }}
+                        </td>
+                        <td class="align-middle">
+                            <div class="btn-group shadow-sm">
+                                <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-sm btn-white border">
+                                    <i class="fas fa-eye" style="color: #45a1b5;"></i>
+                                </a>
+                                <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-sm btn-white border">
+                                    <i class="fas fa-edit" style="color: #ffc107;"></i>
+                                </a>
+                                <form action="{{ route('payments.destroy', $payment->id) }}" method="POST" id="delete-payment-{{ $payment->id }}" style="display:inline">
+                                    @csrf @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-white border" onclick="confirmDelete({{ $payment->id }})">
+                                        <i class="fas fa-trash-alt" style="color: #e3342f;"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection
+
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: '¿Eliminar registro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e3342f',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-payment-' + id).submit();
+            }
+        })
+    }
+
+    @if(session('message'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Listo!',
+            text: "{{ session('message') }}",
+            showConfirmButton: false,
+            timer: 1200,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+    @endif
+</script>
+@endpush
