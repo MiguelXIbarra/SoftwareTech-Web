@@ -29,7 +29,11 @@
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                {{-- Contenedor del ojito inyectado --}}
+                                <div class="password-group">
+                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                    <i class="fas fa-eye toggle-password" onclick="togglePass('password', this)"></i>
+                                </div>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -56,6 +60,11 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Login') }}
                                 </button>
+
+                                {{-- Enlace a Registro --}}
+                                @if (Route::has('register'))
+                                    <a class="btn btn-link" href="{{ route('register') }}">¿No tienes cuenta? Regístrate</a>
+                                @endif
 
                                 @if (Route::has('password.request'))
                                     <a class="btn btn-link" href="{{ route('password.request') }}">

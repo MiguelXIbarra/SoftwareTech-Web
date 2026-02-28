@@ -38,7 +38,11 @@
                         <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                                {{-- Ojito para Contraseña Principal --}}
+                                <div class="password-group">
+                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                                    <i class="fas fa-eye toggle-password" onclick="togglePass('password', this)"></i>
+                                </div>
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -50,7 +54,11 @@
                         <div class="row mb-3">
                             <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
                             <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                {{-- Ojito para Confirmación --}}
+                                <div class="password-group">
+                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                    <i class="fas fa-eye toggle-password" onclick="togglePass('password-confirm', this)"></i>
+                                </div>
                             </div>
                         </div>
 
@@ -78,6 +86,8 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
+                                {{-- Enlace a Login --}}
+                                <a class="btn btn-link" href="{{ route('login') }}">¿Ya tienes cuenta? Inicia Sesión</a>
                             </div>
                         </div>
                     </form>

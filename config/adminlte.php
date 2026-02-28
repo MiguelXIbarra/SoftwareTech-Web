@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'Software Tech',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'title' => 'Software Tech',
+    'logo' => '<b>SOFTWARE TECH</b>',
+    'logo_img' => 'vendor/adminlte/dist/img/SoftwareTechnologies_Logotipo06.png',
+    'logo_img_class' => 'brand-image img-circle',
     'logo_img_xl' => null,
-    'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => ' ',
 
     /*
     |--------------------------------------------------------------------------
@@ -377,13 +377,13 @@ return [
         ['header' => 'AJUSTES DE CUENTA'],
         [
             'text' => 'Perfil',
-            'url' => 'admin/settings',
+            'route'  => 'profile.show',
             'icon' => 'fas fa-fw fa-user-cog',
         ],
         [
-            'text' => 'Cambiar Contraseña',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
+            'text' => 'Configuración',
+            'route'  => 'settings',
+            'icon' => 'fas fa-fw fa-cogs',
         ],
     ],
 
