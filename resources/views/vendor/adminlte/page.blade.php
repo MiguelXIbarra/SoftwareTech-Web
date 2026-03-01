@@ -7,165 +7,139 @@
 @stack('css')
 @yield('css')
 <style>
-    /* Fondo Gris Oxford con efecto cristal */
-    .main-sidebar {
-        background-color: #12141d !important;
-        /* Un poco más claro que el negro puro */
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(138, 43, 226, 0.2) !important;
-        transition: all 0.3s ease;
-    }
-
-    /* Encabezados de sección (ADMINISTRACIÓN, PROYECTOS...) */
-    .nav-header {
-        color: #8a2be2 !important;
-        /* Morado Software Tech */
-        font-size: 0.65rem !important;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        padding: 1.5rem 1rem 0.5rem 1.5rem !important;
-        opacity: 0.8;
-    }
-
-    /* Ítem del menú (Texto e Icono) */
-    .nav-sidebar .nav-link {
-        color: rgba(255, 255, 255, 0.8) !important;
-        /* Blanco más brillante */
-        font-weight: 500;
-        margin-bottom: 5px;
-        border-radius: 10px !important;
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-
-    /* Iconos: Morado neón suave */
-    .nav-sidebar .nav-link i {
-        color: #a366ff !important;
-        text-shadow: 0 0 8px rgba(163, 102, 255, 0.3);
-    }
-
-    /* Ítem ACTIVO: Efecto de iluminación */
-    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
-        background: rgba(138, 43, 226, 0.15) !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(138, 43, 226, 0.4) !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active i {
-        color: #ffffff !important;
-        text-shadow: 0 0 10px #8a2be2;
-    }
-
-    /* HOVER: Al pasar el mouse */
-    .nav-sidebar .nav-link:hover {
-        background: rgba(255, 255, 255, 0.05) !important;
-        color: #ffffff !important;
-        transform: translateX(5px);
-    }
-
-    /* Buscador lateral */
-    .sidebar-search-block .form-control-sidebar {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(138, 43, 226, 0.2) !important;
-        color: #fff !important;
-        border-radius: 8px;
-    }
-
-    /* 1. ELIMINACIÓN TOTAL DE BORDES BLANCOS */
+    /* 1. ESTRUCTURA GLOBAL: VISIÓN SOFTWARE TECH */
     body,
     .content-wrapper,
     .main-sidebar,
     .main-footer,
-    .card,
+    .main-header,
     .modal-content,
     .card-header,
     .card-footer,
-    .main-header,
     .table td,
     .table th {
         background-color: #00040a !important;
+        /* Negro profundo coherente con el Home */
         color: #ffffff !important;
         border: none !important;
-        /* Adiós a los bordes blancos */
     }
 
-    /* 2. TARJETAS CON EFECTO NEÓN SUTIL */
+    /* 2. TARJETAS CON EFECTO CRISTAL (GLASSMORPHISM) */
     .card {
         background: rgba(255, 255, 255, 0.01) !important;
-        backdrop-filter: blur(30px);
+        /* Más transparente para evitar "cortes" */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(138, 43, 226, 0.2) !important;
-        /* Borde morado muy fino */
         border-radius: 20px !important;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+        margin-bottom: 2rem;
     }
 
-    /* 3. BOTONES RESPONSIVOS AL CURSOR (HOVER) */
+    /* 3. TABLAS PROFESIONALES: ALTO CONTRASTE */
+    .table thead th {
+        color: #ffffff !important;
+        /* Blanco brillante para legibilidad total */
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2px solid #8a2be2 !important;
+        background-color: rgba(255, 255, 255, 0.03) !important;
+        padding: 15px !important;
+    }
+
+    .table tbody td {
+        color: rgba(255, 255, 255, 0.85) !important;
+        border-bottom: 1px solid rgba(138, 43, 226, 0.08) !important;
+        padding: 12px 15px !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(138, 43, 226, 0.04) !important;
+        border-left: 4px solid #8a2be2;
+        /* Indicador neón lateral */
+        transition: all 0.3s ease;
+    }
+
+    /* 4. BOTONES PRINCIPALES RESPONSIVOS */
     .btn-primary,
-    .btn-submit,
     .btn-success,
-    .btn-info {
+    .btn-info,
+    .btn-submit {
         background: linear-gradient(135deg, #8a2be2 0%, #007bff 100%) !important;
         border: none !important;
         color: #ffffff !important;
         font-weight: 800 !important;
         text-transform: uppercase;
-        box-shadow: 0 0 15px rgba(138, 43, 226, 0.4) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     }
 
-    /* Efecto al pasar el mouse (Responsive Cursor) */
     .btn-primary:hover,
-    .btn-submit:hover,
     .btn-success:hover,
     .btn-info:hover {
-        transform: translateY(-3px) scale(1.05) !important;
-        box-shadow: 0 0 30px rgba(0, 123, 255, 0.7) !important;
-        filter: brightness(1.2);
-        cursor: pointer;
+        transform: translateY(-3px) scale(1.03) !important;
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5) !important;
+        filter: brightness(1.1);
     }
 
-    /* Botones de acción en tablas (Ver, Editar, Borrar) */
-    .btn-group .btn {
+    /* 7. BOTONES DE ACCIÓN (TABLAS) - CORRECCIÓN DE BORDES BLANCOS */
+    .btn-group .btn,
+    .table .btn {
         background: rgba(255, 255, 255, 0.05) !important;
+        /* Fondo de cristal tenue */
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        margin: 0 2px;
+        /* Borde casi invisible */
+        color: #ffffff !important;
+        border-radius: 8px !important;
+        margin: 0 3px;
+        transition: all 0.3s ease !important;
     }
 
     .btn-group .btn:hover {
+        background: rgba(138, 43, 226, 0.2) !important;
+        /* Brillo morado al pasar el mouse */
         border-color: #8a2be2 !important;
-        background: rgba(138, 43, 226, 0.1) !important;
+        transform: scale(1.1);
     }
 
-    /* 4. TABLAS LIMPIAS */
-    .table thead th {
-        background: rgba(138, 43, 226, 0.1) !important;
-        color: #8a2be2 !important;
-        border-bottom: 2px solid #8a2be2 !important;
+    /* Colores responsivos para iconos específicos */
+    .btn-group .btn i.fa-eye {
+        color: #00d4ff !important;
     }
 
-    .table tbody tr {
-        transition: 0.3s;
+    .btn-group .btn i.fa-edit {
+        color: #ffcc00 !important;
     }
 
-    .table tbody tr:hover {
-        background: rgba(138, 43, 226, 0.05) !important;
+    .btn-group .btn i.fa-trash {
+        color: #ff4444 !important;
     }
 
-    /* 5. FORMULARIOS OSCUROS */
+    /* 5. FORMULARIOS E INPUTS MODERNOS */
     .form-control {
-        background: rgba(255, 255, 255, 0.03) !important;
+        background: rgba(0, 0, 0, 0.4) !important;
         border: 1px solid rgba(138, 43, 226, 0.3) !important;
         color: #ffffff !important;
+        border-radius: 10px !important;
     }
 
     .form-control:focus {
-        border-color: #007bff !important;
-        box-shadow: 0 0 15px rgba(0, 123, 255, 0.3) !important;
+        border-color: #8a2be2 !important;
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3) !important;
     }
 
-    /* Barra de desplazamiento neón */
+    /* 6. SIDEBAR Y SCROLLBAR */
+    .main-sidebar {
+        border-right: 1px solid rgba(138, 43, 226, 0.15) !important;
+    }
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+        background: rgba(138, 43, 226, 0.12) !important;
+        border-left: 3px solid #8a2be2 !important;
+    }
+
     ::-webkit-scrollbar {
         width: 8px;
     }
@@ -179,9 +153,48 @@
         border-radius: 10px;
     }
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: #007bff;
+    /* 8. BOTÓN CANCELAR: FUERZA BRUTA BLANCO NÍTIDO */
+    body.dark-mode .content-wrapper .btn-secondary,
+    body.dark-mode .content-wrapper .btn-default,
+    body.dark-mode .modal-content .btn-secondary,
+    .btn-secondary:not(:disabled):not(.disabled) {
+        /* Fondo: Cristal blanco constante */
+        background-color: rgba(255, 255, 255, 0.18) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+
+        /* Borde: Blanco semitransparente */
+        border: 1px solid rgba(255, 255, 255, 0.5) !important;
+
+        /* TEXTO: Blanco puro absoluto (Aquí es donde fallaba antes) */
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+
+        /* Forzamos visibilidad total para eliminar el "gris" */
+        opacity: 1 !important;
+        filter: none !important;
+        /* Elimina filtros de brillo automáticos de AdminLTE */
+        border-radius: 10px !important;
+        padding: 8px 25px !important;
+
+        /* Limpieza de sombras que ensucian el texto */
+        box-shadow: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
+
+    /* EFECTO RESPONSIVO: Brillo Neon Blanco al Cursor */
+    .btn-secondary:hover,
+    .btn-secondary:not(:disabled):not(.disabled):hover {
+        background-color: rgba(255, 255, 255, 0.3) !important;
+        border-color: #ffffff !important;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.3) !important;
+        color: #ffffff !important;
+    }
+
+    .st-force-white .btn-secondary { color: #fff !important; opacity: 1 !important; }
 </style>
 @stop
 
@@ -220,3 +233,4 @@
         })();
 </script>
 @stop
+
