@@ -65,7 +65,7 @@ return [
 
     'title' => 'Software Tech',
     'logo' => '<b>SOFTWARE TECH</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/SoftwareTechnologies_Logotipo06.png',
+    'logo_img' => 'vendor/adminlte/dist/img/SoftwareTechnologies_Logotipo01.png',
     'logo_img_class' => 'brand-image img-circle',
     'logo_img_xl' => null,
     'logo_img_alt' => ' ',
