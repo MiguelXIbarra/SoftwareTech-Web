@@ -135,9 +135,9 @@ return [
 
     'usermenu_enabled' => true,
     'usermenu_header' => false,
-    'usermenu_header_class' => 'bg-primary',
+    'usermenu_header_class' => 'bg-transparent',
     'usermenu_image' => false,
-    'usermenu_desc' => false,
+    'usermenu_desc' => true,
     'usermenu_profile_url' => false,
 
     /*
@@ -299,10 +299,32 @@ return [
     */
 
     'menu' => [
+
+        [
+            'text' => 'Perfil Personal',
+            'route'  => 'profile',
+            'icon' => 'fas fa-fw fa-layer-group',
+            'topnav_user' => true,
+        ],
+
+        [
+            'text' => 'Configuración',
+            'route'  => 'settings',
+            'icon' => 'fas fa-fw fa-adjust',
+            'topnav_user' => true,
+        ],
+
+        [
+            'text' => 'Finalizar Sesión',
+            'url'  => 'logout',
+            'icon' => 'fas fa-fw fa-power-off',
+            'topnav_user' => true,
+        ],
+
         // Buscador en la barra lateral
         [
             'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Buscador',
         ],
 
         // --- SECCIÓN DE GESTIÓN ---
@@ -311,18 +333,8 @@ return [
         [
             'text' => 'Usuarios',
             'icon' => 'fas fa-fw fa-users',
-            'submenu' => [
-                [
-                    'text' => 'Listar Usuarios',
-                    'route' => 'users.index',
-                    'icon' => 'fas fa-list',
-                ],
-                [
-                    'text' => 'Crear Usuario',
-                    'route' => 'users.create',
-                    'icon' => 'fas fa-plus',
-                ],
-            ],
+            'route' => 'users.index',
+            
         ],
 
         // --- SECCIÓN DE PROYECTOS ---
@@ -331,18 +343,8 @@ return [
         [
             'text' => 'Proyectos',
             'icon' => 'fas fa-fw fa-project-diagram',
-            'submenu' => [
-                [
-                    'text' => 'Ver Proyectos',
-                    'route' => 'projects.index',
-                    'icon' => 'fas fa-tasks',
-                ],
-                [
-                    'text' => 'Nuevo Proyecto',
-                    'route' => 'projects.create',
-                    'icon' => 'fas fa-plus-circle',
-                ],
-            ],
+            'route' => 'projects.index',
+            
         ],
         [
             'text' => 'Hitos (Milestones)',
@@ -377,7 +379,7 @@ return [
         ['header' => 'AJUSTES DE CUENTA'],
         [
             'text' => 'Perfil',
-            'route'  => 'profile.show',
+            'route'  => 'profile',
             'icon' => 'fas fa-fw fa-user-cog',
         ],
         [

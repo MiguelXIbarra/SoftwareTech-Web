@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 <style>
     /* 1. NAVBAR FIJO Y ESTILO CRISTAL OSCURO */
@@ -29,13 +28,14 @@
 
     /* 3. CONTENEDOR PRINCIPAL Y CARRUSEL */
     .main-terminal {
-        background-color: #00040a;
+        background-color: #00040a !important;
+        background-image: none !important;
         margin-top: -75px;
         overflow-x: hidden;
     }
 
     .hero-carousel .carousel-item {
-        height: 100vh;
+        height: calc(100vh - 60px);
         position: relative;
     }
 
@@ -183,6 +183,14 @@
         padding: 0 10%;
         width: max-content;
     }
+
+    .operational-ribbon p {
+        display: none !important;
+    }
+
+    .mobile-help-text {
+        display: none !important;
+    }
 </style>
 
 <div class="main-terminal">
@@ -289,14 +297,14 @@
                         metas estratégicas de nuestros clientes.</p>
                 </div>
             </div>
-            <p class="text-center text-white-50 mt-4 small"><i class="fas fa-arrows-alt-h me-2"></i> Desliza
-                lateralmente para explorar el ADN</p>
         </div>
+
+        <footer class="main-footer">
+            <strong>&copy; {{ date('Y') }} <a href="/home">SOFTWARE TECH</a> | INNOVATION LAB | V4.5</strong>
+        </footer>
     </div>
 
-    <footer class="py-5 text-center border-top border-dark">
-        <p class="text-muted small">© 2026 Software Technologies Lab | Terminal Operativa v4.5</p>
-    </footer>
+
 </div>
 
 <script>

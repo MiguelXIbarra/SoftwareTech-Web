@@ -23,7 +23,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // PERFIL DE USUARIO (La ruta que se ve en blanco)
-    Route::get('/admin/profile', [ProfileController::class, 'profile'])->name('profile.show');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.show');
+    Route::get('/admin/profile', [ProfileController::class, 'profile'])->name('profile');
+    
 
     // CONFIGURACIÓN DE PERFIL Y 2FA
     Route::get('/settings', [ProfileController::class, 'index'])->name('profile.edit');

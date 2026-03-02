@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/projects'; // Aquí defines que vayan a proyectos en lugar de /home
+    public const HOME = '/home'; // Aquí defines que vayan a proyectos en lugar de /home
 
     /**
      * Register any application services.

@@ -3,7 +3,7 @@
 @section('title', 'Perfil | Software Tech')
 
 @section('content_header')
-    <h1 class="m-0 dna-gradient" style="background: linear-gradient(135deg, #007bff, #8a2be2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">PERFIL DE OPERADOR</h1>
+    <h1 class="m-0 dna-gradient" style="background: linear-gradient(135deg, #007bff, #8a2be2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">PERFIL DE USUARIO</h1>
 @stop
 
 @section('css')
@@ -56,7 +56,7 @@
 
         <div class="col-md-8">
             <div class="card p-4">
-                <div class="card-header"><h3 class="text-white fw-bold">ESPECIFICACIONES DEL OPERADOR</h3></div>
+                <div class="card-header"><h3 class="text-white fw-bold">ESPECIFICACIONES DEL USUARIO</h3></div>
                 <div class="card-body">
                     <div class="row mb-4">
                         <div class="col-sm-4 text-info fw-bold">NOMBRE COMPLETO</div>

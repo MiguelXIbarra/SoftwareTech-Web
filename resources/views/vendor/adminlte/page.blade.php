@@ -7,194 +7,437 @@
 @stack('css')
 @yield('css')
 <style>
-    /* 1. ESTRUCTURA GLOBAL: VISIÓN SOFTWARE TECH */
-    body,
-    .content-wrapper,
-    .main-sidebar,
-    .main-footer,
-    .main-header,
-    .modal-content,
+    /* 1. ESTRUCTURA Y ELIMINACIÓN DE SCROLL */
+    html,
+    body {
+        height: 100% !important;
+        margin: 0;
+        overflow: hidden !important;
+    }
+
+    .wrapper {
+        height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: radial-gradient(circle at top, #000814 0%, #000 100%) !important;
+    }
+
+    .content-wrapper {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        background: transparent !important;
+        margin-left: 250px !important;
+        width: calc(100% - 250px) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 2. LIMPIEZA DE INTERFAZ */
+    .card,
     .card-header,
     .card-footer,
-    .table td,
-    .table th {
-        background-color: #00040a !important;
-        /* Negro profundo coherente con el Home */
-        color: #ffffff !important;
-        border: none !important;
+    .post,
+    .mailbox-read-info {
+        background: rgba(255, 255, 255, 0.02) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        color: #fff !important;
     }
 
-    /* 2. TARJETAS CON EFECTO CRISTAL (GLASSMORPHISM) */
-    .card {
-        background: rgba(255, 255, 255, 0.01) !important;
-        /* Más transparente para evitar "cortes" */
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(138, 43, 226, 0.2) !important;
-        border-radius: 20px !important;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
-        margin-bottom: 2rem;
+    /* 3. NAVBAR Y PERFIL (ESTILO HOME - MINIMALISMO TOTAL + SALIDA EN ROJO) */
+
+    /* Limpieza de la barra superior */
+    body .main-header {
+        background: transparent !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        padding-right: 20px !important;
     }
 
-    /* 3. TABLAS PROFESIONALES: ALTO CONTRASTE */
-    .table thead th {
+    /* EL ACTIVADOR (NOMBRE IZQ + CÍRCULO DER CON GRADIENTE) */
+    body .main-header .nav-item.dropdown.user-menu .nav-link {
+        display: flex !important;
+        align-items: center !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 50px !important;
+        padding: 5px 5px 5px 20px !important;
         color: #ffffff !important;
-        /* Blanco brillante para legibilidad total */
-        font-weight: 800 !important;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        border-bottom: 2px solid #8a2be2 !important;
-        background-color: rgba(255, 255, 255, 0.03) !important;
-        padding: 15px !important;
+        font-weight: 800;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        transition: 0.4s ease;
     }
 
-    .table tbody td {
-        color: rgba(255, 255, 255, 0.85) !important;
-        border-bottom: 1px solid rgba(138, 43, 226, 0.08) !important;
-        padding: 12px 15px !important;
+    body .main-header .nav-item.dropdown.user-menu .nav-link::after {
+        content: "\f61f";
+        /* fa-shapes (Diamante) */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        background: #000 !important;
+        color: #fff !important;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-left: 15px;
+        font-size: 1rem;
+        border: 2px solid transparent !important;
+        background-image: linear-gradient(#000, #000),
+            linear-gradient(to right, #8a2be2, #00d4ff) !important;
+        background-origin: border-box !important;
+        background-clip: content-box, border-box !important;
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
     }
 
-    .table-hover tbody tr:hover {
-        background-color: rgba(138, 43, 226, 0.04) !important;
-        border-left: 4px solid #8a2be2;
-        /* Indicador neón lateral */
+    /* PANEL DROPDOWN (TU CÓDIGO DEL HOME: NEGRO AHUMADO + BLUR 45px) */
+    body .dropdown-menu-lg {
+        min-width: 320px !important;
+        background: rgba(5, 5, 5, 0.85) !important;
+        backdrop-filter: blur(45px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(45px) saturate(180%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 24px !important;
+        padding: 25px !important;
+        margin-top: 25px !important;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7) !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    /* OCULTAR CABECERA Y CUERPO PREDETERMINADO DE ADMINLTE */
+    body .user-header,
+    body .user-body,
+    body .user-footer {
+        display: none !important;
+    }
+
+    /* ESTILO UNIFICADO DE ÍTEMS (ESTRUCTURA DEL HOME) */
+    body .dropdown-item {
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        padding: 14px 22px !important;
+        border-radius: 14px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        margin-bottom: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        background: transparent !important;
+        border: none !important;
+        width: 100% !important;
+        text-align: left !important;
+    }
+
+    /* ICONOS (Opacidad 40% que sube al 100% en Hover) */
+    body .dropdown-item i {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: 1.1rem !important;
+        margin-right: 15px !important;
+        opacity: 0.4 !important;
+        color: #fff !important;
+        transition: 0.3s ease;
+    }
+
+    /* HOVER GENERAL (Salto 10px + Brillo Blanco) */
+    body .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #fff !important;
+        transform: translateX(10px) !important;
+        text-decoration: none !important;
+    }
+
+    body .dropdown-item:hover i {
+        opacity: 1 !important;
+    }
+
+    /* CONFIGURACIÓN ESPECÍFICA PARA "FINALIZAR SESIÓN" (EN ROJO) */
+    body .dropdown-item[href*="logout"] {
+        color: rgba(255, 50, 50, 0.6) !important;
+        /* Rojo tenue inicial */
+        border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+        margin-top: 15px !important;
+        padding-top: 20px !important;
+    }
+
+    /* Icono de encendido en Rojo para Logout */
+    body .dropdown-item[href*="logout"] i {
+        color: #ff3232 !important;
+        /* Rojo vibrante */
+        opacity: 0.5 !important;
+    }
+
+    /* Hover específico para Logout */
+    body .dropdown-item[href*="logout"]:hover {
+        background: rgba(255, 50, 50, 0.08) !important;
+        /* Brillo rojizo */
+        color: #ff4d4d !important;
+        /* Rojo brillante al tocar */
+    }
+
+    body .dropdown-item[href*="logout"]:hover i {
+        opacity: 1 !important;
+        text-shadow: 0 0 10px rgba(255, 50, 50, 0.5);
+    }
+
+    /* 4. SIDEBAR (NUNITO - CENTRADO Y COLORES INNOVATION LAB) */
+
+    .main-sidebar {
+        background: rgba(5, 8, 15, 0.92) !important;
+        backdrop-filter: blur(40px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+        font-family: 'Nunito', sans-serif !important;
+        height: 100vh !important;
+    }
+
+    /* ELIMINACIÓN DE DOBLE BUSCADOR */
+    .sidebar-search-results,
+    .nav-sidebar>.nav-item:first-child .form-inline+.form-inline {
+        display: none !important;
+    }
+
+    /* BUSCADOR: CÁPSULA MINI, CENTRADA Y CON LUZ */
+    .sidebar-form,
+    .nav-sidebar .form-inline {
+        /* Aumentamos el margen lateral a 25px para forzar que sea pequeño y esté centrado */
+        margin: 15px 25px !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 20px;
+        /* Borde con toque morado sutil */
+        border: 1px solid rgba(138, 43, 226, 0.3) !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        height: 32px !important;
         transition: all 0.3s ease;
     }
 
-    /* 4. BOTONES PRINCIPALES RESPONSIVOS */
-    .btn-primary,
-    .btn-success,
-    .btn-info,
-    .btn-submit {
-        background: linear-gradient(135deg, #8a2be2 0%, #007bff 100%) !important;
+    /* Efecto al enfocar: Iluminación Cian */
+    .sidebar-form:focus-within {
+        border-color: rgba(0, 212, 255, 0.5) !important;
+        box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    }
+
+    .form-control-sidebar {
+        background: transparent !important;
         border: none !important;
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        text-transform: uppercase;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3) !important;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        color: #fff !important;
+        font-family: 'Nunito', sans-serif !important;
+        height: 100% !important;
+        padding: 0 5px 0 15px !important;
+        font-size: 0.75rem !important;
+        flex: 1 !important;
+        outline: none !important;
     }
 
-    .btn-primary:hover,
-    .btn-success:hover,
-    .btn-info:hover {
-        transform: translateY(-3px) scale(1.03) !important;
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5) !important;
-        filter: brightness(1.1);
+    /* BOTÓN LUPA: Color Cian para dar vida */
+    .btn-sidebar {
+        background: transparent !important;
+        border: none !important;
+        width: 35px !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
     }
 
-    /* 7. BOTONES DE ACCIÓN (TABLAS) - CORRECCIÓN DE BORDES BLANCOS */
-    .btn-group .btn,
-    .table .btn {
-        background: rgba(255, 255, 255, 0.05) !important;
-        /* Fondo de cristal tenue */
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        /* Borde casi invisible */
-        color: #ffffff !important;
-        border-radius: 8px !important;
-        margin: 0 3px;
-        transition: all 0.3s ease !important;
-    }
-
-    .btn-group .btn:hover {
-        background: rgba(138, 43, 226, 0.2) !important;
-        /* Brillo morado al pasar el mouse */
-        border-color: #8a2be2 !important;
-        transform: scale(1.1);
-    }
-
-    /* Colores responsivos para iconos específicos */
-    .btn-group .btn i.fa-eye {
+    .btn-sidebar i {
+        font-size: 0.8rem !important;
         color: #00d4ff !important;
+        /* Cian Eléctrico */
+        opacity: 0.8;
+        position: static !important;
+        transform: none !important;
     }
 
-    .btn-group .btn i.fa-edit {
-        color: #ffcc00 !important;
+    /* LINKS DEL MENÚ: COMPACTOS Y VIVIDOS */
+    .nav-sidebar .nav-item {
+        padding: 0 10px !important;
+        margin-bottom: 2px !important;
     }
 
-    .btn-group .btn i.fa-trash {
-        color: #ff4444 !important;
-    }
-
-    /* 5. FORMULARIOS E INPUTS MODERNOS */
-    .form-control {
-        background: rgba(0, 0, 0, 0.4) !important;
-        border: 1px solid rgba(138, 43, 226, 0.3) !important;
-        color: #ffffff !important;
+    .nav-sidebar .nav-link {
         border-radius: 10px !important;
+        color: rgba(255, 255, 255, 0.45) !important;
+        font-family: 'Nunito', sans-serif !important;
+        font-size: 0.8rem !important;
+        padding: 8px 12px !important;
+        transition: 0.3s ease;
     }
 
-    .form-control:focus {
-        border-color: #8a2be2 !important;
-        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3) !important;
+    /* ESTADO ACTIVO: Línea de degradado Morado-Cian */
+    .nav-sidebar .nav-item .nav-link.active {
+        border-left: 3px solid transparent !important;
+        /* Degradado que combina con el footer */
+        border-image: linear-gradient(to bottom, #8a2be2, #00d4ff) 1 !important;
+        background: linear-gradient(to right, rgba(138, 43, 226, 0.1), transparent) !important;
+        color: #fff !important;
     }
 
-    /* 6. SIDEBAR Y SCROLLBAR */
-    .main-sidebar {
-        border-right: 1px solid rgba(138, 43, 226, 0.15) !important;
-    }
-
-    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
-        background: rgba(138, 43, 226, 0.12) !important;
-        border-left: 3px solid #8a2be2 !important;
-    }
-
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #00040a;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #8a2be2;
-        border-radius: 10px;
-    }
-
-    /* 8. BOTÓN CANCELAR: FUERZA BRUTA BLANCO NÍTIDO */
-    body.dark-mode .content-wrapper .btn-secondary,
-    body.dark-mode .content-wrapper .btn-default,
-    body.dark-mode .modal-content .btn-secondary,
-    .btn-secondary:not(:disabled):not(.disabled) {
-        /* Fondo: Cristal blanco constante */
-        background-color: rgba(255, 255, 255, 0.18) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-
-        /* Borde: Blanco semitransparente */
-        border: 1px solid rgba(255, 255, 255, 0.5) !important;
-
-        /* TEXTO: Blanco puro absoluto (Aquí es donde fallaba antes) */
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-
-        /* Forzamos visibilidad total para eliminar el "gris" */
+    .nav-sidebar .nav-link:hover i,
+    .nav-sidebar .nav-link.active i {
+        color: #00d4ff !important;
         opacity: 1 !important;
-        filter: none !important;
-        /* Elimina filtros de brillo automáticos de AdminLTE */
-        border-radius: 10px !important;
-        padding: 8px 25px !important;
-
-        /* Limpieza de sombras que ensucian el texto */
-        box-shadow: none !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.5));
     }
 
-    /* EFECTO RESPONSIVO: Brillo Neon Blanco al Cursor */
-    .btn-secondary:hover,
-    .btn-secondary:not(:disabled):not(.disabled):hover {
-        background-color: rgba(255, 255, 255, 0.3) !important;
-        border-color: #ffffff !important;
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 0 25px rgba(255, 255, 255, 0.3) !important;
+    /* 5. TABLAS Y BOTONES ACCIÓN */
+    .table td .btn {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        transition: 0.3s ease !important;
+    }
+
+    .table td .btn:hover {
+        transform: translateY(-4px) scale(1.1) !important;
         color: #ffffff !important;
+        border-color: #ffffff !important;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
-    .st-force-white .btn-secondary { color: #fff !important; opacity: 1 !important; }
+    /* AJUSTE DE TABLAS: RESPONSIVIDAD INVISIBLE */
+    .table-responsive {
+        border: none !important;
+        overflow-x: auto !important;
+        scrollbar-width: none !important;
+        /* Firefox */
+        -ms-overflow-style: none !important;
+        /* IE/Edge */
+    }
+
+    /* Ocultar barra de scroll en Chrome/Safari pero permitir scroll */
+    .table-responsive::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    table.table {
+        width: 100% !important;
+        margin-bottom: 0 !important;
+        background: transparent !important;
+        border-collapse: separate !important;
+        border-spacing: 0 8px !important;
+        /* Espaciado entre filas para airear el diseño */
+    }
+
+    /* Evitar que las celdas se deformen bruscamente */
+    .table td,
+    .table th {
+        white-space: nowrap !important;
+        /* Mantiene el texto en una línea */
+        padding: 15px 20px !important;
+        vertical-align: middle !important;
+        border: none !important;
+    }
+
+    /* Evitamos el color de fondo fuerte al pasar el cursor */
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+        /* Brillo apenas perceptible */
+        color: #fff !important;
+        transition: background-color 0.5s ease;
+    }
+
+    /* Quitamos cualquier borde o resalte tosco */
+    table.dataTable,
+    .table {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        background: transparent !important;
+    }
+
+    .table td,
+    .table th {
+        border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
+        /* Divisor muy tenue */
+        padding: 15px 20px !important;
+        background: transparent !important;
+        transition: all 0.3s ease;
+    }
+
+    /* Responsividad sin barras de scroll molestas */
+    .table-responsive {
+        border: none !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+
+    .table-responsive::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    /* 6. BOTONES REGRESAR */
+    body .content-wrapper .btn-secondary,
+    body .content-wrapper .btn-default {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #ffffff !important;
+        border: 2px solid #ffffff !important;
+        font-weight: 800 !important;
+        border-radius: 12px !important;
+    }
+
+    /* 7. FOOTER DE LA APP - NOMBRE EN CIAN */
+    .main-footer {
+        background: #000 !important;
+        border-top: 1px solid transparent !important;
+        border-image: linear-gradient(to right, transparent, #8a2be2, #00d4ff, #8a2be2, transparent) 1 !important;
+
+        /* Mantenemos el margin-left para el sidebar de la app */
+        margin-left: 250px !important;
+        width: calc(100% - 250px) !important;
+        padding: 20px 30px !important;
+
+        text-align: center !important;
+        color: rgba(200, 200, 200, 0.8) !important;
+        font-family: 'Nunito', sans-serif !important;
+        font-size: 0.85rem !important;
+    }
+
+    .main-footer strong {
+        color: #f8f9fa !important;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    /* EL CAMBIO CLAVE: Software Tech en Cian */
+    .main-footer a {
+        color: #00d4ff !important;
+        /* Color Cian Eléctrico */
+        font-weight: 800 !important;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        /* Resplandor sutil */
+        text-decoration: none !important;
+    }
+
+    /* Ajuste responsivo */
+    .sidebar-collapse .main-footer {
+        margin-left: 4.6rem !important;
+        width: calc(100% - 4.6rem) !important;
+    }
+
+    /* Sincronización con el colapso del sidebar */
+    .sidebar-collapse .main-footer {
+        margin-left: 4.6rem !important;
+        width: calc(100% - 4.6rem) !important;
+    }
+
+    /* Sincronización con el colapso del sidebar */
+    .sidebar-collapse .main-footer {
+        margin-left: 4.6rem !important;
+        width: calc(100% - 4.6rem) !important;
+    }
+
+    /* AJUSTE COLLAPSE */
+    .sidebar-collapse .content-wrapper,
+    .sidebar-collapse .main-footer {
+        margin-left: 4.6rem !important;
+        width: calc(100% - 4.6rem) !important;
+    }
 </style>
 @stop
 
@@ -213,24 +456,77 @@
             <div class="container-fluid">@yield('content')</div>
         </div>
     </div>
+
+    <footer class="main-footer">
+        <strong>&copy; {{ date('Y') }} <a href="/home" style="color: #00d4ff;">SOFTWARE TECH</a> | INNOVATION LAB |
+            V4.5</strong>
+    </footer>
 </div>
 @stop
 
 @section('adminlte_js')
-@stack('js')
-@yield('js')
+@stack('js') @yield('js')
 <script>
     (function() {
-            function lockTheme() {
-                const body = document.body;
-                body.classList.remove('high-contrast');
-                body.classList.add('dark-mode'); 
-                const compact = localStorage.getItem('st_user_compact') === 'true';
-                if (compact) body.classList.add('sidebar-collapse');
-            }
-            document.addEventListener('DOMContentLoaded', lockTheme);
-            window.onload = lockTheme;
+            const body = document.body;
+            const sidebar = document.querySelector('.main-sidebar');
+            const STORAGE_KEY = 'adminlte_sidebar_compact';
+
+            // 1. FUNCIÓN QUE APLICA EL ESTADO DE BANDEJA COMPACTA
+            const updateSidebar = (isCompact) => {
+                if (isCompact) {
+                    body.classList.add('sidebar-collapse');
+                    body.classList.remove('sidebar-open');
+                } else {
+                    body.classList.remove('sidebar-collapse');
+                }
+            };
+
+            // 2. BLOQUEO DE TEMA (NEGRO)
+            const lockTheme = () => {
+                if (sidebar) {
+                    sidebar.style.setProperty('background-color', '#00040a', 'important');
+                    sidebar.classList.add('dark-mode');
+                }
+                body.classList.add('dark-mode');
+            };
+
+            // 3. PERSISTENCIA: Aplicar estado guardado de inmediato al cargar el script
+            const savedState = localStorage.getItem(STORAGE_KEY) === 'true';
+            updateSidebar(savedState);
+            lockTheme();
+
+            // Escuchar cambios visuales del usuario
+            document.addEventListener('click', (e) => {
+                // Al hacer clic en el botón de hamburguesa tradicional
+                if (e.target.closest('[data-widget="pushmenu"]')) {
+                    setTimeout(() => {
+                        const isNowCollapsed = body.classList.contains('sidebar-collapse');
+                        localStorage.setItem(STORAGE_KEY, isNowCollapsed);
+                    }, 300);
+                }
+            });
+
+            // Sincronizar con el switch de la vista (Bandeja de datos compacta)
+            document.addEventListener('change', (e) => {
+                // Si el usuario mueve el switch de "Bandeja de datos compacta"
+                if (e.target.closest('.custom-control-input')) {
+                    const active = e.target.checked;
+                    localStorage.setItem(STORAGE_KEY, active);
+                    updateSidebar(active);
+                }
+            });
+
+            // 4. INTERVALO DE SEGURIDAD (Refuerzo para cambios de vista)
+            let checks = 0;
+            const interval = setInterval(() => {
+                const currentState = localStorage.getItem(STORAGE_KEY) === 'true';
+                updateSidebar(currentState);
+                lockTheme();
+                if (++checks > 20) clearInterval(interval);
+            }, 50);
+
+            window.onload = applyState;
         })();
 </script>
 @stop
-

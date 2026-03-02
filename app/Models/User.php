@@ -27,6 +27,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function adminlte_desc()
+    {
+        return 'Super Admin'; 
+    }
+
     // Tus relaciones originales se quedan igual
     public function projects(): HasMany { return $this->hasMany(Project::class, 'client_id'); }
     public function messages(): HasMany { return $this->hasMany(Message::class, 'sender_id'); }
