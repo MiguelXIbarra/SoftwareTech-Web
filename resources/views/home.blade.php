@@ -232,14 +232,17 @@
         </button>
     </div>
 
+    @auth
     <div class="container py-5 mt-5 reveal">
         <div class="glass-panel w-100" style="border-left: 5px solid #8a2be2; width: auto; flex-shrink: 1;">
             <h2 class="text-white fw-bold mb-3">SISTEMA INICIADO: <span class="dna-gradient">{{ Auth::user()->name
                     }}</span></h2>
-            <p class="text-white opacity-75 lead mb-0">Acceso total concedido al núcleo operativo de Software
-                Technologies. Todos los módulos de innovación están listos para ejecución estratégica.</p>
+            <p class="text-white opacity-75 lead mb-0">
+                Acceso total concedido al núcleo operativo de Software Technologies. 
+                Todos los módulos de innovación están listos para ejecución estratégica.</p>
         </div>
     </div>
+    @endauth
 
     <div class="container py-5 reveal">
         <h2 class="text-white fw-bold mb-5 ps-3 border-start border-primary" style="border-width: 6px !important;">

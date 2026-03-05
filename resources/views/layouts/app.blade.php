@@ -205,6 +205,7 @@
 
                 <div class="collapse navbar-collapse" id="navC">
                     <ul class="navbar-nav ms-auto align-items-center">
+                        {{-- MÓDULOS OPERATIVOS: Solo se ven si está logueado --}}
                         @auth
                         <li class="nav-item"><a class="nav-link px-3" href="{{ route('users.index') }}">Usuarios</a>
                         </li>
@@ -218,24 +219,29 @@
                         </li>
                         <li class="nav-item"><a class="nav-link px-3" href="{{ route('lab_posts.index') }}">Blog</a>
                         </li>
+                        @endauth
 
+                        {{-- BOTÓN DE PERFIL: Siempre visible con la misma estructura --}}
                         <li class="nav-item dropdown ms-4">
                             <a id="navbarDropdown" class="nav-link d-flex align-items-center" href="#" role="button"
                                 data-bs-toggle="dropdown">
                                 <div class="profile-wrapper">
-                                    {{-- Ícono más sofisticado: Un diamante/hexágono minimalista --}}
                                     <i class="fas fa-shapes"></i>
                                 </div>
                             </a>
 
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu dropdown-menu-end">
+                                @auth
+                                {{-- VISTA PARA USUARIOS REGISTRADOS --}}
                                 <div class="px-3 pb-4">
                                     <p class="mb-0 fw-bold"
-                                        style="color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">{{
-                                        Auth::user()->name }}</p>
+                                        style="color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                        {{ Auth::user()->name }}
+                                    </p>
                                     <p class="mb-0 small"
                                         style="color: rgba(255,255,255,0.3); text-transform: uppercase; font-weight: 700; font-size: 0.7rem;">
-                                        Account Manager</p>
+                                        Account Manager
+                                    </p>
                                 </div>
                                 <a class="dropdown-item" href="{{ url('/admin/profile') }}">
                                     <i class="fas fa-layer-group"></i> Perfil Personal
@@ -250,14 +256,27 @@
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf
                                 </form>
+                                @else
+                                {{-- VISTA PARA INVITADOS (SIN CUENTA) --}}
+                                <div class="px-3 pb-4">
+                                    <p class="mb-0 fw-bold"
+                                        style="color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                        Bienvenido
+                                    </p>
+                                    <p class="mb-0 small"
+                                        style="color: rgba(255,255,255,0.3); text-transform: uppercase; font-weight: 700; font-size: 0.7rem;">
+                                        Innovation Lab Visitor
+                                    </p>
+                                </div>
+                                <a class="dropdown-item" href="{{ route('login') }}">
+                                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                                </a>
+                                <a class="dropdown-item" href="{{ route('register') }}">
+                                    <i class="fas fa-user-plus"></i> Registrarse
+                                </a>
+                                @endauth
                             </div>
                         </li>
-                        @else
-                        <li class="nav-item"><a class="nav-link px-4" href="{{ route('login') }}">Login</a></li>
-                        <li class="nav-item"><a href="{{ route('register') }}"
-                                style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 40px; padding: 12px 35px; font-weight: 700; text-decoration: none; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1.5px; transition: 0.3s;">Registro</a>
-                        </li>
-                        @endauth
                     </ul>
                 </div>
             </div>

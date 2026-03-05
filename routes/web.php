@@ -12,15 +12,14 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Auth::routes();
 
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 Route::middleware(['auth'])->group(function () {
-    
-    // DASHBOARD PRINCIPAL
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // PERFIL DE USUARIO (La ruta que se ve en blanco)
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.show');
