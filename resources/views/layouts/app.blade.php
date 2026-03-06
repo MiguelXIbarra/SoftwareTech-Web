@@ -154,20 +154,14 @@
         /* FOOTER CLONADO (ESTILO EXACTO DE LA APP) */
         .main-footer {
             background: #000 !important;
-            /* Fondo negro sólido como en la app */
-            /* Línea neón con el degradado exacto de page.blade.php */
             border-top: 1px solid transparent !important;
             border-image: linear-gradient(to right, transparent, #8a2be2, #00d4ff, #8a2be2, transparent) 1 !important;
 
             width: 100% !important;
             padding: 20px 30px !important;
-            margin-top: 100px;
-            /* Espacio para que respire al final del home */
-
-            /* Tipografía y Alineación de la App */
+            margin-top: 0 !important;
             text-align: center !important;
             color: rgba(200, 200, 200, 0.8) !important;
-            /* Gris claro suave */
             font-family: 'Nunito', sans-serif !important;
             font-size: 0.85rem !important;
             letter-spacing: 1px;
@@ -189,6 +183,7 @@
         }
     </style>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 
 <body>
@@ -274,7 +269,7 @@
                                 <a class="dropdown-item" href="{{ route('register') }}">
                                     <i class="fas fa-user-plus"></i> Registrarse
                                 </a>
-                                @endauth
+                                @endif  
                             </div>
                         </li>
                     </ul>
@@ -288,21 +283,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS("dna-canvas", {
-            "particles": {
-                "number": { "value": 35 },
-                "color": { "value": "#ffffff" },
-                "line_linked": { "enable": true, "distance": 280, "color": "#ffffff", "opacity": 0.03 }
-            }
-        });
-
-        window.onscroll = function() {
-            var nav = document.getElementById('mainNavbar');
-            if (window.pageYOffset > 50) { nav.classList.add("scrolled"); } 
-            else { nav.classList.remove("scrolled"); }
-        };
-    </script>
 </body>
-
 </html>
