@@ -12,7 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('home');
+    return redirect()->route('home');
 });
 
 Auth::routes();
