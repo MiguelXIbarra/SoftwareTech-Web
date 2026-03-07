@@ -7,31 +7,55 @@
 @stack('css')
 @yield('css')
 <style>
-    /* 1. ESTRUCTURA Y ELIMINACIÓN DE SCROLL */
+    /* 1. ESTRUCTURA BASE Y MOTOR STICKY */
     html,
     body {
         height: 100% !important;
         margin: 0;
-        overflow: hidden !important;
+        overflow-y: auto !important;
+        background: #000 !important;
+    }
+
+    /* SCROLLBAR NEÓN PERSONALIZADO */
+    ::-webkit-scrollbar {
+        width: 8px;
+        background-color: #000;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #00040a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #8a2be2, #00d4ff);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
     }
 
     .wrapper {
-        height: 100vh !important;
+        min-height: 100vh !important;
         display: flex !important;
         flex-direction: column !important;
         background: radial-gradient(circle at top, #000814 0%, #000 100%) !important;
     }
 
+    /* CONTENEDOR DE CONTENIDO (PULMÓN DEL STICKY FOOTER) */
     .content-wrapper {
-        flex: 1 !important;
-        overflow-y: auto !important;
+        flex: 1 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
         background: transparent !important;
         margin-left: 250px !important;
         width: calc(100% - 250px) !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding-bottom: 20px !important;
     }
 
-    /* 2. LIMPIEZA DE INTERFAZ */
+    .content {
+        flex: 1 0 auto !important;
+    }
+
+    /* 2. INTERFAZ CRISTAL (CARDS & TABLES) */
     .card,
     .card-header,
     .card-footer,
@@ -43,16 +67,13 @@
         color: #fff !important;
     }
 
-    /* 3. NAVBAR Y PERFIL (ESTILO HOME - MINIMALISMO TOTAL + SALIDA EN ROJO) */
-
-    /* Limpieza de la barra superior */
+    /* 3. NAVBAR Y PERFIL DINÁMICO */
     body .main-header {
         background: transparent !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         padding-right: 20px !important;
     }
 
-    /* EL ACTIVADOR (NOMBRE IZQ + CÍRCULO DER CON GRADIENTE) */
     body .main-header .nav-item.dropdown.user-menu .nav-link {
         display: flex !important;
         align-items: center !important;
@@ -65,12 +86,10 @@
         font-weight: 800;
         font-size: 0.7rem;
         letter-spacing: 2px;
-        transition: 0.4s ease;
     }
 
     body .main-header .nav-item.dropdown.user-menu .nav-link::after {
         content: "\f61f";
-        /* fa-shapes (Diamante) */
         font-family: "Font Awesome 5 Free";
         font-weight: 900;
         background: #000 !important;
@@ -82,296 +101,117 @@
         justify-content: center;
         border-radius: 50%;
         margin-left: 15px;
-        font-size: 1rem;
         border: 2px solid transparent !important;
-        background-image: linear-gradient(#000, #000),
-            linear-gradient(to right, #8a2be2, #00d4ff) !important;
+        background-image: linear-gradient(#000, #000), linear-gradient(to right, #8a2be2, #00d4ff) !important;
         background-origin: border-box !important;
         background-clip: content-box, border-box !important;
         box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
     }
 
-    /* PANEL DROPDOWN (TU CÓDIGO DEL HOME: NEGRO AHUMADO + BLUR 45px) */
     body .dropdown-menu-lg {
         min-width: 320px !important;
         background: rgba(5, 5, 5, 0.85) !important;
         backdrop-filter: blur(45px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(45px) saturate(180%) !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         border-radius: 24px !important;
-        padding: 25px !important;
-        margin-top: 25px !important;
         box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7) !important;
-        right: 0 !important;
-        left: auto !important;
     }
 
-    /* OCULTAR CABECERA Y CUERPO PREDETERMINADO DE ADMINLTE */
-    body .user-header,
-    body .user-body,
-    body .user-footer {
-        display: none !important;
-    }
-
-    /* ESTILO UNIFICADO DE ÍTEMS (ESTRUCTURA DEL HOME) */
-    body .dropdown-item {
-        color: rgba(255, 255, 255, 0.5) !important;
-        font-size: 0.95rem !important;
-        font-weight: 600 !important;
-        padding: 14px 22px !important;
-        border-radius: 14px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        margin-bottom: 8px !important;
-        display: flex !important;
-        align-items: center !important;
-        background: transparent !important;
-        border: none !important;
-        width: 100% !important;
-        text-align: left !important;
-    }
-
-    /* ICONOS (Opacidad 40% que sube al 100% en Hover) */
-    body .dropdown-item i {
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        font-size: 1.1rem !important;
-        margin-right: 15px !important;
-        opacity: 0.4 !important;
-        color: #fff !important;
-        transition: 0.3s ease;
-    }
-
-    /* HOVER GENERAL (Salto 10px + Brillo Blanco) */
-    body .dropdown-item:hover {
-        background: rgba(255, 255, 255, 0.05) !important;
-        color: #fff !important;
-        transform: translateX(10px) !important;
-        text-decoration: none !important;
-    }
-
-    body .dropdown-item:hover i {
-        opacity: 1 !important;
-    }
-
-    /* CONFIGURACIÓN ESPECÍFICA PARA "FINALIZAR SESIÓN" (EN ROJO) */
-    body .dropdown-item[href*="logout"] {
-        color: rgba(255, 50, 50, 0.6) !important;
-        /* Rojo tenue inicial */
-        border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-        margin-top: 15px !important;
-        padding-top: 20px !important;
-    }
-
-    /* Icono de encendido en Rojo para Logout */
-    body .dropdown-item[href*="logout"] i {
-        color: #ff3232 !important;
-        /* Rojo vibrante */
-        opacity: 0.5 !important;
-    }
-
-    /* Hover específico para Logout */
-    body .dropdown-item[href*="logout"]:hover {
-        background: rgba(255, 50, 50, 0.08) !important;
-        /* Brillo rojizo */
-        color: #ff4d4d !important;
-        /* Rojo brillante al tocar */
-    }
-
-    body .dropdown-item[href*="logout"]:hover i {
-        opacity: 1 !important;
-        text-shadow: 0 0 10px rgba(255, 50, 50, 0.5);
-    }
-
-    /* 4. SIDEBAR (NUNITO - CENTRADO Y COLORES INNOVATION LAB) */
-
+    /* 4. SIDEBAR Y ESTADO ACTIVO GRADIENTE */
     .main-sidebar {
         background: rgba(5, 8, 15, 0.92) !important;
         backdrop-filter: blur(40px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
         font-family: 'Nunito', sans-serif !important;
-        height: 100vh !important;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    /* ELIMINACIÓN DE DOBLE BUSCADOR */
-    .sidebar-search-results,
-    .nav-sidebar>.nav-item:first-child .form-inline+.form-inline {
-        display: none !important;
-    }
-
-    /* BUSCADOR: CÁPSULA MINI, CENTRADA Y CON LUZ */
     .sidebar-form,
     .nav-sidebar .form-inline {
-        /* Aumentamos el margen lateral a 25px para forzar que sea pequeño y esté centrado */
         margin: 15px 25px !important;
-        display: flex !important;
-        flex-wrap: nowrap !important;
         background: rgba(255, 255, 255, 0.03);
         border-radius: 20px;
-        /* Borde con toque morado sutil */
         border: 1px solid rgba(138, 43, 226, 0.3) !important;
-        padding: 0 !important;
-        overflow: hidden !important;
         height: 32px !important;
-        transition: all 0.3s ease;
     }
 
-    /* Efecto al enfocar: Iluminación Cian */
-    .sidebar-form:focus-within {
-        border-color: rgba(0, 212, 255, 0.5) !important;
-        box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-    }
-
-    .form-control-sidebar {
-        background: transparent !important;
-        border: none !important;
-        color: #fff !important;
-        font-family: 'Nunito', sans-serif !important;
-        height: 100% !important;
-        padding: 0 5px 0 15px !important;
-        font-size: 0.75rem !important;
-        flex: 1 !important;
-        outline: none !important;
-    }
-
-    /* BOTÓN LUPA: Color Cian para dar vida */
-    .btn-sidebar {
-        background: transparent !important;
-        border: none !important;
-        width: 35px !important;
-        height: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 !important;
-    }
-
-    .btn-sidebar i {
-        font-size: 0.8rem !important;
-        color: #00d4ff !important;
-        /* Cian Eléctrico */
-        opacity: 0.8;
-        position: static !important;
-        transform: none !important;
-    }
-
-    /* LINKS DEL MENÚ: COMPACTOS Y VIVIDOS */
-    .nav-sidebar .nav-item {
-        padding: 0 10px !important;
-        margin-bottom: 2px !important;
-    }
-
-    .nav-sidebar .nav-link {
-        border-radius: 10px !important;
-        color: rgba(255, 255, 255, 0.45) !important;
-        font-family: 'Nunito', sans-serif !important;
-        font-size: 0.8rem !important;
-        padding: 8px 12px !important;
-        transition: 0.3s ease;
-    }
-
-    /* ESTADO ACTIVO: Línea de degradado Morado-Cian */
+    /* PESTAÑA SELECCIONADA CON GRADIENTE NEÓN */
     .nav-sidebar .nav-item .nav-link.active {
-        border-left: 3px solid transparent !important;
-        /* Degradado que combina con el footer */
+        border-left: 4px solid transparent !important;
         border-image: linear-gradient(to bottom, #8a2be2, #00d4ff) 1 !important;
-        background: linear-gradient(to right, rgba(138, 43, 226, 0.1), transparent) !important;
+        background: linear-gradient(to right, rgba(138, 43, 226, 0.15), rgba(0, 212, 255, 0.05), transparent) !important;
         color: #fff !important;
+        font-weight: 700 !important;
+        box-shadow: inset 10px 0 20px -10px rgba(138, 43, 226, 0.3);
     }
 
-    .nav-sidebar .nav-link:hover i,
-    .nav-sidebar .nav-link.active i {
+    .nav-sidebar .nav-item .nav-link.active i {
         color: #00d4ff !important;
+        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.8)) !important;
         opacity: 1 !important;
-        filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.5));
     }
 
-    /* 5. TABLAS Y BOTONES ACCIÓN */
-    .table td .btn {
-        background: rgba(255, 255, 255, 0.03) !important;
-        color: rgba(255, 255, 255, 0.6) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        transition: 0.3s ease !important;
-    }
-
-    .table td .btn:hover {
-        transform: translateY(-4px) scale(1.1) !important;
-        color: #ffffff !important;
-        border-color: #ffffff !important;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-    }
-
-    /* AJUSTE DE TABLAS: RESPONSIVIDAD INVISIBLE */
-    .table-responsive {
-        border: none !important;
-        overflow-x: auto !important;
-        scrollbar-width: none !important;
-        /* Firefox */
-        -ms-overflow-style: none !important;
-        /* IE/Edge */
-    }
-
-    /* Ocultar barra de scroll en Chrome/Safari pero permitir scroll */
-    .table-responsive::-webkit-scrollbar {
-        display: none !important;
-    }
-
-    table.table {
-        width: 100% !important;
-        margin-bottom: 0 !important;
-        background: transparent !important;
-        border-collapse: separate !important;
-        border-spacing: 0 8px !important;
-        /* Espaciado entre filas para airear el diseño */
-    }
-
-    /* Evitar que las celdas se deformen bruscamente */
-    .table td,
-    .table th {
-        white-space: nowrap !important;
-        /* Mantiene el texto en una línea */
-        padding: 15px 20px !important;
-        vertical-align: middle !important;
-        border: none !important;
-    }
-
-    /* Evitamos el color de fondo fuerte al pasar el cursor */
-    .table-hover tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.02) !important;
-        /* Brillo apenas perceptible */
-        color: #fff !important;
-        transition: background-color 0.5s ease;
-    }
-
-    /* Quitamos cualquier borde o resalte tosco */
-    table.dataTable,
-    .table {
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-        background: transparent !important;
-    }
-
+    /* 5. TABLAS (LIMPIEZA Y HOVER) */
     .table td,
     .table th {
         border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
-        /* Divisor muy tenue */
-        padding: 15px 20px !important;
-        background: transparent !important;
+        color: #fff !important;
+        vertical-align: middle !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+    }
+
+    /* 6. FOOTER STICKY (TEXTO BLANCO + MARCA CIAN) */
+    .main-footer {
+        flex-shrink: 0 !important;
+        background: #000 !important;
+        border-top: 1px solid transparent !important;
+        border-image: linear-gradient(to right, transparent, #8a2be2, #00d4ff, #8a2be2, transparent) 1 !important;
+        margin-left: 250px !important;
+        width: calc(100% - 250px) !important;
+        height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #ffffff !important;
+        font-size: 0.8rem !important;
+        line-height: 1 !important;
+        margin-top: 25px !important;
         transition: all 0.3s ease;
     }
 
-    /* Responsividad sin barras de scroll molestas */
-    .table-responsive {
-        border: none !important;
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
+    .main-footer a {
+        color: #00d4ff !important;
+        font-weight: 800 !important;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        text-decoration: none !important;
+        margin: 0 5px;
     }
 
-    .table-responsive::-webkit-scrollbar {
+    /* 7. AJUSTES DE COLAPSO Y DESPLIEGUE */
+    .sidebar-collapse .main-sidebar {
+        width: 4.6rem !important;
+    }
+
+    .sidebar-open .main-sidebar,
+    .sidebar-is-opening .main-sidebar,
+    .sidebar-mini.sidebar-collapse .main-sidebar:hover {
+        width: 250px !important;
+    }
+
+    .sidebar-collapse .content-wrapper,
+    .sidebar-collapse .main-footer {
+        margin-left: 4.6rem !important;
+        width: calc(100% - 4.6rem) !important;
+    }
+
+    .sidebar-collapse .sidebar-form {
         display: none !important;
     }
 
-    /* 6. BOTONES REGRESAR */
+    /* 8. BOTONES ACCIÓN */
     body .content-wrapper .btn-secondary,
     body .content-wrapper .btn-default {
         background: rgba(255, 255, 255, 0.05) !important;
@@ -379,64 +219,6 @@
         border: 2px solid #ffffff !important;
         font-weight: 800 !important;
         border-radius: 12px !important;
-    }
-
-    /* 7. FOOTER DE LA APP - NOMBRE EN CIAN */
-    .main-footer {
-        background: #000 !important;
-        border-top: 1px solid transparent !important;
-        border-image: linear-gradient(to right, transparent, #8a2be2, #00d4ff, #8a2be2, transparent) 1 !important;
-
-        /* Mantenemos el margin-left para el sidebar de la app */
-        margin-left: 250px !important;
-        width: calc(100% - 250px) !important;
-        padding: 20px 30px !important;
-
-        text-align: center !important;
-        color: rgba(200, 200, 200, 0.8) !important;
-        font-family: 'Nunito', sans-serif !important;
-        font-size: 0.85rem !important;
-    }
-
-    .main-footer strong {
-        color: #f8f9fa !important;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-    }
-
-    /* EL CAMBIO CLAVE: Software Tech en Cian */
-    .main-footer a {
-        color: #00d4ff !important;
-        /* Color Cian Eléctrico */
-        font-weight: 800 !important;
-        text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-        /* Resplandor sutil */
-        text-decoration: none !important;
-    }
-
-    /* Ajuste responsivo */
-    .sidebar-collapse .main-footer {
-        margin-left: 4.6rem !important;
-        width: calc(100% - 4.6rem) !important;
-    }
-
-    /* Sincronización con el colapso del sidebar */
-    .sidebar-collapse .main-footer {
-        margin-left: 4.6rem !important;
-        width: calc(100% - 4.6rem) !important;
-    }
-
-    /* Sincronización con el colapso del sidebar */
-    .sidebar-collapse .main-footer {
-        margin-left: 4.6rem !important;
-        width: calc(100% - 4.6rem) !important;
-    }
-
-    /* AJUSTE COLLAPSE */
-    .sidebar-collapse .content-wrapper,
-    .sidebar-collapse .main-footer {
-        margin-left: 4.6rem !important;
-        width: calc(100% - 4.6rem) !important;
     }
 </style>
 @stop
