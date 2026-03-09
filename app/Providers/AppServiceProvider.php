@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Pagination\Paginator; // Opcional: para estilos de paginación
+use Illuminate\Pagination\Paginator;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home'; // Aquí defines que vayan a proyectos en lugar de /home
+    public const HOME = '/home';
 
     /**
      * Register any application services.
@@ -26,8 +28,20 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
-        // Si usas Bootstrap para las tablas del manual, añade esto:
-        Paginator::useBootstrap();
-    }
+{
+    Paginator::useBootstrap();
+    
+    ResetPassword::toMailUsing(function ($notifiable, $token) {
+        return (new MailMessage)
+            ->subject('Verificación de Seguridad - Software Tech')
+            ->greeting('Hola, Investigador/a')
+            ->line('Se ha detectado una solicitud de actualización de identidad para tu acceso al Innovation Lab.')
+            ->action('ACTUALIZAR CONTRASEÑA', url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false)))
+            ->line('Si no has solicitado este cambio, ignora este correo.')
+            ->salutation('Atentamente, El Equipo de Software Tech');
+    });
+}
 }

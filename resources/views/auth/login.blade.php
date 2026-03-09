@@ -95,8 +95,9 @@
             <div class="d-flex justify-content-between">
                 <a href="{{ route('register') }}" class="text-white-50 small text-decoration-none fw-bold">Crear
                     Cuenta</a>
-                <a href="{{ route('password.request') }}"
-                    class="text-white-50 small text-decoration-none fw-bold">¿Olvidaste tu clave?</a>
+                <a href="{{ route('password.request') }}" class="text-white-50 small text-decoration-none fw-bold">
+                    ¿Olvidaste tu contraseña?
+                </a>
             </div>
         </form>
     </div>

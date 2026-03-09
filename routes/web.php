@@ -10,12 +10,26 @@ use App\Http\Controllers\LabPostController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Password;
 
 Route::get('/', function () {
     return view('home');
 });
 
+
 Auth::routes();
+
+Route::get('/forgot-password', function () {
+    return view('auth.passwords.email');
+})->name('password.request');
+
+Route::post('/password/send-auto-reset', function () {
+    $user = auth()->user();
+
+    $status = Password::broker()->sendResetLink(['email' => $user->email]);
+
+    return back()->with('status', __($status));
+})->name('password.auto_send');
 
 Route::middleware(['auth'])->group(function () {
     
@@ -51,5 +65,5 @@ Route::middleware(['auth'])->group(function () {
     Auth::logout();
     Session::flush();
     return redirect('/');
-});
+    });
 });
