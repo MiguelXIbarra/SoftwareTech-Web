@@ -83,7 +83,10 @@
             </div>
             <div class="mb-5 text-start">
                 <label class="small fw-bold mb-2 opacity-75 text-white">CONTRASEÑA</label>
-                <input type="password" name="password" class="form-control-tech w-100" required>
+                <div class="password-container">
+                    <input type="password" name="password" class="form-control-tech w-100" required>
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
             </div>
             <button type="submit" class="btn w-100 text-white mb-4"
                 style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 15px; font-weight: 800; border: none;">

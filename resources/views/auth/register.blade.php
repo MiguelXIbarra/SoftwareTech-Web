@@ -89,11 +89,17 @@
             <div class="row mb-4">
                 <div class="col-md-6 text-start">
                     <label class="small fw-bold mb-1 opacity-75 text-white">CONTRASEÑA</label>
-                    <input type="password" name="password" class="form-control-tech w-100" required>
+                    <div class="password-container">
+                        <input type="password" name="password" class="form-control-tech w-100" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
                 </div>
                 <div class="col-md-6 text-start">
                     <label class="small fw-bold mb-1 opacity-75 text-white">CONFIRMAR</label>
-                    <input type="password" name="password_confirmation" class="form-control-tech w-100" required>
+                    <div class="password-container">
+                        <input type="password" name="password_confirmation" class="form-control-tech w-100" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
                 </div>
             </div>
             <button type="submit" class="btn w-100 text-white mb-3"

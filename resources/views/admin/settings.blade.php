@@ -99,18 +99,27 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label>Contraseña Actual</label>
-                        <input type="password" name="current_password" class="form-control"
-                            placeholder="Escribe tu contraseña actual" required>
+                        <div class="password-container">
+                            <input type="password" name="current_password" class="form-control"
+                                placeholder="Escribe tu contraseña actual" required>
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Nueva Contraseña</label>
-                        <input type="password" name="password" class="form-control" placeholder="Mínimo 8 caracteres"
-                            required>
+                        <div class="password-container">
+                            <input type="password" name="password" class="form-control"
+                                placeholder="Mínimo 8 caracteres" required>
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Confirmar Nueva Contraseña</label>
-                        <input type="password" name="password_confirmation" class="form-control"
-                            placeholder="Repite la contraseña" required>
+                        <div class="password-container">
+                            <input type="password" name="password_confirmation" class="form-control"
+                                placeholder="Repite la contraseña" required>
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-right">

@@ -46,4 +46,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('messages', MessageController::class);
     Route::resource('lab_posts', LabPostController::class);
+
+    Route::get('/logout', function () {
+    Auth::logout();
+    Session::flush();
+    return redirect('/');
+});
 });

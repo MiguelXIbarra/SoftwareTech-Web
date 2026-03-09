@@ -409,6 +409,7 @@
         width: calc(100% - 4.6rem) !important;
     }
 
+    /* 8. ESTILOS PARA CAMPOS DE AUTOllenado */
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
@@ -418,9 +419,54 @@
         transition: background-color 5000s ease-in-out 0s;
     }
 
-
     input:focus {
         outline: none !important;
+    }
+
+    /* 9. CONTENEDOR PARA EL VER/OCULTAR CONTRASEÑA Y ESTILO DE INPUTS */
+    .password-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .form-control {
+        background: rgba(15, 15, 15, 0.7) !important;
+        border: 1px solid rgba(0, 212, 255, 0.15) !important;
+        border-radius: 10px !important;
+        color: #fff !important;
+        padding: 12px 45px 12px 15px !important;
+        height: auto !important;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background: rgba(20, 20, 20, 0.9) !important;
+        border-color: rgba(0, 212, 255, 0.4) !important;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.05) !important;
+        outline: none;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+
+        color: rgba(200, 200, 200, 0.4) !important;
+        opacity: 1 !important;
+        z-index: 10;
+
+        font-size: 0.85rem;
+        filter: none !important;
+        transition: 0.3s ease;
+    }
+
+    .toggle-password:hover {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
     }
 </style>
 @stop
@@ -477,7 +523,7 @@
 
         // 3. VALIDACIÓN AJAX "AL INSTANTE" (EL GURDAESPALDAS)
         window.verificarCredenciales = async function(event) {
-            event.preventDefault(); // Detenemos el envío
+            event.preventDefault();
             
             const form = document.getElementById('form-password-update');
             const currentPass = document.querySelector('input[name="current_password"]');
@@ -575,23 +621,19 @@
                 text: "ESTA ACCIÓN NO SE PUEDE DESHACER",
                 icon: 'warning',
                 showCancelButton: true,
-                
                 background: '#05080f', 
                 color: '#fff',
                 backdrop: `rgba(0,0,0,0.85)`,
-                
                 confirmButtonColor: '#ff3232',
                 cancelButtonColor: 'rgba(255, 255, 255, 0.1)',
                 confirmButtonText: 'ELIMINAR PERMANENTEMENTE',
                 cancelButtonText: 'CANCELAR',
-                
                 customClass: {
                     popup: 'border border-danger shadow-lg',
                     title: 'font-weight-bold letter-spacing-2',
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-
                     Swal.fire({
                         title: 'PROCESANDO...',
                         background: '#05080f',
@@ -603,6 +645,25 @@
                 }
             });
         };
+
+        // 5. LÓGICA PARA VER/OCULTAR CONTRASEÑA (EL OJITO)
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('toggle-password')) {
+                const icon = e.target;
+                const input = icon.parentElement.querySelector('input');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        });
+
     })();
 </script>
 @stop

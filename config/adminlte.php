@@ -316,7 +316,7 @@ return [
         ],
 
         [
-            'text' => 'Finalizar Sesión',
+            'text' => 'Cerrar Sesión',
             'url'  => 'logout',
             'icon' => 'fas fa-fw fa-power-off',
             'topnav_user' => true,
