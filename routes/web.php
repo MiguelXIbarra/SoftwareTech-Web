@@ -12,14 +12,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return redirect()->route('home');
+    return view('welcome');
 });
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
 Route::middleware(['auth'])->group(function () {
+    
+    // DASHBOARD PRINCIPAL
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // PERFIL DE USUARIO (La ruta que se ve en blanco)
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.show');
@@ -31,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/settings', [ProfileController::class, 'index'])->name('settings');
 
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/admin/verify-password', [ProfileController::class, 'verifyAjax'])->name('password.verify.ajax');
 
     // FLUJO DE 2FA
     Route::post('/settings/2fa-manual', [ProfileController::class, 'toggleTwoFactor'])->name('custom.2fa.toggle');

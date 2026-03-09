@@ -20,7 +20,6 @@ class ProfileController extends Controller
 
     public function profile()
     {
-        // Obligatorio pasar el usuario para que la vista no se quede en blanco
         return view('admin.profile', ['user' => Auth::user()]);
     }
 
@@ -29,14 +28,30 @@ class ProfileController extends Controller
         $request->validate([
             'current_password' => 'required',
             'password' => 'required|min:8|confirmed',
+        ], [
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la nueva contraseña no coincide.',
         ]);
 
-        if (!Hash::check($request->current_password, Auth::user()->password)) {
-            return back()->withErrors(['current_password' => 'La contraseña actual no coincide.']);
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.'])
+                        ->withInput();
         }
 
-        Auth::user()->update(['password' => Hash::make($request->password)]);
-        return back()->with('status', 'Contraseña actualizada con éxito.');
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return back()->with('status', 'Contraseña actualizada correctamente.');
+    }
+
+    public function verifyAjax(Request $request) 
+    {
+        $isValid = \Illuminate\Support\Facades\Hash::check($request->current_password, auth()->user()->password);
+        
+        return response()->json(['valid' => $isValid]);
     }
 
     public function toggleTwoFactor(Request $request)

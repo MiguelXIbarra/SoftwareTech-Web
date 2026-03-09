@@ -49,10 +49,14 @@
                                 </a>
                                 <form action="{{ route('projects.destroy', $project->id) }}" method="POST"
                                     id="delete-project-{{ $project->id }}" style="display:inline">
-                                    @csrf @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-white border"
-                                        onclick="confirmDelete({{ $project->id }})">
-                                        <i class="fas fa-trash text-danger"></i>
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="button" class="btn btn-sm"
+                                        onclick="confirmDelete('delete-project-{{ $project->id }}')"
+                                        style="background: rgba(255, 50, 50, 0.05); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 8px; transition: 0.3s;">
+                                        <i class="fas fa-trash"
+                                            style="color: #ff3232; filter: drop-shadow(0 0 5px rgba(255, 50, 50, 0.4));"></i>
                                     </button>
                                 </form>
                             </div>
@@ -65,41 +69,3 @@
     </div>
 </div>
 @endsection
-
-@push('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmDelete(id) {
-            Swal.fire({
-                title: '¿Eliminar proyecto?',
-                text: "Esta acción no se puede deshacer",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e3342f',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, borrar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-project-' + id).submit();
-                }
-            })
-        }
-
-    @if(session('message'))
-        Swal.fire({
-            icon: 'success',
-            title: '¡Listo!',
-            text: "{{ session('message') }}",
-            showConfirmButton: false,
-            timer: 1200,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-    @endif
-</script>
-@endpush

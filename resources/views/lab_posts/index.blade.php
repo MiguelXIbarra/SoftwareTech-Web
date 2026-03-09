@@ -18,12 +18,12 @@
 @endpush
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="text-bold">Software Tech Lab</h1>
-        <a href="{{ route('lab_posts.create') }}" class="btn text-white shadow-sm" style="background-color: #4472f1;">
-            <i class="fas fa-plus mr-1"></i> Nueva Entrada
-        </a>
-    </div>
+<div class="d-flex justify-content-between align-items-center">
+    <h1 class="text-bold">Software Tech Lab</h1>
+    <a href="{{ route('lab_posts.create') }}" class="btn text-white shadow-sm" style="background-color: #4472f1;">
+        <i class="fas fa-plus mr-1"></i> Nueva Entrada
+    </a>
+</div>
 @stop
 
 @section('content')
@@ -45,15 +45,17 @@
                     <a href="{{ route('lab_posts.show', $post->id) }}" class="btn btn-sm btn-read-more px-3">
                         <i class="fas fa-eye mr-1"></i> Leer más
                     </a>
-                    
+
                     <div class="btn-group shadow-sm">
                         <a href="{{ route('lab_posts.edit', $post->id) }}" class="btn btn-sm btn-white border">
                             <i class="fas fa-edit" style="color: #ffc107;"></i>
                         </a>
-                        <form action="{{ route('lab_posts.destroy', $post->id) }}" method="POST" id="delete-post-{{ $post->id }}" style="display:inline">
+                        <form action="{{ route('lab_posts.destroy', $post->id) }}" method="POST"
+                            id="delete-post-{{ $post->id }}" style="display:inline">
                             @csrf @method('DELETE')
-                            <button type="button" class="btn btn-sm btn-white border" onclick="confirmDelete({{ $post->id }})">
-                                <i class="fas fa-trash-alt" style="color: #e3342f;"></i>
+                            <button type="button" class="btn btn-sm btn-white border"
+                                onclick="confirmDelete('delete-post-{{ $post->id }}')">
+                                <i class="fas fa-trash text-danger"></i>
                             </button>
                         </form>
                     </div>
@@ -64,41 +66,3 @@
     @endforeach
 </div>
 @endsection
-
-@push('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Eliminar entrada?',
-            text: "Esta publicación desaparecerá del laboratorio",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e3342f',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-post-' + id).submit();
-            }
-        })
-    }
-
-    @if(session('message'))
-        Swal.fire({
-            icon: 'success',
-            title: '¡Listo!',
-            text: "{{ session('message') }}",
-            showConfirmButton: false,
-            timer: 1200,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-    @endif
-</script>
-@endpush

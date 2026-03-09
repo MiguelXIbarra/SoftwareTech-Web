@@ -52,9 +52,9 @@
                                     id="delete-form-{{ $milestone->id }}" style="display:inline;">
                                     @csrf @method('DELETE')
                                     <button type="button" class="btn btn-sm btn-white border"
-                                        onclick="confirmDelete({{ $milestone->id }})">
-                                        <i class="fas fa-trash-alt" style="color: #e3342f;"></i>
-                                    </button>
+                                        onclick="confirmDelete('delete-form-{{ $milestone->id }}')">
+                                        <i class="fas fa-trash text-danger"></i>
+                                    </button>   
                                 </form>
                             </div>
                         </td>
@@ -66,41 +66,3 @@
     </div>
 </div>
 @endsection
-
-@push('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Eliminar hito?',
-            text: "Esta acción no se puede deshacer",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e3342f',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        })
-    }
-
-@if(session('message'))
-    Swal.fire({
-    icon: 'success',
-    title: '¡Listo!',
-    text: "{{ session('message') }}",
-    showConfirmButton: false,
-    timer: 1200,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer)
-    toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-    });
-    @endif
-</script>
-@endpush

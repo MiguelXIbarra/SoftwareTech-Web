@@ -2,12 +2,12 @@
 @section('title', 'Pagos')
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="text-bold">Registro de Pagos</h1>
-        <a href="{{ route('payments.create') }}" class="btn text-white shadow-sm" style="background-color: #4472f1;">
-            <i class="fas fa-file-invoice-dollar mr-1"></i> Registrar Pago
-        </a>
-    </div>
+<div class="d-flex justify-content-between align-items-center">
+    <h1 class="text-bold">Registro de Pagos</h1>
+    <a href="{{ route('payments.create') }}" class="btn text-white shadow-sm" style="background-color: #4472f1;">
+        <i class="fas fa-file-invoice-dollar mr-1"></i> Registrar Pago
+    </a>
+</div>
 @stop
 
 @section('content')
@@ -46,16 +46,20 @@
                         </td>
                         <td class="align-middle">
                             <div class="btn-group shadow-sm">
-                                <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-sm btn-white border">
+                                <a href="{{ route('payments.show', $payment->id) }}"
+                                    class="btn btn-sm btn-white border">
                                     <i class="fas fa-eye" style="color: #45a1b5;"></i>
                                 </a>
-                                <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-sm btn-white border">
+                                <a href="{{ route('payments.edit', $payment->id) }}"
+                                    class="btn btn-sm btn-white border">
                                     <i class="fas fa-edit" style="color: #ffc107;"></i>
                                 </a>
-                                <form action="{{ route('payments.destroy', $payment->id) }}" method="POST" id="delete-payment-{{ $payment->id }}" style="display:inline">
+                                <form action="{{ route('payments.destroy', $payment->id) }}" method="POST"
+                                    id="delete-payment-{{ $payment->id }}" style="display:inline">
                                     @csrf @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-white border" onclick="confirmDelete({{ $payment->id }})">
-                                        <i class="fas fa-trash-alt" style="color: #e3342f;"></i>
+                                    <button type="button" class="btn btn-sm btn-white border"
+                                        onclick="confirmDelete('delete-payment-{{ $payment->id }}')">
+                                        <i class="fas fa-trash text-danger"></i>
                                     </button>
                                 </form>
                             </div>
@@ -89,20 +93,5 @@
             }
         })
     }
-
-    @if(session('message'))
-        Swal.fire({
-            icon: 'success',
-            title: '¡Listo!',
-            text: "{{ session('message') }}",
-            showConfirmButton: false,
-            timer: 1200,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-    @endif
 </script>
 @endpush
