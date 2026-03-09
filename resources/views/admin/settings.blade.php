@@ -8,7 +8,6 @@
 
 @section('css')
 <style>
-    /* ESTILO ÚNICO DARK NEON */
     .content-wrapper {
         background: transparent !important;
     }
@@ -21,7 +20,6 @@
         color: #ffffff !important;
     }
 
-    /* GRADIENTES Y BOTONES */
     .dna-gradient {
         background: linear-gradient(135deg, #00d4ff, #8a2be2);
         -webkit-background-clip: text;
@@ -41,10 +39,15 @@
         box-shadow: 0 0 25px rgba(0, 123, 255, 0.6) !important;
     }
 
-    .form-control {
+    ..form-control {
         background-color: rgba(255, 255, 255, 0.05) !important;
         border: 1px solid rgba(138, 43, 226, 0.3) !important;
         color: #ffffff !important;
+    }
+
+    .form-control:-webkit-autofill {
+        -webkit-text-fill-color: #ffffff !important;
+        -webkit-box-shadow: 0 0 0 1000px #0a0f19 inset !important;
     }
 
     label {
@@ -90,15 +93,14 @@
             <div class="card-header border-0">
                 <h3 class="card-title font-weight-bold text-white">ACTUALIZAR CREDENCIALES</h3>
             </div>
-            {{-- ID añadido para que el script de page.blade pueda enviarlo tras la validación --}}
             <form id="form-password-update" action="{{ route('profile.password') }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="card-body">
                     <div class="form-group">
                         <label>Contraseña Actual</label>
-                        <input type="password" name="current_password" class="form-control" placeholder="Escribe tu contraseña actual"
-                            required>
+                        <input type="password" name="current_password" class="form-control"
+                            placeholder="Escribe tu contraseña actual" required>
                     </div>
                     <div class="form-group">
                         <label>Nueva Contraseña</label>
@@ -112,7 +114,6 @@
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-right">
-                    {{-- Ejecuta la función global verificarCredenciales definida en page.blade.php --}}
                     <button type="submit" onclick="verificarCredenciales(event)" class="btn btn-primary px-5 py-2">
                         GUARDAR CAMBIOS
                     </button>
@@ -135,7 +136,6 @@
                         <span class="dna-gradient fw-bold">SOFTWARE TECH (DARK NEON)</span>
                     </div>
                 </div>
-                {{-- Switch sincronizado con el localStorage de page.blade.php --}}
                 <div class="custom-control custom-switch mt-4">
                     <input type="checkbox" class="custom-control-input" id="st-compact">
                     <label class="custom-control-label text-white" for="st-compact">BANDEJA DE DATOS COMPACTA</label>
@@ -188,15 +188,11 @@
 
         // 1. SINCRONIZACIÓN DEL SWITCH (BANDEJA COMPACTA)
         if (compactSwitch) {
-            // Cargar estado inicial del switch desde el almacenamiento
             compactSwitch.checked = localStorage.getItem(STORAGE_KEY) === 'true';
-
-            // Escuchar cambios en el switch
             compactSwitch.addEventListener('change', () => {
                 const isActive = compactSwitch.checked;
                 localStorage.setItem(STORAGE_KEY, isActive);
                 
-                // Aplicar el cambio al body inmediatamente
                 if (isActive) {
                     document.body.classList.add('sidebar-collapse');
                 } else {
@@ -206,14 +202,12 @@
         }
 
         // 2. VALIDACIÓN DE CONTRASEÑA POR AJAX
-        // Esta función es llamada por el botón 'GUARDAR CAMBIOS' vía onclick
         window.verificarCredenciales = async function(event) {
-            event.preventDefault(); // Detenemos el envío normal del formulario
+            event.preventDefault();
             
             const form = document.getElementById('form-password-update');
             const currentPassInput = document.querySelector('input[name="current_password"]');
 
-            // Validación básica antes de ir al servidor
             if (!currentPassInput || currentPassInput.value === "") {
                 Swal.fire({ 
                     icon: 'warning', 
@@ -225,7 +219,6 @@
                 return;
             }
 
-            // Mostramos estado de carga
             Swal.fire({
                 title: 'CONSULTANDO SEGURIDAD',
                 html: 'Validando identidad...',
@@ -236,7 +229,6 @@
             });
 
             try {
-                // Petición al servidor (Ruta definida en web.php)
                 const response = await fetch("{{ route('password.verify.ajax') }}", {
                     method: 'POST',
                     headers: { 
@@ -249,7 +241,6 @@
                 const data = await response.json();
 
                 if (!data.valid) {
-                    // Contraseña incorrecta
                     Swal.fire({ 
                         icon: 'error', 
                         title: 'DATOS INCORRECTOS', 
@@ -260,12 +251,10 @@
                     });
                     currentPassInput.focus();
                 } else {
-                    // Contraseña correcta: Enviar formulario real
                     form.submit();
                 }
 
             } catch (e) {
-                // Error de red o servidor
                 Swal.fire({ 
                     icon: 'error', 
                     title: 'ERROR DE CONEXIÓN', 

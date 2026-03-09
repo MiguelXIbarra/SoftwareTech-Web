@@ -14,7 +14,6 @@
         overflow: hidden !important;
     }
 
-    /* DESACTIVAR BOLITAS FLOTANTES */
     #dna-canvas {
         display: none !important;
     }
@@ -35,9 +34,7 @@
         height: 100vh;
         display: flex;
         align-items: center;
-        /* CENTRADO VERTICAL */
         justify-content: center;
-        /* CENTRADO HORIZONTAL */
     }
 
     .glass-terminal-v2 {
@@ -51,7 +48,6 @@
         max-width: 480px;
         box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
         margin-top: -20px;
-        /* AJUSTE FINO PARA QUE NO SE VEA ABAJO */
     }
 
     .form-control-tech {
@@ -91,7 +87,7 @@
             </div>
             <button type="submit" class="btn w-100 text-white mb-4"
                 style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 15px; font-weight: 800; border: none;">
-                ENTRAR AL SISTEMA
+                INICIAR SESIÓN
             </button>
             <div class="d-flex justify-content-between">
                 <a href="{{ route('register') }}" class="text-white-50 small text-decoration-none fw-bold">Crear

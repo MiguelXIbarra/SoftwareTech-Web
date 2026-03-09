@@ -1,4 +1,3 @@
-{{-- resources/views/vendor/adminlte/page.blade.php --}}
 @extends('adminlte::master')
 
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
@@ -44,15 +43,12 @@
     }
 
     /* 3. NAVBAR Y PERFIL (ESTILO HOME - MINIMALISMO TOTAL + SALIDA EN ROJO) */
-
-    /* Limpieza de la barra superior */
     body .main-header {
         background: transparent !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         padding-right: 20px !important;
     }
 
-    /* EL ACTIVADOR (NOMBRE IZQ + CÍRCULO DER CON GRADIENTE) */
     body .main-header .nav-item.dropdown.user-menu .nav-link {
         display: flex !important;
         align-items: center !important;
@@ -70,7 +66,6 @@
 
     body .main-header .nav-item.dropdown.user-menu .nav-link::after {
         content: "\f61f";
-        /* fa-shapes (Diamante) */
         font-family: "Font Awesome 5 Free";
         font-weight: 900;
         background: #000 !important;
@@ -91,7 +86,6 @@
         box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
     }
 
-    /* PANEL DROPDOWN (TU CÓDIGO DEL HOME: NEGRO AHUMADO + BLUR 45px) */
     body .dropdown-menu-lg {
         min-width: 320px !important;
         background: rgba(5, 5, 5, 0.85) !important;
@@ -106,14 +100,12 @@
         left: auto !important;
     }
 
-    /* OCULTAR CABECERA Y CUERPO PREDETERMINADO DE ADMINLTE */
     body .user-header,
     body .user-body,
     body .user-footer {
         display: none !important;
     }
 
-    /* ESTILO UNIFICADO DE ÍTEMS (ESTRUCTURA DEL HOME) */
     body .dropdown-item {
         color: rgba(255, 255, 255, 0.5) !important;
         font-size: 0.95rem !important;
@@ -130,7 +122,6 @@
         text-align: left !important;
     }
 
-    /* ICONOS (Opacidad 40% que sube al 100% en Hover) */
     body .dropdown-item i {
         font-family: "Font Awesome 5 Free";
         font-weight: 900;
@@ -141,7 +132,6 @@
         transition: 0.3s ease;
     }
 
-    /* HOVER GENERAL (Salto 10px + Brillo Blanco) */
     body .dropdown-item:hover {
         background: rgba(255, 255, 255, 0.05) !important;
         color: #fff !important;
@@ -153,28 +143,21 @@
         opacity: 1 !important;
     }
 
-    /* CONFIGURACIÓN ESPECÍFICA PARA "FINALIZAR SESIÓN" (EN ROJO) */
     body .dropdown-item[href*="logout"] {
         color: rgba(255, 50, 50, 0.6) !important;
-        /* Rojo tenue inicial */
         border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
         margin-top: 15px !important;
         padding-top: 20px !important;
     }
 
-    /* Icono de encendido en Rojo para Logout */
     body .dropdown-item[href*="logout"] i {
         color: #ff3232 !important;
-        /* Rojo vibrante */
         opacity: 0.5 !important;
     }
 
-    /* Hover específico para Logout */
     body .dropdown-item[href*="logout"]:hover {
         background: rgba(255, 50, 50, 0.08) !important;
-        /* Brillo rojizo */
         color: #ff4d4d !important;
-        /* Rojo brillante al tocar */
     }
 
     body .dropdown-item[href*="logout"]:hover i {
@@ -193,22 +176,18 @@
         height: 100vh !important;
     }
 
-    /* ELIMINACIÓN DE DOBLE BUSCADOR */
     .sidebar-search-results,
     .nav-sidebar>.nav-item:first-child .form-inline+.form-inline {
         display: none !important;
     }
 
-    /* BUSCADOR: CÁPSULA MINI, CENTRADA Y CON LUZ */
     .sidebar-form,
     .nav-sidebar .form-inline {
-        /* Aumentamos el margen lateral a 25px para forzar que sea pequeño y esté centrado */
         margin: 15px 25px !important;
         display: flex !important;
         flex-wrap: nowrap !important;
         background: rgba(255, 255, 255, 0.03);
         border-radius: 20px;
-        /* Borde con toque morado sutil */
         border: 1px solid rgba(138, 43, 226, 0.3) !important;
         padding: 0 !important;
         overflow: hidden !important;
@@ -216,7 +195,6 @@
         transition: all 0.3s ease;
     }
 
-    /* Efecto al enfocar: Iluminación Cian */
     .sidebar-form:focus-within {
         border-color: rgba(0, 212, 255, 0.5) !important;
         box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
@@ -234,7 +212,6 @@
         outline: none !important;
     }
 
-    /* BOTÓN LUPA: Color Cian para dar vida */
     .btn-sidebar {
         background: transparent !important;
         border: none !important;
@@ -249,13 +226,11 @@
     .btn-sidebar i {
         font-size: 0.8rem !important;
         color: #00d4ff !important;
-        /* Cian Eléctrico */
         opacity: 0.8;
         position: static !important;
         transform: none !important;
     }
 
-    /* LINKS DEL MENÚ: COMPACTOS Y VIVIDOS */
     .nav-sidebar .nav-item {
         padding: 0 10px !important;
         margin-bottom: 2px !important;
@@ -270,10 +245,8 @@
         transition: 0.3s ease;
     }
 
-    /* ESTADO ACTIVO: Línea de degradado Morado-Cian */
     .nav-sidebar .nav-item .nav-link.active {
         border-left: 3px solid transparent !important;
-        /* Degradado que combina con el footer */
         border-image: linear-gradient(to bottom, #8a2be2, #00d4ff) 1 !important;
         background: linear-gradient(to right, rgba(138, 43, 226, 0.1), transparent) !important;
         color: #fff !important;
@@ -301,17 +274,13 @@
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
-    /* AJUSTE DE TABLAS: RESPONSIVIDAD INVISIBLE */
     .table-responsive {
         border: none !important;
         overflow-x: auto !important;
         scrollbar-width: none !important;
-        /* Firefox */
         -ms-overflow-style: none !important;
-        /* IE/Edge */
     }
 
-    /* Ocultar barra de scroll en Chrome/Safari pero permitir scroll */
     .table-responsive::-webkit-scrollbar {
         display: none !important;
     }
@@ -322,28 +291,22 @@
         background: transparent !important;
         border-collapse: separate !important;
         border-spacing: 0 8px !important;
-        /* Espaciado entre filas para airear el diseño */
     }
 
-    /* Evitar que las celdas se deformen bruscamente */
     .table td,
     .table th {
         white-space: nowrap !important;
-        /* Mantiene el texto en una línea */
         padding: 15px 20px !important;
         vertical-align: middle !important;
         border: none !important;
     }
 
-    /* Evitamos el color de fondo fuerte al pasar el cursor */
     .table-hover tbody tr:hover {
         background-color: rgba(255, 255, 255, 0.02) !important;
-        /* Brillo apenas perceptible */
         color: #fff !important;
         transition: background-color 0.5s ease;
     }
 
-    /* Quitamos cualquier borde o resalte tosco */
     table.dataTable,
     .table {
         border-collapse: separate !important;
@@ -354,13 +317,11 @@
     .table td,
     .table th {
         border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
-        /* Divisor muy tenue */
         padding: 15px 20px !important;
         background: transparent !important;
         transition: all 0.3s ease;
     }
 
-    /* Responsividad sin barras de scroll molestas */
     .table-responsive {
         border: none !important;
         scrollbar-width: none !important;
@@ -397,7 +358,6 @@
         text-transform: uppercase;
     }
 
-    /* EL CAMBIO CLAVE: Software Tech en Cian */
     .main-footer {
         flex-shrink: 0 !important;
         background: rgba(5, 8, 15, 0.9) !important;
@@ -428,29 +388,39 @@
         border-right: 1px solid rgba(138, 43, 226, 0.2) !important;
     }
 
-    /* Ajuste responsivo */
     .sidebar-collapse .main-footer {
         margin-left: 4.6rem !important;
         width: calc(100% - 4.6rem) !important;
     }
 
-    /* Sincronización con el colapso del sidebar */
     .sidebar-collapse .main-footer {
         margin-left: 4.6rem !important;
         width: calc(100% - 4.6rem) !important;
     }
 
-    /* Sincronización con el colapso del sidebar */
     .sidebar-collapse .main-footer {
         margin-left: 4.6rem !important;
         width: calc(100% - 4.6rem) !important;
     }
 
-    /* AJUSTE COLLAPSE */
     .sidebar-collapse .content-wrapper,
     .sidebar-collapse .main-footer {
         margin-left: 4.6rem !important;
         width: calc(100% - 4.6rem) !important;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-text-fill-color: #ffffff !important;
+        -webkit-box-shadow: 0 0 0 1000px rgba(10, 15, 25, 1) inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+
+    input:focus {
+        outline: none !important;
     }
 </style>
 @stop

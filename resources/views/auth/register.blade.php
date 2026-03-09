@@ -34,9 +34,7 @@
         height: 100vh;
         display: flex;
         align-items: center;
-        /* CENTRADO VERTICAL */
         justify-content: center;
-        /* CENTRADO HORIZONTAL */
     }
 
     .glass-terminal-v2 {
@@ -99,8 +97,8 @@
                 </div>
             </div>
             <button type="submit" class="btn w-100 text-white mb-3"
-                style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 12px; font-weight: 800; border: none;">CREAR
-                IDENTIDAD</button>
+                style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 12px; font-weight: 800; border: none;">
+                REGISTRARSE</button>
             <div class="text-center">
                 <a href="{{ route('login') }}" class="text-white-50 small text-decoration-none fw-bold">Inicia
                     Sesión</a>
