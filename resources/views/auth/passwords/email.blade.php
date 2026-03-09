@@ -43,6 +43,20 @@
         max-width: 480px;
         box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
     }
+
+    .form-control-tech {
+        background: rgba(20, 20, 20, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 12px;
+        color: #fff !important;
+        padding: 12px;
+    }
+
+    .form-control-tech:focus {
+        border-color: #00d4ff !important;
+        outline: none;
+        box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    }
 </style>
 @endpush
 
@@ -51,6 +65,7 @@
 <div class="auth-content">
     <div class="glass-terminal-v2 text-center">
 
+        {{-- ESTADO 1: ÉXITO (CORREO ENVIADO) --}}
         @if (session('status'))
         <div class="py-4">
             <i class="fas fa-paper-plane fa-4x mb-4"
@@ -59,46 +74,58 @@
             <p class="text-white-50 mb-5" style="font-size: 1.1rem;">Se envió un email a tu correo para cambiar tu
                 contraseña.</p>
 
-            <button type="button" onclick="window.location.href='{{ route('home') }}'" class="btn w-100 text-white"
+            <button type="button" onclick="window.location.href='{{ route('login') }}'" class="btn w-100 text-white"
                 style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 15px; font-weight: 800; border: none;">
                 CONTINUAR
             </button>
         </div>
+
+        {{-- ESTADO 2: ERROR (CORREO INCORRECTO) --}}
+        @elseif ($errors->has('email'))
+        <div class="py-4">
+            <i class="fas fa-exclamation-triangle fa-4x mb-4"
+                style="color: #ff4b5c; filter: drop-shadow(0 0 15px rgba(255, 75, 92, 0.4));"></i>
+            <h2 class="text-white fw-bold mb-3" style="letter-spacing: 2px;">ACCESO DENEGADO</h2>
+            <p class="text-white-50 mb-5">El correo electrónico ingresado no coincide con nuestros registros de
+                seguridad.</p>
+
+            <button type="button" onclick="window.location.href='{{ route('password.request') }}'"
+                class="btn w-100 text-white"
+                style="background: linear-gradient(135deg, #ff4b5c, #8a2be2); border-radius: 12px; padding: 15px; font-weight: 800; border: none;">
+                REINTENTAR
+            </button>
+        </div>
+
+        {{-- ESTADO 3: FORMULARIO INICIAL (O SEGURIDAD SI ESTÁ LOGUEADO) --}}
         @else
         <div class="mb-4">
             <i class="fas fa-user-shield fa-4x mb-3" style="color: #00d4ff;"></i>
             <h2 class="text-white fw-bold" style="letter-spacing: 2px;">SEGURIDAD</h2>
 
             @if(Auth::check())
+            {{-- Usuario Autenticado --}}
             <p class="text-white-50">Hola, <strong>{{ Auth::user()->name }}</strong>.<br>¿Deseas restablecer tu
                 contraseña operativa?</p>
-
             <form id="form-auto-reset" action="{{ route('password.auto_send') }}" method="POST">
                 @csrf
-                <button type="button" onclick="confirmarEnvioAutenticado()" class="btn w-100 text-white mb-3"
+                <button type="button"
+                    onclick="confirmarAccion('form-auto-reset', 'Se enviará el enlace a tu correo registrado.')"
+                    class="btn w-100 text-white mb-3"
                     style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 15px; font-weight: 800; border: none;">
-                    GENERAR ENLACE DE SEGURIDAD
+                    GENERAR ENLACE
                 </button>
             </form>
             @else
-            <p class="text-white-50">Ingresa tu correo para validar tu identidad y enviarte un enlace de recuperación.
-            </p>
-
+            {{-- Usuario Invitado --}}
+            <p class="text-white-50">Ingresa tu correo para validar tu identidad.</p>
             <form id="form-recovery" method="POST" action="{{ route('password.email') }}">
                 @csrf
                 <div class="mb-4 text-start">
                     <label class="small fw-bold mb-2 opacity-75 text-white">CORREO ELECTRÓNICO</label>
-                    <input id="email_input" type="email" name="email"
-                        class="form-control-tech w-100 {{ $errors->has('email') ? 'is-invalid' : '' }}"
-                        value="{{ old('email') }}" required autofocus>
-
-                    @error('email')
-                    <span class="invalid-feedback d-block mt-2" style="color: #ff4b5c; font-size: 0.8rem;">
-                        * Identidad no encontrada en la base de datos.
-                    </span>
-                    @enderror
+                    <input id="email_input" type="email" name="email" class="form-control-tech w-100" required
+                        autofocus>
                 </div>
-                <button type="button" onclick="confirmarEnvioInvitado()" class="btn w-100 text-white mb-3"
+                <button type="button" onclick="validarYEnviarInvitado()" class="btn w-100 text-white mb-3"
                     style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 15px; font-weight: 800; border: none;">
                     VERIFICAR Y ENVIAR
                 </button>
@@ -113,53 +140,39 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Para el usuario que YA ESTÁ dentro del sistema
-    function confirmarEnvioAutenticado() {
+    // Función genérica para mostrar carga y enviar
+    function procesarEnvio(formId) {
         Swal.fire({
-            title: 'VERIFICACIÓN',
-            text: 'Se enviará el enlace a tu correo registrado.',
+            title: 'PROCESANDO...',
+            html: 'Conectando con el servidor de seguridad',
+            allowOutsideClick: false,
+            background: '#05080f',
+            color: '#fff',
+            didOpen: () => { Swal.showLoading(); }
+        });
+        document.getElementById(formId).submit();
+    }
+
+    // Confirmación para Logueados
+    function confirmarAccion(formId, mensaje) {
+        Swal.fire({
+            title: '¿CONTINUAR?',
+            text: mensaje,
             icon: 'question',
             background: '#05080f', color: '#fff',
             showCancelButton: true,
             confirmButtonColor: '#00d4ff',
             confirmButtonText: 'SÍ, ENVIAR'
         }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('form-auto-reset').submit();
-            }
+            if (result.isConfirmed) procesarEnvio(formId);
         });
     }
 
-    // Para el usuario que ESTÁ AFUERA (Invitado)
-    function confirmarEnvioInvitado() {
+    // Validación para Invitados
+    function validarYEnviarInvitado() {
         const email = document.getElementById('email_input').value;
         if(!email) return;
-
-        Swal.fire({
-            title: 'RECUPERACIÓN',
-            text: `Se enviará el enlace a: ${email}`,
-            icon: 'info',
-            background: '#05080f', color: '#fff',
-            showCancelButton: true,
-            confirmButtonColor: '#00d4ff',
-            confirmButtonText: 'SÍ, ENVIAR'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('form-recovery').submit();
-            }
-        });
+        confirmarAccion('form-recovery', `Se enviará un enlace de recuperación a: ${email}`);
     }
-
-    @if ($errors->has('email'))
-        Swal.fire({
-            title: 'ACCESO DENEGADO',
-            text: 'El correo electrónico ingresado no coincide con nuestros registros.',
-            icon: 'error',
-            background: '#05080f',
-            color: '#fff',
-            confirmButtonColor: '#8a2be2', // Morado de tu diseño
-            confirmButtonText: 'REINTENTAR'
-        });
-    @endif
 </script>
 @endsection
