@@ -24,12 +24,11 @@ Route::get('/forgot-password', function () {
 })->name('password.request');
 
 Route::post('/password/send-auto-reset', function () {
-    $user = auth()->user();
-
-    $status = Password::broker()->sendResetLink(['email' => $user->email]);
+    
+    $status = Password::broker()->sendResetLink(['email' => auth()->user()->email]);
 
     return back()->with('status', __($status));
-})->name('password.auto_send');
+})->name('password.auto_send')->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     
