@@ -1,76 +1,33 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @push('styles')
 <style>
-    body,
-    html {
-        height: 100vh;
-        margin: 0;
-        background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop') !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        background-size: cover !important;
-        background-attachment: fixed !important;
-        overflow: hidden !important;
-    }
-
-    #dna-canvas {
+    /* 1. MATAR ICONOS NATIVOS DEL NAVEGADOR (Edge, Chrome, Safari) */
+    input::-ms-reveal,
+    input::-ms-clear {
         display: none !important;
     }
 
-    .auth-overlay-fix {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.75);
-        z-index: 1;
+    input::-webkit-contacts-auto-fill-button,
+    input::-webkit-credentials-auto-fill-button {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        right: 0 !important;
     }
 
-    .auth-content {
-        position: relative;
-        z-index: 2;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .glass-terminal-v2 {
-        background: rgba(10, 10, 10, 0.85) !important;
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 30px;
-        padding: 40px;
-        width: 100%;
-        max-width: 500px;
-        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
-        margin-top: -20px;
-        /* AJUSTE FINO */
-    }
-
+    /* Ajuste para que el texto no se encime con el ojo */
     .form-control-tech {
-        background: rgba(20, 20, 20, 0.6) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 12px;
-        color: #fff !important;
-        padding: 10px;
-    }
-
-    .form-control-tech:focus {
-        border-color: #00d4ff !important;
-        box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-        outline: none;
+        padding-right: 45px !important;
     }
 </style>
 @endpush
 
 @section('content')
 <div class="auth-overlay-fix"></div>
-<div class="auth-content">
-    <div class="glass-terminal-v2">
+<div class="auth-content w-100">
+    <div class="glass-terminal-v2 mx-auto">
         <div class="text-center mb-4">
             <h2 class="text-white fw-bold" style="letter-spacing: 2px;">NUEVA IDENTIDAD</h2>
             <p class="small opacity-50 text-white" style="letter-spacing: 2px;">IDENTIDAD OPERATIVA</p>
@@ -78,36 +35,60 @@
 
         <form method="POST" action="{{ route('register') }}">
             @csrf
+
             <div class="mb-3 text-start">
                 <label class="small fw-bold mb-1 opacity-75 text-white">NOMBRE COMPLETO</label>
-                <input type="text" name="name" class="form-control-tech w-100" required>
+                <input type="text" name="name" class="form-control-tech w-100 @error('name') is-invalid @enderror"
+                    value="{{ old('name') }}" required autofocus>
+                @error('name')
+                <span class="text-danger small d-block mt-1">{{ $message }}</span>
+                @enderror
             </div>
+
             <div class="mb-3 text-start">
                 <label class="small fw-bold mb-1 opacity-75 text-white">CORREO ELECTRÓNICO</label>
-                <input type="email" name="email" class="form-control-tech w-100" required>
+                <input type="email" name="email" class="form-control-tech w-100 @error('email') is-invalid @enderror"
+                    value="{{ old('email') }}" required>
+                @error('email')
+                <span class="text-danger small d-block mt-1">{{ $message }}</span>
+                @enderror
             </div>
+
             <div class="row mb-4">
                 <div class="col-md-6 text-start">
                     <label class="small fw-bold mb-1 opacity-75 text-white">CONTRASEÑA</label>
                     <div class="password-container">
-                        <input type="password" name="password" class="form-control-tech w-100" required>
+                        <input type="password" name="password"
+                            class="form-control-tech w-100 @error('password') is-invalid @enderror" required
+                            autocomplete="new-password">
                         <i class="fas fa-eye toggle-password"></i>
                     </div>
                 </div>
+
                 <div class="col-md-6 text-start">
                     <label class="small fw-bold mb-1 opacity-75 text-white">CONFIRMAR</label>
                     <div class="password-container">
-                        <input type="password" name="password_confirmation" class="form-control-tech w-100" required>
+                        <input type="password" name="password_confirmation" class="form-control-tech w-100" required
+                            autocomplete="new-password">
                         <i class="fas fa-eye toggle-password"></i>
                     </div>
                 </div>
+
+                @error('password')
+                <div class="col-12 mt-2">
+                    <span class="text-danger small d-block">{{ $message }}</span>
+                </div>
+                @enderror
             </div>
+
             <button type="submit" class="btn w-100 text-white mb-3"
-                style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 12px; font-weight: 800; border: none;">
-                REGISTRARSE</button>
+                style="background: linear-gradient(135deg, #8a2be2, #00d4ff); border-radius: 12px; padding: 12px; font-weight: 800; border: none; box-shadow: 0 10px 20px rgba(0, 212, 255, 0.2);">
+                REGISTRARSE
+            </button>
+
             <div class="text-center">
-                <a href="{{ route('login') }}" class="text-white-50 small text-decoration-none fw-bold">Inicia
-                    Sesión</a>
+                <a href="{{ route('login') }}" class="text-white-50 small text-decoration-none fw-bold">Ya tengo
+                    cuenta</a>
             </div>
         </form>
     </div>

@@ -181,41 +181,6 @@
         .main-footer a {
             color: #00d4ff !important;
         }
-
-        /* ESTILOS PARA LOGIN Y REGISTRO: VER/OCULTAR CONTRASEÑA */
-        .password-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .form-control-tech {
-            background: rgba(20, 20, 20, 0.6) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 12px;
-            color: #fff !important;
-            padding: 12px 45px 12px 15px !important;
-            height: 50px;
-            transition: 0.3s;
-            padding-right: 45px !important;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-
-            color: rgba(200, 200, 200, 0.3) !important;
-            font-size: 0.85rem;
-            z-index: 10;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-password:hover {
-            color: rgba(255, 255, 255, 0.8) !important;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
-        }
     </style>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @stack('styles')
@@ -224,6 +189,7 @@
 <body>
     <div id="dna-canvas"></div>
     <div id="app">
+        @if(!request()->is('*pass') && !request()->is('*reset*'))
         <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/home') }}">
@@ -311,6 +277,7 @@
                 </div>
             </div>
         </nav>
+        @endif
 
         <main>
             @yield('content')
@@ -318,24 +285,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
-    <script>
-        document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('toggle-password')) {
-            const icon = e.target;
-            const input = icon.parentElement.querySelector('input');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-    });
-    </script>
 </body>
 
 </html>

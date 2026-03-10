@@ -9,40 +9,27 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * La ruta a la que los usuarios son redirigidos después de autenticarse.
-     *
-     * @var string
-     */
     public const HOME = '/home';
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
 {
     Paginator::useBootstrap();
 
     ResetPassword::toMailUsing(function ($notifiable, $token) {
-    $url = url(route('password.reset', [
-        'token' => $token,
-        'email' => $notifiable->getEmailForPasswordReset(),
-    ], false));
+        
+        $url = url('/password/reset/' . $token . '?email=' . urlencode($notifiable->getEmailForPasswordReset()));
 
-    return (new MailMessage)
-        ->subject('Verificación de restablecimiento de contraseña')
-        ->view('emails.password_reset', [
-            'url' => $url,
-            'name' => $notifiable->name
-        ]);
+        return (new MailMessage)
+            ->subject('Restablecimiento de Contraseña | Software Tech')
+            ->view('emails.password_reset', [
+                'url' => $url,
+                'name' => $notifiable->name
+            ]);
     });
 }
 }

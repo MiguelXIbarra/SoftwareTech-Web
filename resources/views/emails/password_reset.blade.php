@@ -3,34 +3,36 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Estilos base para compatibilidad con clientes de correo */
         .body-bg {
-            background-color: #0b111b;
-            /* Azul muy oscuro de tu app */
+            background-color: #0b111b !important;
             padding: 40px 10px;
-            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
         }
 
         .main-card {
             max-width: 550px;
             margin: 0 auto;
-            background: #111827;
-            /* Fondo de las tarjetas en tu app */
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            background-color: #111827;
+            border: 1px solid #1f2937;
             border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         .header-gradient {
+            /* Fallback de color sólido para clientes que no soportan linear-gradient */
+            background-color: #8a2be2;
             background: linear-gradient(135deg, #8a2be2, #00d4ff);
-            padding: 30px;
+            padding: 35px 20px;
             text-align: center;
         }
 
         .content {
-            padding: 40px 30px;
+            padding: 45px 35px;
             text-align: center;
         }
 
@@ -39,7 +41,8 @@
             font-size: 24px;
             font-weight: 800;
             margin: 0 0 20px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .p {
@@ -51,7 +54,9 @@
 
         .btn-link {
             display: inline-block;
-            padding: 15px 35px;
+            padding: 16px 40px;
+            background-color: #00d4ff;
+            /* Fallback */
             background: linear-gradient(135deg, #8a2be2, #00d4ff);
             color: #ffffff !important;
             text-decoration: none;
@@ -59,12 +64,13 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.2);
         }
 
         .footer-note {
-            margin-top: 35px;
+            margin-top: 40px;
             padding-top: 25px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: #6b7280;
             font-size: 12px;
         }
@@ -79,27 +85,31 @@
 <body class="body-bg">
     <div class="main-card">
         <div class="header-gradient">
-            <h2 style="margin:0; color:white; letter-spacing:4px; font-size:20px;">SOFTWARE TECH</h2>
+            <h2 style="margin:0; color:#ffffff; letter-spacing:4px; font-size:22px; font-weight:800;">SOFTWARE TECH</h2>
         </div>
 
         <div class="content">
             <h1 class="h1">ACTUALIZACIÓN DE IDENTIDAD</h1>
 
             <p class="p">
-                Hola, <span style="color: #ffffff;">{{ $name }}</span>.<br>
+                Hola, <strong style="color: #ffffff;">{{ $name }}</strong>.<br>
                 Se ha generado una solicitud para restablecer tus credenciales de acceso al
                 <span class="brand-text">Innovation Lab</span>.
             </p>
 
-            <a href="{{ $url }}" class="btn-link">Autorizar Cambio</a>
+            <div style="margin: 35px 0;">
+                <a href="{{ $url }}" class="btn-link">Autorizar Cambio</a>
+            </div>
 
             <p class="p" style="margin-top: 30px; font-size: 14px;">
-                Por motivos de seguridad, este enlace expirará automáticamente en <strong>60 minutos</strong>.
+                Por motivos de seguridad, este enlace expirará automáticamente en <strong>60 minutos</strong>. Si no
+                solicitaste este cambio, puedes ignorar este mensaje.
             </p>
 
             <div class="footer-note">
-                <p>Este es un mensaje automático del protocolo de seguridad de Software Tech.</p>
-                <p>© 2026 Software Technologies. Identidad Protegida.</p>
+                <p style="margin-bottom: 5px;">Este es un mensaje automático del protocolo de seguridad de Software
+                    Tech.</p>
+                <p style="margin-top: 0;">© 2026 Software Technologies. Identidad Protegida.</p>
             </div>
         </div>
     </div>
