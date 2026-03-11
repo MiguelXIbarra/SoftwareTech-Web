@@ -26,7 +26,7 @@
                 <div class="password-container">
                     <input type="password" name="password"
                         class="form-control-tech w-100 @error('password') is-invalid @enderror"
-                        placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
+                        placeholder="Mínimo 8 caracteres" required autocomplete="current-password">
                     <i class="fas fa-eye toggle-password"></i>
                 </div>
                 @error('password')
@@ -51,4 +51,22 @@
         </form>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if (session('status'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'SISTEMA ACTUALIZADO',
+                text: "{{ session('status') }}",
+                icon: 'success',
+                confirmButtonText: 'CONTINUAR AL ACCESO',
+                background: 'rgba(10, 10, 10, 0.95)',
+                color: '#fff',
+                confirmButtonColor: '#00d4ff',
+                backdrop: 'blur(10px)'
+            });
+        });
+</script>
+@endif
 @endsection

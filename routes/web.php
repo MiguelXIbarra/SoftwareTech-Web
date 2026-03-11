@@ -10,25 +10,28 @@ use App\Http\Controllers\LabPostController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+// --- RUTAS PÚBLICAS ---
 Route::get('/', function () {
     return view('home');
 });
 
+// Deshabilitamos el reset de Auth::routes para controlarlo manualmente y evitar conflictos
 Auth::routes(['reset' => false]);
 
+// --- SISTEMA DE RECUPERACIÓN DE IDENTIDAD (PASSWORD RESET) ---
+
+// 1. Vista para solicitar el enlace (Olvide mi contraseña)
 Route::get('/forgot-password', function () {
     return view('auth.passwords.email');
 })->name('password.request');
 
-Route::get('/password/reset', function () {
-    return view('auth.passwords.email');
-});
-
+// 2. Envío del correo con el enlace
 Route::post('/password/email', function (Request $request) {
     $request->validate(['email' => 'required|email']);
     
@@ -45,6 +48,7 @@ Route::post('/password/email', function (Request $request) {
         : back()->withErrors(['email' => __($status)]);
 })->name('password.email');
 
+// 3. Vista para ingresar la nueva contraseña (desde el correo)
 Route::get('/password/reset/{token}', function ($token) {
     return view('auth.passwords.reset', [
         'token' => $token, 
@@ -52,23 +56,23 @@ Route::get('/password/reset/{token}', function ($token) {
     ]);
 })->name('password.reset');
 
-Route::get('/reset-password/{token}', function ($token) {
-    return view('auth.passwords.reset', [
-        'token' => $token, 
-        'email' => request()->email
-    ]);
-});
+// 4. PROCESAR LA ACTUALIZACIÓN (Esta ruta conecta con tu ResetPasswordController)
+// Es vital que el nombre sea 'password.update' para que Laravel lo reconozca
+Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-Route::post('/password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 
+// --- RUTAS PROTEGIDAS (LAB CORE) ---
 Route::middleware(['auth'])->group(function () {
+    
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     
+    // Reset automático desde el perfil
     Route::post('/password/send-auto-reset', function () {
         $status = Password::broker()->sendResetLink(['email' => auth()->user()->email]);
         return back()->with('status', __($status));
     })->name('password.auto_send');
 
+    // Gestión de Perfil y Configuración
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.show');
     Route::get('/admin/profile', [ProfileController::class, 'profile'])->name('profile');
     Route::get('/settings', [ProfileController::class, 'index'])->name('profile.edit');
@@ -77,10 +81,12 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::post('/admin/verify-password', [ProfileController::class, 'verifyAjax'])->name('password.verify.ajax');
 
+    // Seguridad 2FA
     Route::post('/settings/2fa-manual', [ProfileController::class, 'toggleTwoFactor'])->name('custom.2fa.toggle');
     Route::post('/settings/2fa-confirm', [ProfileController::class, 'confirmTwoFactor'])->name('custom.2fa.confirm');
     Route::post('/settings/2fa-cancel', [ProfileController::class, 'cancelTwoFactor'])->name('custom.2fa.cancel');
 
+    // Recursos del Sistema
     Route::resource('projects', ProjectController::class);
     Route::resource('milestones', MilestoneController::class);
     Route::resource('payments', PaymentController::class);
@@ -88,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('messages', MessageController::class);
     Route::resource('lab_posts', LabPostController::class);
 
+    // Salida del Sistema
     Route::get('/logout', function () {
         Auth::logout();
         Session::flush();

@@ -2,6 +2,7 @@
 
 @push('styles')
 <style>
+    /* Mantenemos todo tu CSS original intacto */
     body,
     html {
         height: 100vh;
@@ -88,6 +89,17 @@
         color: rgba(255, 255, 255, 0.4) !important;
         z-index: 10;
     }
+
+    /* Bloqueo de iconos nativos para que no se encimen con los tuyos */
+    input::-ms-reveal,
+    input::-ms-clear {
+        display: none !important;
+    }
+
+    input::-webkit-contacts-auto-fill-button,
+    input::-webkit-credentials-auto-fill-button {
+        display: none !important;
+    }
 </style>
 @endpush
 
@@ -103,7 +115,8 @@
             </div>
             <h2 class="text-white fw-bold" style="letter-spacing: 2px; font-size: 1.6rem; margin-bottom: 15px;">
                 ACTUALIZAR IDENTIDAD</h2>
-            <p class="small opacity-50 text-white" style="letter-spacing: 2px; margin-bottom: 40px;">PROTOCOLO DE SEGURIDAD
+            <p class="small opacity-50 text-white" style="letter-spacing: 2px; margin-bottom: 40px;">PROTOCOLO DE
+                SEGURIDAD
             </p>
         </div>
 
@@ -146,7 +159,21 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Errores con SweetAlert
+    // 1. SCRIPT PARA LOS OJOS (CAMBIAR MODO)
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+        icon.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                this.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    });
+
+    // 2. Errores con SweetAlert
     @if ($errors->any())
         Swal.fire({
             icon: 'error',
