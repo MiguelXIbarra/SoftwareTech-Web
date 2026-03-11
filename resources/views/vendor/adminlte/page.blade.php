@@ -6,12 +6,38 @@
 @stack('css')
 @yield('css')
 <style>
-    /* 1. ESTRUCTURA Y ELIMINACIÓN DE SCROLL */
+    /* 1. ESTRUCTURA Y SCROLLBAR GRADIENTE */
     html,
     body {
         height: 100% !important;
         margin: 0;
         background: #000 !important;
+        scrollbar-width: thin;
+        scrollbar-color: #00d4ff #000;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(138, 43, 226, 0), rgba(0, 212, 255, 0));
+        border-radius: 10px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    body:hover::-webkit-scrollbar-thumb,
+    html:hover::-webkit-scrollbar-thumb,
+    .wrapper:hover::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #8a2be2, #00d4ff);
+        border: 2px solid #05080f;
     }
 
     .wrapper {

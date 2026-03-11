@@ -181,6 +181,25 @@
         .main-footer a {
             color: #00d4ff !important;
         }
+
+        /* SCROLLBAR PERSONALIZADO PARA HOME */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8a2be2, #00d4ff);
+            border-radius: 5px;
+            border: 2px solid #000;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #a044ff, #33e0ff);
+        }
     </style>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @stack('styles')

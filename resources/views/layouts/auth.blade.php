@@ -25,7 +25,23 @@
             background-attachment: fixed !important;
             color: #fff;
             font-family: 'Nunito', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* --- SCROLLBAR GRADIENTE TECH --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8a2be2, #00d4ff);
+            border-radius: 10px;
         }
 
         /* CAPA DE OSCURIDAD MÍNIMA: Como la que se ve en tu captura de éxito */
