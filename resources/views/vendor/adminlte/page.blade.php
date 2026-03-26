@@ -494,6 +494,94 @@
         color: rgba(255, 255, 255, 0.9) !important;
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
     }
+
+    /* MODAL DE CRISTAL AZUL PROFUNDO - SOFTWARE TECH */
+    body .swal2-popup.swal2-popup-tech {
+        background: linear-gradient(135deg, rgba(0, 10, 45, 0.95), rgba(0, 0, 0, 1)) !important;
+        border: 2px solid #0056b3 !important;
+        border-radius: 25px !important;
+        backdrop-filter: blur(20px) !important;
+        box-shadow: 0 0 35px rgba(0, 86, 179, 0.3) !important;
+        color: #fff !important;
+    }
+
+    body .swal2-confirm.btn-gradient-tech-blue {
+        background: linear-gradient(135deg, #60a5fa, #2563eb, #1e40af) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+        padding: 12px 35px !important;
+        transition: all 0.3s ease !important;
+    }
+
+    body .swal2-confirm.btn-gradient-tech-blue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
+        filter: brightness(1.1);
+    }
+
+    .swal2-popup.swal2-popup-tech {
+        background: linear-gradient(135deg, rgba(0, 10, 45, 0.95), rgba(0, 0, 0, 1)) !important;
+        border: 2px solid #0056b3 !important;
+        border-radius: 25px !important;
+        backdrop-filter: blur(20px) !important;
+        box-shadow: 0 0 35px rgba(0, 86, 179, 0.25) !important;
+        color: #fff !important;
+    }
+
+    .swal2-title-tech {
+        color: #fff !important;
+        font-weight: 800 !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(0, 86, 179, 0.4);
+    }
+
+    .btn-gradient-tech-blue {
+        background: linear-gradient(135deg, #60a5fa, #2563eb, #1e40af) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .btn-gradient-tech-blue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
+        filter: brightness(1.1);
+    }
+
+    .btn-gradient-tech-blue:active {
+        transform: translateY(0);
+    }
+
+    .input-2fa-terminal {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        border: 1px solid #0056b3 !important;
+        border-radius: 12px !important;
+        color: #fff !important;
+        font-family: 'Courier New', monospace !important;
+        font-size: 2.2rem !important;
+        height: 75px !important;
+        text-align: center !important;
+
+        letter-spacing: 15px !important;
+        text-indent: 15px !important;
+
+        margin: 20px auto !important;
+        display: block !important;
+        width: 85% !important;
+        padding: 0 !important;
+        box-shadow: inset 0 0 10px rgba(0, 86, 179, 0.15) !important;
+    }
 </style>
 @stop
 
@@ -535,7 +623,22 @@
         };
         initApp();
 
-        // 2. DETECTOR DE ÉXITO (POST-RECARGA)
+        // 2. CONTROL DEL SIDEBAR
+        const compactSwitch = document.getElementById('st-compact');
+        if (compactSwitch) {
+            compactSwitch.checked = localStorage.getItem(STORAGE_KEY) === 'true';
+            compactSwitch.addEventListener('change', () => {
+                const isActive = compactSwitch.checked;
+                localStorage.setItem(STORAGE_KEY, isActive);
+                if (isActive) {
+                    body.classList.add('sidebar-collapse');
+                } else {
+                    body.classList.remove('sidebar-collapse');
+                }
+            });
+        }
+
+        // 3. DETECTOR DE ÉXITO (Post-Recarga)
         document.addEventListener('DOMContentLoaded', function() {
             @if(session('status') || session('success'))
                 Swal.fire({
@@ -547,149 +650,108 @@
             @endif
         });
 
-        // 3. VALIDACIÓN AJAX "AL INSTANTE" (EL GURDAESPALDAS)
-        window.verificarCredenciales = async function(event) {
-            event.preventDefault();
-            
-            const form = document.getElementById('form-password-update');
-            const currentPass = document.querySelector('input[name="current_password"]');
-            const newPass = document.querySelector('input[name="password"]');
-            const confirmPass = document.querySelector('input[name="password_confirmation"]');
-
-            // 3.1. VALIDACIÓN DE CAMPOS VACÍOS (Al instante)
-            if (!currentPass.value || !newPass.value || !confirmPass.value) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'CAMPOS INCOMPLETOS',
-                    text: 'Por favor, completa los tres campos de contraseña para continuar.',
-                    background: '#05080f',
-                    color: '#fff',
-                    confirmButtonColor: '#00d4ff'
-                });
-                return;
-            }
-
-            // 3.2. VALIDACIÓN DE COINCIDENCIA (Al instante)
-            if (newPass.value !== confirmPass.value) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'ERROR DE COINCIDENCIA',
-                    text: 'La nueva contraseña y la confirmación no son iguales.',
-                    background: '#05080f',
-                    color: '#fff',
-                    confirmButtonColor: '#00d4ff'
-                });
-                return; 
-            }
-
-            // 3.3. VALIDACIÓN DE LONGITUD (Al instante)
-            if (newPass.value.length < 8) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'CONTRASEÑA DÉBIL',
-                    text: 'La nueva contraseña debe tener al menos 8 caracteres.',
-                    background: '#05080f',
-                    color: '#fff',
-                    confirmButtonColor: '#00d4ff'
-                });
-                return;
-            }
-
-            // 3.4. SOLO SI PASA TODO LO ANTERIOR, SE MUESTRA LA VERIFICACIÓN DE SEGURIDAD
-            Swal.fire({
-                title: 'VERIFICANDO SEGURIDAD...',
-                html: 'Comprobando identidad con el servidor',
-                allowOutsideClick: false,
-                background: '#05080f',
+        // 4. FUNCIÓN: DESACTIVACIÓN 2FA (SIMETRÍA CORREGIDA)
+        window.confirmarDesactivacion2FA = async function() {
+            const { value: code } = await Swal.fire({
+                title: 'VERIFICACIÓN DE SEGURIDAD',
+                text: 'Ingresa el código de tu terminal para desactivar la protección.',
+                input: 'text',
+                inputPlaceholder: '000000',
+                showCancelButton: true,
+                confirmButtonText: 'CONFIRMAR',
+                cancelButtonText: 'CANCELAR',
+                background: 'transparent',
                 color: '#fff',
-                didOpen: () => { Swal.showLoading(); }
+
+                customClass: {
+                    container: 'center-modal-tech',
+                    popup: 'border border-primary shadow-lg rounded-5',
+                    input: 'input-2fa-terminal',
+                    actions: 'justify-content-center w-100 mt-4',
+                    confirmButton: 'btn-gradient-tech-blue px-5 py-2 mx-2',
+                    cancelButton: 'px-5 py-2 mx-2'
+                },
+                inputAttributes: {
+                    maxlength: 6,
+                    autofocus: true
+                },
+                inputValidator: (value) => {
+                    if (!value || value.length !== 6) return 'Se requiere código de 6 dígitos';
+                }
             });
 
-            try {
-                const response = await fetch("{{ route('password.verify.ajax') }}", {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
-                    },
-                    body: JSON.stringify({ current_password: currentPass.value })
+            if (code) {
+                Swal.fire({
+                    title: 'AUTENTICANDO...',
+                    background: '#05080f',
+                    color: '#fff',
+                    didOpen: () => { Swal.showLoading(); }
                 });
 
-                const data = await response.json();
+                try {
+                    const response = await fetch("{{ route('custom.2fa.deactivate') }}", {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                        },
+                        body: JSON.stringify({ code: code })
+                    });
 
-                if (data.valid) {
-                    form.submit();
-                } else {
+                    const data = await response.json();
+                    if (data.success) {
+                        Swal.fire({ 
+                            icon: 'success', 
+                            title: 'PROTOCOLO FINALIZADO', 
+                            background: '#05080f', 
+                            color: '#fff', 
+                            confirmButtonColor: '#00d4ff' 
+                        }).then(() => location.reload());
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
                     Swal.fire({ 
                         icon: 'error', 
                         title: 'ACCESO DENEGADO', 
-                        text: 'Tu contraseña actual es incorrecta.', 
+                        text: error.message, 
                         background: '#05080f', 
-                        color: '#fff', 
-                        confirmButtonColor: '#00d4ff'
+                        color: '#fff' 
                     });
+                }
+            }
+        };
+
+        // 5. VALIDACIÓN AJAX CONTRASEÑA ACTUAL
+        window.verificarCredenciales = async function(event) {
+            event.preventDefault();
+            const form = document.getElementById('form-password-update');
+            const currentPassInput = document.querySelector('input[name="current_password"]');
+            
+            if (!currentPassInput || currentPassInput.value === "") {
+                Swal.fire({ icon: 'warning', title: 'ATENCIÓN', text: 'Escribe tu contraseña actual.', background: '#05080f', color: '#fff' });
+                return;
+            }
+
+            Swal.fire({ title: 'VALIDANDO...', allowOutsideClick: false, background: '#05080f', color: '#fff', didOpen: () => { Swal.showLoading(); } });
+            
+            try {
+                const response = await fetch("{{ route('password.verify.ajax') }}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ current_password: currentPassInput.value })
+                });
+                const data = await response.json();
+                if (!data.valid) {
+                    Swal.fire({ icon: 'error', title: 'ERROR', text: 'Contraseña incorrecta.', background: '#05080f', color: '#fff' });
+                } else {
+                    form.submit();
                 }
             } catch (e) {
-                Swal.fire({ 
-                    icon: 'error', 
-                    title: 'ERROR', 
-                    text: 'Error de comunicación con el servidor.', 
-                    background: '#05080f', 
-                    color: '#fff' 
-                });
+                Swal.fire({ icon: 'error', title: 'ERROR', background: '#05080f', color: '#fff' });
             }
         };
-
-        // 4. FUNCIÓN DE ELIMINACIÓN PARA TABLAS
-        window.confirmDelete = function(formId) {
-            Swal.fire({
-                title: '¿ELIMINAR REGISTRO?',
-                text: "ESTA ACCIÓN NO SE PUEDE DESHACER",
-                icon: 'warning',
-                showCancelButton: true,
-                background: '#05080f', 
-                color: '#fff',
-                backdrop: `rgba(0,0,0,0.85)`,
-                confirmButtonColor: '#ff3232',
-                cancelButtonColor: 'rgba(255, 255, 255, 0.1)',
-                confirmButtonText: 'ELIMINAR PERMANENTEMENTE',
-                cancelButtonText: 'CANCELAR',
-                customClass: {
-                    popup: 'border border-danger shadow-lg',
-                    title: 'font-weight-bold letter-spacing-2',
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'PROCESANDO...',
-                        background: '#05080f',
-                        color: '#fff',
-                        allowOutsideClick: false,
-                        didOpen: () => { Swal.showLoading(); }
-                    });
-                    document.getElementById(formId).submit();
-                }
-            });
-        };
-
-        // 5. LÓGICA PARA VER/OCULTAR CONTRASEÑA (EL OJITO)
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('toggle-password')) {
-                const icon = e.target;
-                const input = icon.parentElement.querySelector('input');
-
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            }
-        });
-
     })();
 </script>
 @stop

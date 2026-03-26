@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\Auth\LoginController;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -57,9 +58,11 @@ Route::get('/password/reset/{token}', function ($token) {
 })->name('password.reset');
 
 // 4. PROCESAR LA ACTUALIZACIÓN (Esta ruta conecta con tu ResetPasswordController)
-// Es vital que el nombre sea 'password.update' para que Laravel lo reconozca
 Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
+// --- RUTAS PÚBLICAS (Fuera del middleware auth) ---
+Route::post('/login/check-2fa', [LoginController::class, 'check2fa'])->name('login.check.2fa');
+Route::post('/login/2fa', [LoginController::class, 'loginWith2fa'])->name('login.2fa');
 
 // --- RUTAS PROTEGIDAS (LAB CORE) ---
 Route::middleware(['auth'])->group(function () {
@@ -85,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/settings/2fa-manual', [ProfileController::class, 'toggleTwoFactor'])->name('custom.2fa.toggle');
     Route::post('/settings/2fa-confirm', [ProfileController::class, 'confirmTwoFactor'])->name('custom.2fa.confirm');
     Route::post('/settings/2fa-cancel', [ProfileController::class, 'cancelTwoFactor'])->name('custom.2fa.cancel');
+    Route::post('/settings/2fa-deactivate', [ProfileController::class, 'deactivateTwoFactor'])->name('custom.2fa.deactivate');
 
     // Recursos del Sistema
     Route::resource('projects', ProjectController::class);

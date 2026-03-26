@@ -200,6 +200,20 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #a044ff, #33e0ff);
         }
+
+        .input-2fa-simetrico {
+            padding-right: 0 !important;
+            padding-left: 10px !important;
+            text-align: center !important;
+            letter-spacing: 10px !important;
+            font-size: 1.5rem !important;
+            height: 55px !important;
+            background-color: rgba(5, 8, 15, 0.9) !important;
+            border: 1px solid rgba(0, 212, 255, 0.5) !important;
+            color: #fff !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+        }
     </style>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @stack('styles')

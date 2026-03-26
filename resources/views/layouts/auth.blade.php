@@ -148,6 +148,43 @@
             text-transform: uppercase;
             font-weight: 800;
         }
+
+        .input-2fa-terminal {
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid #00d4ff !important;
+            border-radius: 12px !important;
+            color: #fff !important;
+            font-family: 'Courier New', Courier, monospace !important;
+            font-size: 2.2rem !important;
+            font-weight: bold !important;
+            height: 75px !important;
+            
+            text-align: center !important;
+            letter-spacing: 15px !important;
+            text-indent: 15px !important;
+            
+            margin: 20px auto !important;
+            display: block !important;
+            width: 85% !important;
+            padding: 0 !important;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+        }
+
+        .btn-gradient-tech {
+            background: linear-gradient(135deg, #8a2be2, #00d4ff) !important;
+            border: none !important;
+            border-radius: 10px !important;
+            color: #fff !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3) !important;
+        }
+
+        .swal2-popup-tech {
+            background: #0a0a0a !important;
+            border: 1px solid rgba(0, 212, 255, 0.3) !important;
+            border-radius: 20px !important;
+        }
     </style>
 </head>
 
