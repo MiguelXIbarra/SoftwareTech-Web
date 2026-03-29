@@ -38,7 +38,7 @@ class AssetController extends Controller
                 'nombre' => $request->nombre,
                 'path' => $path,
                 'tipo' => $tipo,
-                'assetable_id' => auth()->id(), // Por defecto al usuario actual
+                'assetable_id' => auth()->id(),
                 'assetable_type' => \App\Models\User::class,
             ]);
 
