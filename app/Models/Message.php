@@ -29,4 +29,9 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
+    
+    public function assets()
+    {
+        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
 }

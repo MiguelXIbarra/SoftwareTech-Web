@@ -25,4 +25,9 @@ class Project extends Model
     {
         return $this->belongsTo(User::class, 'client_id');
     }
+
+    public function assets()
+    {
+        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
 }

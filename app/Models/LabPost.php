@@ -25,4 +25,9 @@ class LabPost extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function assets()
+    {
+        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
 }

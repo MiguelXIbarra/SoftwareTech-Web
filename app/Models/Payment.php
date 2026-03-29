@@ -24,4 +24,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Milestone::class);
     }
+
+    public function assets()
+    {
+        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
 }

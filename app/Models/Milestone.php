@@ -25,4 +25,9 @@ class Milestone extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function assets()
+    {
+        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
 }

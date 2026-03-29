@@ -376,6 +376,23 @@ return [
             'route' => 'lab_posts.index',
         ],
 
+        // --- SECCIÓN DE ASSETS --- 
+        [
+            'header' => 'ADMINISTRACIÓN MULTIMEDIA',
+        ],
+        [
+            'text' => 'Terminal de Archivos',
+            'route'  => 'assets.index',
+            'icon' => 'fas fa-fw fa-hdd',
+            'label'       => 'Storage',
+            'label_color' => 'cyan',
+        ],
+        [
+            'text' => 'Cargar Recurso',
+            'route'  => 'assets.create',
+            'icon' => 'fas fa-fw fa-upload',
+        ],
+
         // --- CONFIGURACIÓN DE CUENTA ---
         ['header' => 'AJUSTES DE CUENTA'],
         [

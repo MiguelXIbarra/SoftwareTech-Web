@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AssetController;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,6 @@ Route::get('/', function () {
     return view('home');
 });
 
-// Deshabilitamos el reset de Auth::routes para controlarlo manualmente y evitar conflictos
 Auth::routes(['reset' => false]);
 
 // --- SISTEMA DE RECUPERACIÓN DE IDENTIDAD (PASSWORD RESET) ---
@@ -97,6 +97,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('messages', MessageController::class);
     Route::resource('lab_posts', LabPostController::class);
+
+    //Manejo de Archivos en Storage
+    Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');
+    Route::get('/assets/create', [AssetController::class, 'create'])->name('assets.create');
+    Route::post('/assets/store', [AssetController::class, 'store'])->name('assets.store');
+    Route::get('/assets/image/{id}', [AssetController::class, 'getImage'])->name('assets.image');
+    Route::get('/assets/video/{id}', [AssetController::class, 'getVideo'])->name('assets.video');
 
     // Salida del Sistema
     Route::get('/logout', function () {

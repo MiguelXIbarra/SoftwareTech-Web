@@ -37,6 +37,11 @@ class User extends Authenticatable
         return 'Super Admin'; 
     }
 
+    public function assets()
+    {
+        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
+
     // Tus relaciones originales se quedan igual
     public function projects(): HasMany { return $this->hasMany(Project::class, 'client_id'); }
     public function messages(): HasMany { return $this->hasMany(Message::class, 'sender_id'); }
