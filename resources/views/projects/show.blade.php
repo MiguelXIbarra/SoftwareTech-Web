@@ -2,42 +2,41 @@
 @section('title', 'Detalles del Proyecto')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        {{-- Header Turquesa Sólido --}}
-        <div class="card card-outline shadow" style="border-top: 3px solid #45a1b5;">
-            <div class="card-header" style="background-color: #45a1b5;">
-                <h3 class="card-title text-bold text-white">Visualizar Proyecto</h3>
-            </div>
-            <div class="card-body">
-                <div class="text-center mb-4">
-                    <h2 class="text-bold" style="color: #45a1b5;">{{ $project->title }}</h2>
-                    <span class="badge px-3 py-2 text-white shadow-sm" style="background-color: #45a1b5;">
-                        {{ $project->category }}
-                    </span>
-                </div>
-
-                <hr>
-
-                <div class="row px-4">
-                    <div class="col-sm-12 mb-3">
-                        <label class="text-muted small d-block">ESTADO ACTUAL</label>
-                        <p class="h6"><i class="fas fa-tasks mr-2" style="color: #45a1b5;"></i> {{ $project->status }}</p>
+<div class="container-fluid pt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card card-dark" style="background-color: #1a222b; border-left: 5px solid #45a1b5;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h1 style="color: #45a1b5;" class="text-bold">{{ $project->name }}</h1>
+                            <p style="font-size: 1.1rem; color: #b0b8c1;">{{ $project->description }}</p>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <span class="badge p-3" style="background-color: #45a1b5; font-size: 1rem;">PROYECTO
+                                ACTIVO</span>
+                        </div>
                     </div>
-                    <div class="col-sm-12 mb-3">
-                        <label class="text-muted small d-block">DESCRIPCIÓN DEL PROYECTO</label>
-                        <div class="p-3 bg-light border rounded" style="min-height: 100px;">
-                            {{ $project->description }}
+                    <hr style="border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div class="row text-center mt-4">
+                        <div class="col-sm-4">
+                            <h5 class="text-muted">Líder de Proyecto</h5>
+                            <p class="text-white">{{ $project->user->name ?? 'Sin asignar' }}</p>
+                        </div>  
+                        <div class="col-sm-4">
+                            <h5 class="text-muted">Fecha Inicio</h5>
+                            <p class="text-white">{{ $project->created_at->format('d/m/Y') }}</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h5 class="text-muted">ID Sistema</h5>
+                            <p class="text-white">#{{ $project->id }}</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="text-center mt-4">
-                    <a href="{{ route('projects.edit', $project->id) }}" class="btn text-white px-4 shadow-sm" style="background-color: #45a1b5;">
-                        <i class="fas fa-edit mr-1"></i> Ir a Editar
-                    </a>
-                    <a href="{{ route('projects.index') }}" class="btn btn-default px-4 ml-2 border">
-                        Regresar
+                <div class="card-footer bg-transparent border-top-0 text-center pb-4">
+                    <a href="{{ route('projects.index') }}" class="btn btn-info shadow"
+                        style="background-color: #45a1b5; border: none; border-radius: 20px; padding: 10px 40px;">
+                        <i class="fas fa-undo mr-2"></i> Volver al Listado
                     </a>
                 </div>
             </div>
