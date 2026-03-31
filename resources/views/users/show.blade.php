@@ -1,55 +1,38 @@
 @extends('adminlte::page')
-
-@section('title', 'Detalles del Usuario')
+@section('title', 'Perfil de Usuario')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        {{-- Color exacto del icono OJO (#45a1b5) --}}
-        <div class="card card-outline shadow" style="border-top: 3px solid #45a1b5;">
-            <div class="card-header" style="background-color: #45a1b5;">
-                <h3 class="card-title text-bold text-white">Visualizar Perfil de Usuario</h3>
-            </div>
-            
-            <div class="card-body">
-                <div class="text-center mb-4">
-                    {{-- Borde de la foto sincronizado --}}
-                    <div class="d-inline-block shadow-sm" style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 4px solid #45a1b5; background: #f4f6f9;">
-                        @if($user->profile_photo)
-                            <img src="{{ asset('storage/' . $user->profile_photo) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                        @else
-                            <div class="h-100 d-flex align-items-center justify-content-center">
-                                <i class="fas fa-user fa-7x text-muted"></i>
-                            </div>
-                        @endif
-                    </div>
-                    <h3 class="mt-3 text-bold">{{ $user->name }}</h3>
-                    <span class="badge px-3 py-2 text-white" style="background-color: #45a1b5;">
-                        {{ ucfirst($user->role) }}
-                    </span>
+<div class="container-fluid pt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-dark shadow-lg"
+                style="background-color: #1a222b; border-radius: 15px; border: 1px solid #45a1b5;">
+                <div class="card-header text-center"
+                    style="background-color: #0b1120; border-bottom: 2px solid #45a1b5;">
+                    <h3 class="card-title text-bold w-100" style="color: #45a1b5;">DETALLES DEL USUARIO</h3>
                 </div>
+                <div class="card-body text-center" style="color: #e0e6ed;">
+                    <i class="fas fa-user-circle fa-7x mb-4" style="color: #45a1b5;"></i>
+                    <h2 class="text-bold">{{ $user->name }}</h2>
+                    <p class="text-muted mb-4">{{ $user->email }}</p>
 
-                <hr>
-
-                <div class="row px-4">
-                    <div class="col-sm-6 mb-3">
-                        <label class="text-muted small d-block">CORREO ELECTRÓNICO</label>
-                        <p class="h6"><i class="fas fa-envelope mr-2" style="color: #45a1b5;"></i> {{ $user->email }}</p>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <label class="text-muted small d-block">ESTADO DE CUENTA</label>
-                        <p class="h6"><i class="fas fa-check-circle mr-2" style="color: #45a1b5;"></i> Activo</p>
+                    <div class="row text-left mt-4 p-3 rounded"
+                        style="background-color: rgba(69, 161, 181, 0.05); border: 1px solid rgba(69, 161, 181, 0.2);">
+                        <div class="col-md-6">
+                            <strong><i class="fas fa-id-card mr-2"></i> ID de Empleado:</strong>
+                            <p class="text-info">{{ $user->id }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><i class="fas fa-calendar-check mr-2"></i> Miembro desde:</strong>
+                            <p class="text-info">{{ $user->created_at->format('M Y') }}</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="text-center mt-4">
-                    {{-- Botón ahora también en el color turquesa del icono --}}
-                    <a href="{{ route('users.edit', $user->id) }}" class="btn text-white px-4 shadow-sm" style="background-color: #45a1b5;">
-                        <i class="fas fa-edit mr-1"></i> Ir a Editar
-                    </a>
-                    <a href="{{ route('users.index') }}" class="btn btn-default px-4 ml-2 border">
-                        Regresar
-                    </a>
+                <div class="card-footer" style="background-color: #0b1120;">
+                    <div class="text-center">
+                        <a href="{{ route('users.index') }}"
+                            class="btn btn-outline-info px-4 border-radius-20">Regresar</a>
+                    </div>
                 </div>
             </div>
         </div>
