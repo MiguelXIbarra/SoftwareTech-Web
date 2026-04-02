@@ -26,8 +26,8 @@
 
                     <hr style="border-top: 1px solid rgba(69, 161, 181, 0.3);">
 
-                    <div class="p-3" style="font-size: 1.2rem; line-height: 1.8; white-space: pre-wrap;">
-                        {{ $post->body }}
+                    <div class="p-3 text-investigation" style="font-size: 1.2rem; line-height: 1.8;">
+                        {!! nl2br(e($post->body)) !!}
                     </div>
                 </div>
 

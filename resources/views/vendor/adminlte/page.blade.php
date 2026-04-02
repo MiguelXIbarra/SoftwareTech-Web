@@ -582,6 +582,106 @@
         padding: 0 !important;
         box-shadow: inset 0 0 10px rgba(0, 86, 179, 0.15) !important;
     }
+
+    /* ESTILOS GLOBALES PARA LABORATORIO (LAB_POST) */
+    .btn-action-outline {
+        background-color: transparent !important;
+        transition: all 0.3s ease;
+        border-width: 1px;
+        border-style: solid;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-action-outline:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        color: white !important;
+    }
+
+    .btn-read-more {
+        border-color: #45a1b5;
+        color: #45a1b5;
+    }
+
+    .btn-read-more:hover {
+        background-color: #45a1b5 !important;
+    }
+
+    .btn-edit-outline {
+        border-color: #ffc107;
+        color: #ffc107;
+    }
+
+    .btn-edit-outline:hover {
+        background-color: #ffc107 !important;
+    }
+
+    .btn-delete-outline {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+
+    .btn-delete-outline:hover {
+        background-color: #dc3545 !important;
+    }
+
+    .card-software-tech {
+        border-top: 4px solid #4472f1 !important;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .card-software-tech:hover {
+        transform: scale(1.01);
+    }
+
+    .textarea-autosize {
+        overflow-y: auto !important;
+        resize: none !important;
+        max-height: 500px;
+        min-height: 250px;
+        width: 100%;
+        scrollbar-width: thin;
+        scrollbar-color: #ffc107 #0b1120;
+    }
+
+    .textarea-autosize::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .textarea-autosize::-webkit-scrollbar-track {
+        background: #0b1120;
+        border-radius: 10px;
+    }
+
+    .textarea-autosize::-webkit-scrollbar-thumb {
+        background: #ffc107;
+        border-radius: 10px;
+        border: 2px solid #0b1120;
+    }
+
+    .textarea-autosize:focus {
+        border-color: #ffc107 !important;
+        outline: none;
+    }
+
+    .text-investigation {
+        text-align: justify !important;
+        text-justify: inter-word !important;
+        padding-left: 0 !important;
+        text-indent: 0 !important;
+        line-height: 1.8 !important;
+        color: #e0e6ed !important;
+        display: block;
+        width: 100%;
+    }
+
+    .border-shadow-cyan {
+        border: 1px solid rgba(69, 161, 181, 0.5) !important;
+        box-shadow: 0 0 20px rgba(69, 161, 181, 0.2) !important;
+    }
 </style>
 @stop
 
@@ -753,5 +853,53 @@
             }
         };
     })();
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const textareas = document.querySelectorAll('.textarea-autosize');
+        
+        textareas.forEach(textarea => {
+            const autoAdjust = (el) => {
+                el.style.height = 'auto';
+                el.style.height = el.scrollHeight + 'px';
+            };
+
+            setTimeout(() => autoAdjust(textarea), 300);
+
+            textarea.addEventListener('input', function() {
+                autoAdjust(this);
+            });
+        });
+    });
+
+    function confirmDelete(formId) {
+    Swal.fire({
+        title: '¿ELIMINAR REGISTRO?',
+        text: "Esta acción es irreversible y se eliminará del núcleo del sistema.",
+        icon: 'warning',
+        showCancelButton: true,
+        background: '#0b1120',
+        color: '#ffffff',
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-trash-alt mr-2"></i>SÍ, ELIMINAR',
+        cancelButtonText: 'CANCELAR',
+        borderClass: 'border-info',
+        customClass: {
+            popup: 'border-shadow-cyan'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'PROCESANDO...',
+                allowOutsideClick: false,
+                background: '#0b1120',
+                color: '#fff',
+                didOpen: () => { Swal.showLoading(); }
+            });
+            
+            document.getElementById(formId).submit();
+        }
+    });
+}
 </script>
 @stop
