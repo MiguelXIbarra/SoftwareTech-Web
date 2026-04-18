@@ -21,6 +21,10 @@ class Milestone extends Model
         'due_date',
     ];
 
+    protected $casts = [
+        'due_date' => 'date',
+    ];
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
