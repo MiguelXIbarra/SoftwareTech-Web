@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Models\Message;
+use App\Models\Email;
 use Illuminate\Support\Facades\Auth;
 
 class ViewServiceProvider extends ServiceProvider
@@ -13,11 +13,11 @@ class ViewServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             if (Auth::check()) {
-                $unreadCount = Message::whereHas('project', function($q) {
+                $unreadCount = Email::whereHas('project', function($q) {
                     $q->where('client_id', Auth::id());
                 })->count();
 
-                $view->with('newMessagesCount', $unreadCount);
+                $view->with('newEmailsCount', $unreadCount);
             }
         });
     }

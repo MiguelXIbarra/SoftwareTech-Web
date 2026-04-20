@@ -361,9 +361,9 @@ return [
         // --- SECCIÓN DE COMUNICACIÓN ---
         ['header' => 'COMUNICACIÓN'],
         [
-            'text' => 'Mensajes',
+            'text' => 'Correo',
             'icon' => 'fas fa-fw fa-envelope',
-            'route' => 'messages.index',
+            'route' => 'emails.index',
             'label' => isset($newMessagesCount) && $newMessagesCount > 0 ? $newMessagesCount : null,
             'label_color' => 'success',
         ],

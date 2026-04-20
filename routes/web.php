@@ -7,7 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\LabPostController;
-use App\Http\Controllers\MessageController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -95,7 +95,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('milestones', MilestoneController::class);
     Route::resource('payments', PaymentController::class);
     Route::resource('users', UserController::class);
-    Route::resource('messages', MessageController::class);
+    Route::resource('emails', EmailController::class);
     Route::resource('lab_posts', LabPostController::class);
 
     //Manejo de Archivos en Storage
