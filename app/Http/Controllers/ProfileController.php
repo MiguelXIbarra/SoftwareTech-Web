@@ -28,24 +28,26 @@ class ProfileController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:8|confirmed|different:current_password',
         ], [
-            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'La confirmación de la nueva contraseña no coincide.',
+            'current_password.required' => 'Debes ingresar tu contraseña actual.',
+            'password.required' => 'La nueva contraseña es obligatoria.',
+            'password.min' => 'Usa al menos 8 caracteres para mayor seguridad.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.different' => 'La nueva contraseña no puede ser igual a la anterior.'
         ]);
 
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.'])
-                        ->withInput();
+            return back()->withErrors(['current_password' => 'La contraseña actual no es correcta.']);
         }
 
         $user->update([
             'password' => Hash::make($request->password)
         ]);
 
-        return back()->with('status', 'Contraseña actualizada correctamente.');
+        return back()->with('status', 'Contraseña actualizada con éxito.');
     }
 
     public function verifyAjax(Request $request) 
@@ -88,7 +90,7 @@ class ProfileController extends Controller
     public function cancelTwoFactor()
     {
         Auth::user()->update(['two_factor_secret' => null, 'two_factor_confirmed_at' => null]);
-        return redirect()->route('profile.edit')->with('status', 'Vinculación cancelada.');
+        return redirect()->route('profile.edit');
     }
 
     public function confirmTwoFactor(Request $request)

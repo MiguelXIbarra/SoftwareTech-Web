@@ -145,33 +145,44 @@
                 @csrf
                 @method('PUT')
                 <div class="card-body">
-                    <div class="form-group">
-                        <label>Contraseña Actual</label>
-                        <div class="password-container">
-                            <input type="password" name="current_password" class="form-control"
-                                placeholder="Escribe tu contraseña actual" required>
-                            <i class="fas fa-eye toggle-password"></i>
+                    <div class="form-group mb-4">
+                        <label class="small text-uppercase text-bold text-primary">Contraseña Actual</label>
+                        <div class="password-container position-relative">
+                            <input type="password" id="current_password" name="current_password"
+                                class="form-control bg-dark text-white border-secondary"
+                                placeholder="Verificación de identidad">
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('current_password')"
+                                id="eye-current_password"></i>
                         </div>
+                        <small id="error-current_password" class="text-danger text-bold mt-1 d-block"></small>
                     </div>
-                    <div class="form-group">
-                        <label>Nueva Contraseña</label>
-                        <div class="password-container">
-                            <input type="password" name="password" class="form-control"
-                                placeholder="Mínimo 8 caracteres" required>
-                            <i class="fas fa-eye toggle-password"></i>
+
+                    <div class="form-group mb-4">
+                        <label class="small text-uppercase text-bold text-primary">Nueva Contraseña</label>
+                        <div class="password-container position-relative">
+                            <input type="password" id="password" name="password"
+                                class="form-control bg-dark text-white border-secondary"
+                                placeholder="Mínimo 8 caracteres">
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"
+                                id="eye-password"></i>
                         </div>
+                        <small id="error-password" class="text-danger text-bold mt-1 d-block"></small>
                     </div>
-                    <div class="form-group">
-                        <label>Confirmar Nueva Contraseña</label>
-                        <div class="password-container">
-                            <input type="password" name="password_confirmation" class="form-control"
-                                placeholder="Repite la contraseña" required>
-                            <i class="fas fa-eye toggle-password"></i>
+
+                    <div class="form-group mb-4">
+                        <label class="small text-uppercase text-bold text-primary">Confirmar Nueva Contraseña</label>
+                        <div class="password-container position-relative">
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                class="form-control bg-dark text-white border-secondary"
+                                placeholder="Repetir credencial">
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('password_confirmation')"
+                                id="eye-password_confirmation"></i>
                         </div>
+                        <small id="error-password_confirmation" class="text-danger text-bold mt-1 d-block"></small>
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-right">
-                    <button type="submit" onclick="verificarCredenciales(event)" class="btn btn-primary px-5 py-2">
+                    <button type="submit" id="btn-save-pass" class="btn btn-primary px-5 py-2">
                         GUARDAR CAMBIOS
                     </button>
                 </div>
@@ -216,6 +227,7 @@
                     <div class="p-3 bg-white d-inline-block rounded mb-4">
                         <img src="{{ $qrUrl }}" style="width: 180px; height: 180px;" alt="Código QR de Seguridad">
                     </div>
+
                     <form method="POST" action="{{ route('custom.2fa.confirm') }}">
                         @csrf
                         <div class="form-group text-center">
@@ -226,9 +238,10 @@
                             VINCULAR DISPOSITIVO
                         </button>
                     </form>
+
                     <form method="POST" action="{{ route('custom.2fa.cancel') }}" class="mt-3">
                         @csrf
-                        <button type="submit" class="btn btn-link text-white-50 btn-sm">CANCELAR OPERACIÓN</button>
+                        <button type="submit" class="btn btn-link text-white-50 btn-sm">CANCELAR</button>
                     </form>
                 </div>
             </div>
@@ -353,5 +366,92 @@
             }
         };
     })();
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById('eye-' + inputId);
+        
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    async function verificarYGuardar(event) {
+        event.preventDefault();
+        
+        const form = document.getElementById('form-password-update');
+        const currentPass = document.getElementById('current_password').value;
+        const newPass = document.getElementById('password').value;
+        const confirmPass = document.getElementById('password_confirmation').value;
+
+        document.getElementById('error-current_password').innerText = '';
+        document.getElementById('error-password').innerText = '';
+        document.getElementById('error-password_confirmation').innerText = '';
+
+        if (!currentPass) {
+            document.getElementById('error-current_password').innerText = '✖ Campo requerido.';
+            return;
+        }
+
+        Swal.fire({
+            title: 'VERIFICANDO CREDENCIALES',
+            text: 'Cifrando conexión con el servidor...',
+            allowOutsideClick: false,
+            background: '#05080f',
+            color: '#fff',
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        try {
+            const response = await fetch("{{ route('password.verify.ajax') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ current_password: currentPass })
+            });
+            const data = await response.json();
+
+            let hasError = false;
+
+            if (!data.valid) {
+                document.getElementById('error-current_password').innerText = "Identidad no válida: Contraseña incorrecta";
+                hasError = true;
+            }
+
+            if (newPass.length < 8) {
+                document.getElementById('error-password').innerText = "El protocolo exige mínimo 8 caracteres";
+                hasError = true;
+            }
+
+            if (newPass !== confirmPass) {
+                document.getElementById('error-password_confirmation').innerText = "Las credenciales no coinciden";
+                hasError = true;
+            }
+
+            if (hasError) {
+                Swal.close();
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ACCESO CONCEDIDO',
+                    text: 'Actualizando base de datos...',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    background: '#05080f',
+                    color: '#fff'
+                }).then(() => {
+                    form.submit();
+                });
+            }
+
+        } catch (e) {
+            Swal.fire({ icon: 'error', title: 'FALLO DE SISTEMA', text: 'Error en la conexión.', background: '#05080f', color: '#fff' });
+        }
+    }
+
+    document.getElementById('btn-save-pass').addEventListener('click', verificarYGuardar);
 </script>
 @endpush
