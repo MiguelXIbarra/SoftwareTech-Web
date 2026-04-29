@@ -1,5 +1,4 @@
-@extends('adminlte::page')
-
+@extends('layouts.page')
 @section('title', 'Gestión de Usuarios')
 
 @section('content_header')

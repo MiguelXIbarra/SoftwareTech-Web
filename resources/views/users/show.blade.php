@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.page')
 @section('title', 'Perfil de Usuario')
 
 @section('content')

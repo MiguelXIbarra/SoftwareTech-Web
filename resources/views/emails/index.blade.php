@@ -1,5 +1,71 @@
-@extends('adminlte::page')
+@extends('layouts.page')
 @section('title', 'Bandeja de Entrada')
+
+@section('css')
+<style>
+    .email-card {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: none !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .email-card:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        transform: translateX(5px);
+        border-left: 4px solid #4472f1 !important;
+    }
+
+    /* CONTENEDOR DE ACCIONES TRANSPARENTE */
+    .action-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    /* BOTÓN CON EFECTO GLOW (Sin cuadro negro) */
+    .btn-glow {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 6px 10px;
+        border-radius: 6px;
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+    }
+
+    .btn-glow:hover {
+        border-color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-glow i {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-glow:hover i {
+        transform: scale(1.1);
+    }
+
+    .btn-redactar {
+        background-color: #4472f1;
+        border-radius: 20px;
+        padding: 6px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-redactar:hover {
+        background-color: #355fd1;
+        box-shadow: 0 0 20px rgba(68, 114, 241, 0.5);
+        transform: scale(1.05);
+    }
+</style>
+@endsection
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center px-3">
@@ -83,68 +149,27 @@
 </div>
 @endsection
 
-@section('css')
-<style>
-    .email-card {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: none !important;
-        border-radius: 8px;
-        transition: all 0.3s ease;
+@section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(formId) {
+        Swal.fire({
+            title: '¿Eliminar correo?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4472f1', // Azul Software Tech
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            background: '#1a222b', // Fondo oscuro
+            color: '#ffffff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        })
     }
-
-    .email-card:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        transform: translateX(5px);
-        border-left: 4px solid #4472f1 !important;
-    }
-
-    /* CONTENEDOR DE ACCIONES TRANSPARENTE */
-    .action-container {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-    }
-
-    /* BOTÓN CON EFECTO GLOW (Sin cuadro negro) */
-    .btn-glow {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 6px 10px;
-        border-radius: 6px;
-        color: inherit;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-decoration: none;
-    }
-
-    .btn-glow:hover {
-        border-color: rgba(255, 255, 255, 0.4);
-        background: rgba(255, 255, 255, 0.05);
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-glow i {
-        transition: transform 0.3s ease;
-    }
-
-    .btn-glow:hover i {
-        transform: scale(1.1);
-    }
-
-    .btn-redactar {
-        background-color: #4472f1;
-        border-radius: 20px;
-        padding: 6px 20px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-redactar:hover {
-        background-color: #355fd1;
-        box-shadow: 0 0 20px rgba(68, 114, 241, 0.5);
-        transform: scale(1.05);
-    }
-</style>
+</script>
 @endsection
+

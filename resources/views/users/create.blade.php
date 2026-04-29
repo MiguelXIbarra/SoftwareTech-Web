@@ -1,5 +1,4 @@
-@extends('adminlte::page')
-
+@extends('layouts.page')
 @section('title', 'Nuevo Usuario')
 
 @push('css')

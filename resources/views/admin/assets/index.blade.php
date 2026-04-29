@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.page')
 
 @section('title', 'Terminal de Archivos | Software Tech')
 
