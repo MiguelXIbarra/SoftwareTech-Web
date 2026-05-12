@@ -745,6 +745,39 @@
         box-shadow: 0 0 20px rgba(68, 114, 241, 0.5);
         transform: scale(1.05);
     }
+
+    .dna-gradient {
+        background: linear-gradient(135deg, #00d4ff, #8a2be2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .asset-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(0, 212, 255, 0.1) !important;
+        transition: all 0.3s ease;
+    }
+
+    .asset-item:hover {
+        background: rgba(0, 212, 255, 0.05);
+        border-color: rgba(0, 212, 255, 0.4) !important;
+        transform: translateY(-5px);
+    }
+
+    .btn-glow {
+        color: #00d4ff !important;
+        border: 1px solid rgba(0, 212, 255, 0.3) !important;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .btn-glow:hover {
+        background: rgba(0, 212, 255, 0.1) !important;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
+        color: #fff !important;
+    }
 </style>
 @stop
 
@@ -764,6 +797,22 @@
         </div>
     </div>
 
+    <div class="content-wrapper">
+        @if(View::hasSection('content_header'))
+        <div class="content-header">
+            <div class="container-fluid">
+                @yield('content_header')
+            </div>
+        </div>
+        @endif
+
+        <div class="content">
+            <div class="container-fluid">
+                @yield('content')
+            </div>
+        </div>
+    </div>
+
     <footer class="main-footer">
         <strong>&copy; {{ date('Y') }} <a href="/home" style="color: #00d4ff;">SOFTWARE TECH</a> | INNOVATION LAB |
             V4.5</strong>
@@ -775,6 +824,19 @@
 @stack('js') @yield('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    @if(session('status') || session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'OPERACIÓN EXITOSA',
+            text: '{{ session("status") ?? session("success") }}',
+            background: '#05080f', 
+            color: '#fff', 
+            confirmButtonColor: '#00d4ff',
+            customClass: {
+                popup: 'border-shadow-cyan'
+            }
+        });
+    @endif
     (function() {
         const body = document.body;
         const STORAGE_KEY = 'adminlte_sidebar_compact';
@@ -964,5 +1026,19 @@
         }
     });
 }
+
+@if(session('status') || session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'OPERACIÓN EXITOSA',
+            text: '{{ session("status") ?? session("success") }}',
+            background: '#05080f', 
+            color: '#fff', 
+            confirmButtonColor: '#00d4ff',
+            customClass: {
+                popup: 'border-shadow-cyan'
+            }
+        });
+    @endif
 </script>
 @stop
