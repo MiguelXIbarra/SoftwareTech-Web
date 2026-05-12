@@ -83,7 +83,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('milestones', MilestoneController::class);
     Route::resource('payments', PaymentController::class);
     Route::resource('users', UserController::class);
+    Route::get('emails/{email}/attachment', [EmailController::class, 'attachment'])->name('emails.attachment');
     Route::resource('emails', EmailController::class);
+    Route::patch('emails/{email}/toggle-important', [EmailController::class, 'toggleImportant'])->name('emails.toggleImportant');
     Route::resource('lab_posts', LabPostController::class);
 
     Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');

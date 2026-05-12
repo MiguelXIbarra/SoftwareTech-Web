@@ -7,23 +7,55 @@
         background: rgba(255, 255, 255, 0.05) !important;
         border: none !important;
         border-radius: 8px;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
     }
 
     .email-card:hover {
         background: rgba(255, 255, 255, 0.08) !important;
-        transform: translateX(5px);
+        transform: translateX(4px);
         border-left: 4px solid #4472f1 !important;
     }
 
-    /* CONTENEDOR DE ACCIONES TRANSPARENTE */
+    .filter-panel {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: none;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .filter-panel .card-body {
+        padding: 0.6rem 0.4rem;
+    }
+
+    .filter-input {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        color: #e9ecef;
+        min-height: 38px;
+        padding: 0.45rem 0.75rem;
+        border-radius: 10px;
+    }
+
+    .filter-input:focus {
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 0.18rem;
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.55);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
     .action-container {
         display: flex;
         justify-content: flex-end;
         gap: 8px;
     }
 
-    /* BOTÓN CON EFECTO GLOW (Sin cuadro negro) */
     .btn-glow {
         background: transparent;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -33,36 +65,27 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.25s ease;
         text-decoration: none;
     }
 
     .btn-glow:hover {
-        border-color: rgba(255, 255, 255, 0.4);
+        border-color: rgba(255, 255, 255, 0.3);
         background: rgba(255, 255, 255, 0.05);
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-glow i {
-        transition: transform 0.3s ease;
-    }
-
-    .btn-glow:hover i {
-        transform: scale(1.1);
+        transform: translateY(-2px);
     }
 
     .btn-redactar {
         background-color: #4472f1;
         border-radius: 20px;
         padding: 6px 20px;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
     }
 
     .btn-redactar:hover {
         background-color: #355fd1;
-        box-shadow: 0 0 20px rgba(68, 114, 241, 0.5);
-        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(68, 114, 241, 0.35);
+        transform: scale(1.02);
     }
 </style>
 @endsection
@@ -80,6 +103,45 @@
 <div class="row justify-content-center">
     <div class="col-md-12 px-4">
 
+        {{-- FILTROS Y BÚSQUEDA --}}
+        <div class="card card-dark filter-panel mb-3">
+            <div class="card-body">
+                <form id="emails-filter-form" action="{{ route('emails.index') }}" method="GET"
+                    class="row gx-2 gy-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="filter-label">Buscar</label>
+                        <input type="text" autocomplete="off" name="q" value="{{ request('q') }}"
+                            class="form-control filter-input" placeholder="Buscar asunto o texto">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="filter-label">Remitente</label>
+                        <select name="sender_id" class="form-control filter-input">
+                            <option value="">Todos</option>
+                            @foreach($senders as $sender)
+                            <option value="{{ $sender->id }}" {{ request('sender_id')==$sender->id ? 'selected' : '' }}>
+                                {{ $sender->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="filter-label">Adjuntos</label>
+                        <select name="has_attachment" class="form-control filter-input">
+                            <option value="0" {{ request('has_attachment') ? '' : 'selected' }}>Todos</option>
+                            <option value="1" {{ request('has_attachment') ? 'selected' : '' }}>Con adjuntos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="filter-label">Destacados</label>
+                        <select name="important" class="form-control filter-input">
+                            <option value="0" {{ request('important') ? '' : 'selected' }}>Todos</option>
+                            <option value="1" {{ request('important') ? 'selected' : '' }}>Solo destacados</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {{-- ENCABEZADOS --}}
         <div class="d-none d-md-flex row mb-2 px-3 text-muted small text-uppercase text-bold"
             style="letter-spacing: 1px;">
@@ -90,61 +152,9 @@
             <div class="col-md-2 text-right px-4">Acciones</div>
         </div>
 
-        @forelse($emails as $email)
-        <div class="card shadow-sm mb-2 email-card">
-            <div class="card-body py-2 px-3">
-                <div class="row align-items-center">
-                    <div class="col-md-1 text-center">
-                        <i class="far fa-star text-muted"></i>
-                    </div>
-
-                    <div class="col-md-2">
-                        <span class="text-white font-weight-bold">{{ $email->sender->name ?? 'Sistema Tech' }}</span>
-                    </div>
-
-                    <div class="col-md-5 d-flex flex-column">
-                        <span class="text-white font-weight-bold" style="font-size: 1.05rem;">
-                            {{ $email->subject ?? 'Sin Asunto' }}
-                        </span>
-                        <span class="text-muted small text-truncate">
-                            {{ Str::limit(strip_tags($email->content), 90) }}
-                        </span>
-                    </div>
-
-                    <div class="col-md-2 text-center">
-                        <span class="text-muted small">
-                            {{ $email->created_at->format('d/m/Y H:i') }}
-                        </span>
-                    </div>
-
-                    <div class="col-md-2 text-right">
-                        <div class="action-container">
-                            <a href="{{ route('emails.show', $email->id) }}" class="btn-glow" title="Ver">
-                                <i class="fas fa-eye" style="color: #45a1b5;"></i>
-                            </a>
-                            @if($email->sender_id === Auth::id())
-                            <a href="{{ route('emails.edit', $email->id) }}" class="btn-glow" title="Editar">
-                                <i class="fas fa-edit" style="color: #ffc107;"></i>
-                            </a>
-                            <form action="{{ route('emails.destroy', $email->id) }}" method="POST"
-                                id="del-{{ $email->id }}" style="display:inline">
-                                @csrf @method('DELETE')
-                                <button type="button" class="btn-glow" onclick="confirmDelete('del-{{ $email->id }}')">
-                                    <i class="fas fa-trash text-danger"></i>
-                                </button>
-                            </form>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div id="emails-list-container">
+            @include('emails.partials.list')
         </div>
-        @empty
-        <div class="text-center py-5">
-            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-            <p class="h5 text-muted">Tu bandeja de entrada está vacía.</p>
-        </div>
-        @endforelse
     </div>
 </div>
 @endsection
@@ -158,18 +168,93 @@
             text: "Esta acción no se puede deshacer",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#4472f1', // Azul Software Tech
+            confirmButtonColor: '#4472f1',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
-            background: '#1a222b', // Fondo oscuro
+            background: '#1a222b',
             color: '#ffffff'
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById(formId).submit();
             }
-        })
+        });
     }
+
+    const filterForm = document.getElementById('emails-filter-form');
+    const emailListContainer = document.getElementById('emails-list-container');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    function debounce(fn, delay = 250) {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn(...args), delay);
+        };
+    }
+
+    function updateEmailList() {
+        const params = new URLSearchParams(new FormData(filterForm));
+        const url = `${filterForm.action}?${params.toString()}`;
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.text())
+            .then(html => {
+                emailListContainer.innerHTML = html;
+                window.history.replaceState({}, '', url);
+            })
+            .catch(error => {
+                console.error('Error al cargar correos:', error);
+            });
+    }
+
+    function toggleStar(event) {
+        const button = event.target.closest('.star-toggle');
+        if (!button) return;
+
+        const url = button.dataset.url;
+        if (!url) return;
+
+        fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.important === undefined) {
+                    throw new Error(data.error || 'No se pudo cambiar el destacado');
+                }
+
+                const icon = button.querySelector('i');
+                if (!icon) return;
+
+                if (data.important) {
+                    icon.classList.remove('far', 'text-muted');
+                    icon.classList.add('fas', 'text-warning');
+                } else {
+                    icon.classList.remove('fas', 'text-warning');
+                    icon.classList.add('far', 'text-muted');
+                }
+            })
+            .catch(error => {
+                console.error('Error al cambiar el destacado:', error);
+            });
+    }
+
+    const debouncedUpdate = debounce(updateEmailList, 250);
+
+    filterForm.querySelector('input[name="q"]').addEventListener('input', debouncedUpdate);
+    filterForm.querySelectorAll('select').forEach((select) => {
+        select.addEventListener('change', updateEmailList);
+    });
+    emailListContainer.addEventListener('click', toggleStar);
 </script>
 @endsection
-

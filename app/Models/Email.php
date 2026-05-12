@@ -17,7 +17,9 @@ class Email extends Model
         'sender_id',
         'receiver_id',
         'read_at',
-        'is_important'
+        'is_important',
+        'attachment',
+        'attachment_name'
     ];
 
     public function project()

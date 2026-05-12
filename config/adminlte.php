@@ -329,7 +329,7 @@ return [
         ],
 
         // --- SECCIÓN DE GESTIÓN ---
-        ['header' => 'ADMINISTRACIÓN'],
+        ['header' => 'GESTIÓN DE USUARIOS'],
         
         [
             'text' => 'Usuarios',
@@ -371,7 +371,7 @@ return [
         // --- SECCIÓN DE INNOVACIÓN ---
         ['header' => 'SOFTWARE TECH LAB'],
         [
-            'text' => 'Laboratorio',
+            'text' => 'Noticias',
             'icon' => 'fas fa-fw fa-flask',
             'route' => 'lab_posts.index',
         ],
