@@ -244,7 +244,7 @@
                         </li>
                         <li class="nav-item"><a class="nav-link px-3" href="{{ route('payments.index') }}">Pagos</a>
                         </li>
-                        <li class="nav-item"><a class="nav-link px-3" href="{{ route('messages.index') }}">Mensajes</a>
+                        <li class="nav-item"><a class="nav-link px-3" href="{{ route('emails.index') }}">Correo</a>
                         </li>
                         <li class="nav-item"><a class="nav-link px-3" href="{{ route('lab_posts.index') }}">Blog</a>
                         </li>
