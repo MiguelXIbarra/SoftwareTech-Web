@@ -348,7 +348,7 @@ return [
             
         ],
         [
-            'text' => 'Hitos (Milestones)',
+            'text' => 'Hitos del Proyecto',
             'icon' => 'fas fa-fw fa-flag',
             'route' => 'milestones.index',
         ],
