@@ -371,7 +371,7 @@ return [
         // --- SECCIÓN DE INNOVACIÓN ---
         ['header' => 'SOFTWARE TECH LAB'],
         [
-            'text' => 'Noticias',
+            'text' => 'Lab Posts',
             'icon' => 'fas fa-fw fa-flask',
             'route' => 'lab_posts.index',
         ],
