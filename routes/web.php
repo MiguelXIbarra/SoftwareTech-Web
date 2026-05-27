@@ -31,7 +31,7 @@ Route::get('/forgot-password', function () {
 
 Route::post('/password/email', function (Request $request) {
     $request->validate(['email' => 'required|email']);
-    
+
     $user = User::where('email', $request->email)->first();
 
     if (!$user) {
@@ -47,7 +47,7 @@ Route::post('/password/email', function (Request $request) {
 
 Route::get('/password/reset/{token}', function ($token) {
     return view('auth.passwords.reset', [
-        'token' => $token, 
+        'token' => $token,
         'email' => request()->email
     ]);
 })->name('password.reset');
@@ -58,7 +58,7 @@ Route::post('/login/check-2fa', [LoginController::class, 'check2fa'])->name('log
 Route::post('/login/2fa', [LoginController::class, 'loginWith2fa'])->name('login.2fa');
 
 Route::middleware(['auth'])->group(function () {
-    
+
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::post('/password/send-auto-reset', function () {
@@ -86,6 +86,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('emails/{email}/attachment', [EmailController::class, 'attachment'])->name('emails.attachment');
     Route::resource('emails', EmailController::class);
     Route::patch('emails/{email}/toggle-important', [EmailController::class, 'toggleImportant'])->name('emails.toggleImportant');
+    Route::get('/laboratorioID', [App\Http\Controllers\LaboratorioIDController::class, 'index'])->name('labID.index');
+    Route::get('/laboratorioID/{id}', [App\Http\Controllers\LaboratorioIDController::class, 'show'])->name('labID.show');
     Route::resource('lab_posts', LabPostController::class);
 
     Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');

@@ -26,7 +26,7 @@ class LabPostController extends Controller
     }
 
     public function store(Request $request)
-{
+    {
     $this->validate($request, ['title' => 'required', 'body' => 'required']);
 
     $post = new LabPost($request->all());
@@ -35,7 +35,7 @@ class LabPostController extends Controller
     $post->save();
 
     return redirect()->route('lab_posts.index')->with('message', 'Artículo publicado con éxito');
-}
+    }
 
     public function show($id)
     {
@@ -50,15 +50,15 @@ class LabPostController extends Controller
     }
 
     public function update(Request $request, $id)
-{
+    {
     $post = LabPost::findOrFail($id);
     $post->update($request->all());
     return redirect()->route('lab_posts.index')->with('message', 'Entrada de laboratorio actualizada');
-}
+    }
 
     public function destroy($id)
-{
+    {
     LabPost::destroy($id);
     return redirect()->route('lab_posts.index')->with('message', 'La entrada ha sido eliminada');
-}
+    }
 }

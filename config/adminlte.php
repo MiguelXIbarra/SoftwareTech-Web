@@ -371,6 +371,11 @@ return [
         // --- SECCIÓN DE INNOVACIÓN ---
         ['header' => 'SOFTWARE TECH LAB'],
         [
+            'text' => 'Laboratorio I+D',
+            'url'  => 'laboratorioID',
+            'icon' => 'fas fa-microscope',
+        ],
+        [
             'text' => 'Lab Posts',
             'icon' => 'fas fa-fw fa-flask',
             'route' => 'lab_posts.index',
