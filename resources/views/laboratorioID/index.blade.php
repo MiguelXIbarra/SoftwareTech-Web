@@ -207,7 +207,7 @@
 
     <div class="modern-tech-center">
         <div class="innovative-title">Próximamente</div>
-        <div class="tech-visible-label"><span>[</span> Software Tech // Innovation Core <span>]</span></div>
+        <div class="tech-visible-label"><span>[</span> Software Tech || Innovation Lab <span>]</span></div>
     </div>
 </div>
 @endsection
