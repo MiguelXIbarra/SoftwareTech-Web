@@ -228,8 +228,7 @@
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/home') }}">
                     <img src="{{ asset('images/SoftwareTechnologies_Logotipo01.png') }}" class="logo-circular me-3"
                         alt="Logo" style="height: 48px; width: 48px; border-radius: 50%;">
-                    <span class="text-white fw-bold" style="letter-spacing: 2px;">SOFTWARE <span
-                            style="opacity: 0.3;">TECH</span></span>
+                    <span class="text-white fw-bold" style="letter-spacing: 2px;">SOFTWARE TECH</span>
                 </a>
 
                 <div class="collapse navbar-collapse" id="navC">
