@@ -100,8 +100,8 @@
         <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <img src="{{ asset('images/SoftwareTechnologies_Logotipo01.png') }}" class="logo-circular me-3"
-                        alt="Logo" style="height: 48px; width: 48px; border-radius: 50%;">
+                    <img src="{{ asset('images/Software-Technologies_Isotipo-SinFondo.png') }}" class="logo-circular me-3"
+                        alt="Logo" style="height: 50px; width: 65px; border-radius: 50%;">
                     <span class="text-white fw-bold" style="letter-spacing: 2px;">SOFTWARE TECH</span>
                 </a>
 

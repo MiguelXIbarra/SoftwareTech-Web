@@ -3,6 +3,97 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+    /* Estilos del Navbar Fijo y Drawer Lateral */
+    .tech-navbar {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        background: rgba(3, 7, 18, 0.7) !important;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        z-index: 1050;
+    }
+
+    .brand-logo-glow {
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #ffffff !important;
+        text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+    }
+
+    .toggle-icon-glow {
+        color: #06b6d4;
+        text-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+    }
+
+    .tech-nav-link {
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7) !important;
+        letter-spacing: 2px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        padding: 8px 0;
+    }
+
+    .tech-nav-link:hover {
+        color: #06b6d4 !important;
+        text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+
+    .btn-portal-nav {
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 0.8rem;
+        font-family: monospace;
+        letter-spacing: 1.5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(138, 43, 226, 0.08);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        width: 100%;
+    }
+
+    @media (min-width: 992px) {
+        .btn-portal-nav {
+            width: auto;
+        }
+    }
+
+    .btn-portal-nav:hover {
+        border-color: #8a2be2;
+        background: rgba(138, 43, 226, 0.2);
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 991.98px) {
+        .tech-drawer {
+            background: rgba(3, 7, 18, 0.95) !important;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+            width: 280px !important;
+        }
+
+        .navbar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .tech-nav-link {
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 12px 0;
+        }
+    }
+
+    /* Contenedor Principal */
     .main-terminal {
         background: #030712 !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -30,9 +121,15 @@
         min-height: 100vh;
         display: flex;
         align-items: center;
-        padding: 160px 0 100px 0;
+        padding: 140px 20px 80px 20px;
         position: relative;
         z-index: 2;
+    }
+
+    @media (min-width: 992px) {
+        .tech-hero-section {
+            padding: 160px 0 100px 0;
+        }
     }
 
     .hero-content {
@@ -107,6 +204,15 @@
         -webkit-backdrop-filter: blur(16px);
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        justify-content: center;
+    }
+
+    @media (min-width: 576px) {
+        .btn-ohio-text {
+            width: auto;
+            justify-content: flex-start;
+        }
     }
 
     .btn-ohio-text:hover {
@@ -222,9 +328,15 @@
     .quantum-node:hover .lux-floating-label { opacity: 1; transform: translateY(-35px); }
 
     .section-wrapper {
-        padding: 120px 0;
+        padding: 80px 20px;
         position: relative;
         z-index: 3;
+    }
+
+    @media (min-width: 768px) {
+        .section-wrapper {
+            padding: 120px 0;
+        }
     }
 
     .ohio-headline-label {
@@ -280,14 +392,33 @@
     .subl-banner-card:hover .img-container { transform: scale(1.04); }
     .subl-banner-card:hover .img-container img { filter: brightness(0.25) saturate(120%); }
 
-    .card-overlay-details { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 35px; z-index: 3; background: linear-gradient(to top, rgba(3, 7, 18, 0.95) 45%, transparent 100%); }
+    .card-overlay-details { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 25px; z-index: 3; background: linear-gradient(to top, rgba(3, 7, 18, 0.95) 45%, transparent 100%); }
+
+    @media (min-width: 576px) {
+        .card-overlay-details { padding: 40px 35px; }
+    }
+
     .card-label-mono { font-family: monospace; font-size: 0.75rem; color: #06b6d4; letter-spacing: 2px; display: block; margin-bottom: 8px; font-weight: 600; }
     .card-headline-title { font-size: 1.35rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 12px; }
     .card-paragraph-desc { color: #9ca3af !important; font-size: 0.9rem; line-height: 1.6; margin-bottom: 0; }
 
-    .metrics-row { border-top: 1px solid rgba(255, 255, 255, 0.04); border-bottom: 1px solid rgba(255, 255, 255, 0.04); padding: 55px 0; margin: 20px 0 60px 0; background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-    .metric-item h4 { font-size: 2.6rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; letter-spacing: -1.5px; background: linear-gradient(to bottom, #ffffff, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .metric-item p { font-family: monospace; font-size: 0.75rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0; letter-spacing: 2px; }
+    .metrics-row { border-top: 1px solid rgba(255, 255, 255, 0.04); border-bottom: 1px solid rgba(255, 255, 255, 0.04); padding: 40px 10px; margin: 20px 0 40px 0; background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+
+    @media (min-width: 768px) {
+        .metrics-row { padding: 55px 0; margin: 20px 0 60px 0; }
+    }
+
+    .metric-item h4 { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; letter-spacing: -1.5px; background: linear-gradient(to bottom, #ffffff, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    @media (min-width: 768px) {
+        .metric-item h4 { font-size: 2.6rem; }
+    }
+
+    .metric-item p { font-family: monospace; font-size: 0.7rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0; letter-spacing: 1px; }
+
+    @media (min-width: 768px) {
+        .metric-item p { font-size: 0.75rem; letter-spacing: 2px; }
+    }
 
     .pipeline-container {
         background: rgba(255, 255, 255, 0.02) !important;
@@ -297,7 +428,11 @@
         backdrop-filter: blur(24px) saturate(160%) !important;
         -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
-        border-radius: 32px; padding: 60px; position: relative;
+        border-radius: 32px; padding: 30px 20px; position: relative;
+    }
+
+    @media (min-width: 768px) {
+        .pipeline-container { padding: 60px; }
     }
 
     .pipeline-progress-bar { height: 2px; width: 100%; background: rgba(255, 255, 255, 0.04); position: relative; margin: 40px 0; border-radius: 2px; overflow: hidden; }
@@ -309,13 +444,18 @@
     .pipeline-step-box h4 { font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .pipeline-step-box h4 span { font-family: monospace; font-size: 0.8rem; color: #06b6d4; background: rgba(6, 182, 212, 0.06); padding: 2px 8px; border-radius: 4px; }
 
-    .showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
+    .showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 50px; }
     .showcase-card { background: rgba(255, 255, 255, 0.02) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; border-top-color: rgba(255, 255, 255, 0.15) !important; border-left-color: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(24px) saturate(160%) !important; -webkit-backdrop-filter: blur(24px) saturate(160%) !important; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important; border-radius: 24px; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     .showcase-card:hover { transform: translateY(-6px); border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 50px rgba(138, 43, 226, 0.05); }
     .showcase-img-wrap { height: 240px; width: 100%; overflow: hidden; position: relative; border-bottom: 1px solid rgba(255, 255, 255, 0.04); background: #030712; }
     .showcase-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.65); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
     .showcase-card:hover .showcase-img-wrap img { transform: scale(1.04); filter: brightness(0.8); }
-    .showcase-body { padding: 35px; }
+    .showcase-body { padding: 30px 20px; }
+
+    @media (min-width: 576px) {
+        .showcase-body { padding: 35px; }
+    }
+
     .showcase-tag { font-family: monospace; font-size: 0.75rem; color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-weight: 600; }
     .showcase-title { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin-bottom: 14px; }
     .showcase-desc { font-size: 0.9rem; color: #9ca3af; line-height: 1.6; margin-bottom: 0; }
@@ -367,13 +507,74 @@
     .main-footer a {
         color: #00d4ff !important;
     }
+
+    .reveal {
+        position: relative;
+        transform: translateY(35px);
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .tech-showcase-section {
+        padding: 60px 20px;
+    }
+
+    @media (min-width: 768px) {
+        .tech-showcase-section {
+            padding: 120px 0;
+        }
+    }
 </style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top px-3 px-md-5 tech-navbar">
+    <div class="container-fluid px-0">
+        <a class="navbar-brand fw-800 tracking-wide" href="#">
+            <span class="brand-logo-glow">SOFTWARE TECH</span>
+        </a>
+
+        <button class="navbar-toggler border-0 p-2 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+            <i class="fas fa-bars fa-lg toggle-icon-glow"></i>
+        </button>
+
+        <div class="offcanvas offcanvas-end tech-drawer" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header border-bottom border-dark-subtle d-lg-none">
+                <h5 class="offcanvas-title fw-800 brand-logo-glow" id="offcanvasNavbarLabel">SOFTWARE TECH</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body p-4 p-lg-0">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-0 gap-3 gap-lg-4 align-items-lg-center">
+                    <li class="nav-item" data-bs-dismiss="offcanvas">
+                        <a class="nav-link tech-nav-link" href="#servicios">SERVICIOS</a>
+                    </li>
+                    <li class="nav-item" data-bs-dismiss="offcanvas">
+                        <a class="nav-link tech-nav-link" href="#tecnologia">TECNOLOGÍA</a>
+                    </li>
+                    <li class="nav-item" data-bs-dismiss="offcanvas">
+                        <a class="nav-link tech-nav-link" href="#proceso">PROCESO</a>
+                    </li>
+                    <li class="nav-item" data-bs-dismiss="offcanvas">
+                        <a class="nav-link tech-nav-link" href="#contacto">CONTACTO</a>
+                    </li>
+                    <li class="nav-item mt-3 mt-lg-0" data-bs-dismiss="offcanvas">
+                        <a class="btn-portal-nav" href="#">PORTAL CLIENTES</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
 
 <div class="main-terminal">
 
-    <section class="tech-hero-section container">
-        <div class="row align-items-center w-100 g-5">
-            <div class="col-12 col-lg-6">
+    <section class="tech-hero-section container px-4 px-md-0">
+        <div class="row align-items-center w-100 g-5 mx-0">
+            <div class="col-12 col-lg-6 col-xl-5 px-0">
                 <div class="hero-content">
                     <div class="hero-headline-wrap">
                         <h1 class="hero-headline">
@@ -391,7 +592,7 @@
                 </div>
             </div>
 
-            <div class="col-12 col-lg-6 d-none d-lg-block">
+            <div class="col-12 col-lg-6 col-xl-7 d-none d-lg-block">
                 <div class="logo-animation-stage">
                     <div class="energy-beam"></div>
 
@@ -427,7 +628,7 @@
     </section>
 
     @auth
-    <div class="container my-4 reveal">
+    <div class="container my-4 reveal px-4 px-md-0">
         <div class="auth-banner-panel d-flex align-items-center justify-content-between">
             <div>
                 <span style="font-family: monospace !important; font-size: 0.95rem !important; color: #a78bfa !important; font-weight: 700 !important; letter-spacing: 1px !important; display: block !important; margin-bottom: 6px !important;">NÚCLEO INICIADO // {{ Auth::user()->name }}</span>
@@ -442,7 +643,7 @@
         <span class="ohio-headline-label">Capacidades</span>
         <h2 class="text-white fw-800 mb-5" style="font-size: 2.2rem; letter-spacing: -1px;">Soluciones de software corporativo.</h2>
 
-        <div class="row g-4">
+        <div class="row g-4 mx-0">
             @php
             $servicios = [
                 ['label' => 'SISTEMAS SAAS', 'title' => 'Plataformas Web', 'desc' => 'Desarrollo de aplicaciones modulares completas full-stack estructuradas con la robustez lógica del framework Laravel.', 'img' => 'photo-1451187580459-43490279c0fa'],
@@ -453,7 +654,7 @@
             @endphp
 
             @foreach($servicios as $s)
-            <div class="col-12 col-md-6 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-3 px-0 px-md-2">
                 <div class="subl-banner-card">
                     <div class="img-container">
                         <img src="https://images.unsplash.com/{{$s['img']}}?w=600" alt="Software Tech Solution">
@@ -469,24 +670,22 @@
         </div>
     </section>
 
-    <div class="main-terminal">
-        <div class="row metrics-row text-center g-4 mx-0">
-            <div class="col-6 col-md-3 metric-item">
-                <h4>99.98%</h4>
-                <p>Uptime de Servidores</p>
-            </div>
-            <div class="col-6 col-md-3 metric-item">
-                <h4>&lt;45ms</h4>
-                <p>Tiempo de Respuesta</p>
-            </div>
-            <div class="col-6 col-md-3 metric-item">
-                <h4>100%</h4>
-                <p>Cobertura SAST Segura</p>
-            </div>
-            <div class="col-6 col-md-3 metric-item">
-                <h4>Zero-Fail</h4>
-                <p>Estructura de Datos</p>
-            </div>
+    <div class="row metrics-row text-center g-4 mx-0 reveal">
+        <div class="col-6 col-md-3 metric-item">
+            <h4>99.98%</h4>
+            <p>Uptime de Servidores</p>
+        </div>
+        <div class="col-6 col-md-3 metric-item">
+            <h4>&lt;45ms</h4>
+            <p>Tiempo de Respuesta</p>
+        </div>
+        <div class="col-6 col-md-3 metric-item">
+            <h4>100%</h4>
+            <p>Cobertura SAST Segura</p>
+        </div>
+        <div class="col-6 col-md-3 metric-item">
+            <h4>Zero-Fail</h4>
+            <p>Estructura de Datos</p>
         </div>
     </div>
 
@@ -537,24 +736,24 @@
                 <h3 class="pipeline-title text-white">Fases de despliegue estratégico.</h3>
             </div>
 
-            <div class="pipeline-progress-bar">
+            <div class="pipeline-progress-bar d-none d-md-block">
                 <div class="pipeline-progress-fill"></div>
             </div>
 
-            <div class="row g-4 mt-2">
-                <div class="col-12 col-md-4">
+            <div class="row g-4 mt-md-2 mx-0">
+                <div class="col-12 col-md-4 px-0 px-md-2">
                     <div class="pipeline-step-box">
                         <h4><span>01</span> Diagnóstico y Arquitectura</h4>
                         <p>Evaluamos la infraestructura actual de tu empresa y diseñamos la lógica del sistema sin alterar tus operaciones activas.</p>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 px-0 px-md-2">
                     <div class="pipeline-step-box">
                         <h4><span>02</span> Desarrollo y Pruebas Simuladas</h4>
                         <p>Construimos los módulos en ambientes aislados y realizamos análisis estáticos de código para garantizar cero vulnerabilidades.</p>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 px-0 px-md-2">
                     <div class="pipeline-step-box">
                         <h4><span>03</span> Despliegue Productivo</h4>
                         <p>Lanzamiento seguro a producción con soporte continuo, garantizando cero caídas en tu servicio.</p>
@@ -565,16 +764,16 @@
     </section>
 
     <section id="contacto" class="container section-wrapper reveal" style="padding: 80px 0;">
-        <div class="row justify-content-center text-center mb-5">
-            <div class="col-12 col-md-8">
+        <div class="row justify-content-center text-center mb-5 mx-0">
+            <div class="col-12 col-md-10 col-lg-8 px-4">
                 <span class="ohio-headline-label">Contacto Interno</span>
                 <h2 class="text-white fw-800" style="font-size: 2.5rem; letter-spacing: -1px;">¿Listo para escalar la infraestructura de tu negocio?</h2>
                 <p style="color: #9ca3af !important; margin-top: 1rem;">Solicita un diagnóstico de arquitectura gratuito y descubre cómo optimizar los activos digitales de tu corporación.</p>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-7">
-                <div class="pipeline-container" style="padding: 40px;">
+        <div class="row justify-content-center mx-0">
+            <div class="col-12 col-md-10 col-lg-7 px-4 px-md-0">
+                <div class="pipeline-container p-4 p-sm-5">
                     <form onsubmit="mandarWhatsApp(event)">
                         <div class="row g-3">
                             <div class="col-12 col-sm-6">
@@ -623,6 +822,7 @@
 </div>
 
 <script>
+    // Lógica del Texto Animado (Efecto Máquina de Escribir)
     document.addEventListener("DOMContentLoaded", function() {
         const target = document.getElementById("typed-target");
         const strings = [
@@ -662,14 +862,19 @@
         setTimeout(type, 400);
     });
 
+    // Animaciones Infinitas controladas por el Scroll (Subir y Bajar)
     function reveal() {
         var reveals = document.querySelectorAll(".reveal");
         for (var i = 0; i < reveals.length; i++) {
             var windowHeight = window.innerHeight;
             var elementTop = reveals[i].getBoundingClientRect().top;
+            var elementBottom = reveals[i].getBoundingClientRect().bottom;
             var elementVisible = 80;
-            if (elementTop < windowHeight - elementVisible) {
+
+            if (elementTop < windowHeight - elementVisible && elementBottom > elementVisible) {
                 reveals[i].classList.add("active");
+            } else {
+                reveals[i].classList.remove("active");
             }
         }
     }
