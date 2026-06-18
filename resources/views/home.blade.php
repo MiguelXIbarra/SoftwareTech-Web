@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('content')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
     .main-terminal {
-        background: #020408 !important;
+        background: #030712 !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         margin-top: -75px;
         overflow-x: hidden;
@@ -15,13 +15,10 @@
     .main-terminal::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at 85% 15%, rgba(138, 43, 226, 0.05) 0%, transparent 45%),
-            radial-gradient(circle at 15% 55%, rgba(0, 123, 255, 0.03) 0%, transparent 40%),
-            radial-gradient(circle at 50% 85%, rgba(138, 43, 226, 0.03) 0%, transparent 45%);
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 60%, rgba(0, 123, 255, 0.12) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 45%);
         z-index: 1;
         pointer-events: none;
     }
@@ -31,10 +28,10 @@
         top: 0 !important;
         width: 100% !important;
         z-index: 9999 !important;
-        background: rgba(2, 4, 8, 0.6) !important;
-        backdrop-filter: blur(25px) !important;
-        -webkit-backdrop-filter: blur(25px) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+        background: rgba(3, 7, 18, 0.4) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
     }
 
     .tech-hero-section {
@@ -52,7 +49,7 @@
     }
 
     .hero-headline-wrap {
-        min-height: 180px;
+        min-height: 160px;
     }
 
     .hero-headline {
@@ -66,40 +63,33 @@
 
     .hero-headline span.headline-main-row {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
     }
 
     .hero-headline .dna-gradient-text {
-        background: linear-gradient(135deg, #007bff, #8a2be2);
+        background: linear-gradient(135deg, #007bff, #06b6d4, #8a2be2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        display: block;
+        display: inline-block;
+        min-height: 1.3em;
     }
 
     .typed-cursor {
-        color: #8a2be2;
+        color: #06b6d4;
         font-weight: 300;
         animation: blink 0.7s infinite;
         margin-left: 4px;
     }
 
     @keyframes blink {
-        0% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
     }
 
     .hero-subtext {
-        font-size: 1.2rem;
-        color: #8e9aa8;
+        font-size: 1.15rem;
+        color: #9ca3af;
         font-weight: 400;
         letter-spacing: -0.2px;
         max-width: 620px;
@@ -117,22 +107,25 @@
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        background: #060913;
+        background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 16px 32px;
-        border-radius: 12px;
+        border-radius: 14px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     }
 
     .btn-ohio-text:hover {
-        border-color: rgba(138, 43, 226, 0.4);
-        box-shadow: 0 0 30px rgba(138, 43, 226, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
         transform: translateY(-2px);
     }
 
     .btn-ohio-text i {
-        color: #007bff;
+        color: #06b6d4;
         transition: transform 0.3s ease;
     }
 
@@ -141,91 +134,135 @@
         color: #8a2be2;
     }
 
-    .lux-cluster-stage {
+    .logo-animation-stage {
         position: relative;
         width: 100%;
-        height: 450px;
+        height: 500px;
         display: flex;
         align-items: center;
         justify-content: center;
-        perspective: 1200px;
+        overflow: visible;
     }
 
-    .lux-grid-floor {
-        position: absolute;
-        width: 85%;
-        height: 85%;
-        background-image:
-            linear-gradient(rgba(0, 123, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(138, 43, 226, 0.03) 1px, transparent 1px);
-        background-size: 30px 30px;
-        transform: rotateX(55deg) rotateZ(-45deg) translateZ(-40px);
-        border: 1px solid rgba(255, 255, 255, 0.01);
-        border-radius: 24px;
-        opacity: 0.8;
+    .cyber-core-container {
+        position: relative;
+        width: 190px;
+        height: 190px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 50%;
     }
 
-    .lux-glass-plate {
-        position: absolute;
-        width: 75%;
-        height: 65%;
-        background: rgba(6, 9, 19, 0.6);
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
-        border-left: 1px solid rgba(255, 255, 255, 0.02);
-        border-radius: 32px;
-        transform: rotateX(55deg) rotateZ(-45deg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: -20px 30px 60px rgba(0, 0, 0, 0.7);
-        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .lux-cluster-stage:hover .lux-glass-plate {
-        transform: rotateX(50deg) rotateZ(-40deg) translateZ(15px);
-        border-top-color: rgba(138, 43, 226, 0.3);
-        box-shadow: -30px 45px 80px rgba(0, 0, 0, 0.8);
-    }
-
-    .lux-node-system {
+    .logo-spheric-backdrop {
         position: absolute;
         width: 100%;
         height: 100%;
-        transform: rotateX(55deg) rotateZ(-45deg);
-        transform-style: preserve-3d;
-        z-index: 5;
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 50%, rgba(9, 15, 32, 0.85) 0%, rgba(3, 7, 18, 0.98) 80%);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        box-shadow:
+            0 0 35px rgba(6, 182, 212, 0.15),
+            inset 0 0 20px rgba(138, 43, 226, 0.2),
+            inset 0 0 4px rgba(255, 255, 255, 0.05);
+        z-index: 11;
         transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        animation: techPulse 4s ease-in-out infinite alternate;
     }
 
-    .lux-cluster-stage:hover .lux-node-system {
-        transform: rotateX(50deg) rotateZ(-40deg) translateZ(25px);
+    @keyframes techPulse {
+        0% {
+            border-color: rgba(6, 182, 212, 0.25);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.1), inset 0 0 20px rgba(138, 43, 226, 0.15);
+        }
+        100% {
+            border-color: rgba(138, 43, 226, 0.4);
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.2), inset 0 0 30px rgba(6, 182, 212, 0.25);
+        }
     }
 
-    .lux-core-ring {
+    .tech-logo-center img {
+        width: 70%;
+        height: 70%;
+        object-fit: contain;
+        border-radius: 50%;
+        mix-blend-mode: lighten;
+        filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.5));
+        z-index: 12;
+        transition: all 0.5s ease;
+        animation: coreFloat 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes coreFloat {
+        0% { transform: translateY(-3px) scale(1); }
+        100% { transform: translateY(3px) scale(1.03); }
+    }
+
+    .logo-animation-stage:hover .tech-logo-center {
+        transform: scale(1.06);
+        cursor: pointer;
+    }
+
+    .logo-animation-stage:hover .logo-spheric-backdrop {
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow:
+            0 0 50px rgba(6, 182, 212, 0.35),
+            inset 0 0 35px rgba(138, 43, 226, 0.4);
+    }
+
+    .logo-animation-stage:hover .tech-logo-center img {
+        filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.8)) brightness(1.1);
+    }
+
+    .circuit-ring {
         position: absolute;
         border-radius: 50%;
-        border: 1px dashed rgba(0, 123, 255, 0.15);
-        animation: spinRing 20s linear infinite;
+        border: 1px solid rgba(6, 182, 212, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
     }
 
-    @keyframes spinRing {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
+    .ring-1 {
+        width: 260px;
+        height: 260px;
+        border: 1px dashed rgba(6, 182, 212, 0.2);
+        animation: rotateClockwise 25s linear infinite;
     }
 
-    .lux-dot-anchor {
+    .ring-2 {
+        width: 360px;
+        height: 360px;
+        border: 1px dotted rgba(138, 43, 226, 0.25);
+        animation: rotateCounterClockwise 35s linear infinite;
+    }
+
+    .ring-3 {
+        width: 460px;
+        height: 460px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        animation: rotateClockwise 50s linear infinite;
+    }
+
+    .quantum-node {
         position: absolute;
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        transition: all 0.4s ease;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 15;
     }
 
-    .lux-dot-anchor::before {
+    .quantum-node::before {
         content: '';
         position: absolute;
         width: 100%;
@@ -236,82 +273,89 @@
     }
 
     @keyframes luxPulse {
-        0% {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        100% {
-            transform: scale(4);
-            opacity: 0;
-        }
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(4); opacity: 0; }
     }
 
-    .anchor-web {
-        top: 20%;
-        left: 25%;
-        background: #007bff;
-        box-shadow: 0 0 20px #007bff;
+    .node-cyan {
+        background: #06b6d4;
+        box-shadow: 0 0 12px #06b6d4, 0 0 25px rgba(6, 182, 212, 0.6);
     }
 
-    .anchor-sast {
-        top: 30%;
-        left: 75%;
+    .node-purple {
         background: #8a2be2;
-        box-shadow: 0 0 20px #8a2be2;
+        box-shadow: 0 0 12px #8a2be2, 0 0 25px rgba(138, 43, 226, 0.6);
     }
 
-    .anchor-cloud {
-        top: 75%;
-        left: 35%;
-        background: #ffffff;
-        box-shadow: 0 0 20px #ffffff;
-    }
-
-    .anchor-data {
-        top: 70%;
-        left: 70%;
+    .node-blue {
         background: #007bff;
-        box-shadow: 0 0 20px #007bff;
+        box-shadow: 0 0 12px #007bff, 0 0 25px rgba(0, 123, 255, 0.6);
+    }
+
+    .ring-1 .quantum-node:nth-child(1) { top: 0; left: 50%; transform: translate(-50%, -50%); }
+    .ring-1 .quantum-node:nth-child(2) { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
+
+    .ring-2 .quantum-node:nth-child(1) { top: 50%; left: 0; transform: translate(-50%, -50%); }
+    .ring-2 .quantum-node:nth-child(2) { top: 50%; right: 0; transform: translate(50%, -50%); }
+
+    .ring-3 .quantum-node:nth-child(1) { top: 14.6%; left: 14.6%; transform: translate(-50%, -50%); }
+    .ring-3 .quantum-node:nth-child(2) { bottom: 14.6%; right: 14.6%; transform: translate(50%, 50%); }
+
+    .energy-beam {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+        animation: beamPulse 3s ease-in-out infinite alternate;
+        z-index: 1;
+    }
+
+    @keyframes rotateClockwise {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes rotateCounterClockwise {
+        0% { transform: rotate(360deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    @keyframes beamPulse {
+        0% { transform: scale(0.85); opacity: 0.3; }
+        100% { transform: scale(1.1); opacity: 0.8; }
     }
 
     .lux-floating-label {
         position: absolute;
-        background: #060913;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(10, 15, 30, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         padding: 6px 12px;
         border-radius: 8px;
         font-family: monospace;
         font-size: 0.7rem;
-        color: #8e9aa8;
+        color: #e5e7eb;
         opacity: 0;
-        transform: translateZ(20px) translateY(10px);
-        transition: all 0.3s ease;
+        transform: translateY(10px);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         pointer-events: none;
         white-space: nowrap;
+        z-index: 20;
     }
 
-    .lux-dot-anchor:hover {
+    .quantum-node:hover {
         transform: scale(1.4);
     }
 
-    .lux-dot-anchor:hover .lux-floating-label {
+    .quantum-node:hover .lux-floating-label {
         opacity: 1;
-        transform: translateZ(30px) translateY(-30px);
-    }
-
-    .lux-laser-line {
-        position: absolute;
-        background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.2), transparent);
-        height: 1px;
-        width: 140px;
-        top: 45%;
-        left: 25%;
-        transform: rotate(35deg);
+        transform: translateY(-35px);
     }
 
     .section-wrapper {
-        padding: 120px 0;
+        padding: 100px 0;
         position: relative;
         z-index: 3;
     }
@@ -321,19 +365,37 @@
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 4px;
-        color: #8a2be2;
+        color: #06b6d4;
         margin-bottom: 20px;
         display: block;
         font-weight: 700;
     }
 
+    .auth-banner-panel {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-top-color: rgba(255, 255, 255, 0.15) !important;
+        border-left-color: rgba(255, 255, 255, 0.15) !important;
+        border-left: 5px solid #8a2be2 !important;
+        padding: 25px 35px !important;
+        border-radius: 16px !important;
+        backdrop-filter: blur(24px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4) !important;
+    }
+
     .subl-banner-card {
         position: relative;
-        border-radius: 28px;
+        border-radius: 24px;
         overflow: hidden;
         height: 430px;
-        background: #05070c;
-        border: 1px solid rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-top-color: rgba(255, 255, 255, 0.15) !important;
+        border-left-color: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(24px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
         transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -341,9 +403,7 @@
         width: 100%;
         height: 100%;
         position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
+        top: 0; left: 0; z-index: 1;
         transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -351,14 +411,13 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.12) grayscale(0.2);
+        filter: brightness(0.15) grayscale(0.2);
         transition: all 0.5s ease;
     }
 
     .subl-banner-card:hover {
-        border-color: rgba(0, 123, 255, 0.2);
-        background: #070b14;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(6, 182, 212, 0.05);
         transform: translateY(-5px);
     }
 
@@ -367,17 +426,25 @@
     }
 
     .subl-banner-card:hover .img-container img {
-        filter: brightness(0.25);
+        filter: brightness(0.25) saturate(120%);
     }
 
     .card-overlay-details {
         position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+        bottom: 0; left: 0; width: 100%;
         padding: 40px 35px;
         z-index: 3;
-        background: linear-gradient(to top, #05070c 40%, transparent 100%);
+        background: linear-gradient(to top, rgba(3, 7, 18, 0.95) 45%, transparent 100%);
+    }
+
+    .card-label-mono {
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: #06b6d4;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
     }
 
     .card-headline-title {
@@ -389,18 +456,20 @@
     }
 
     .card-paragraph-desc {
-        color: #8e9aa8 !important;
+        color: #9ca3af !important;
         font-size: 0.9rem;
         line-height: 1.6;
         margin-bottom: 0;
     }
 
     .metrics-row {
-        border-top: 1px solid rgba(255, 255, 255, 0.03);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         padding: 55px 0;
-        margin: 40px 0 80px 0;
-        background: #03050a;
+        margin: 20px 0 60px 0;
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 
     .metric-item h4 {
@@ -409,7 +478,7 @@
         color: #ffffff;
         margin-bottom: 6px;
         letter-spacing: -1.5px;
-        background: linear-gradient(to bottom, #ffffff, #8e9aa8);
+        background: linear-gradient(to bottom, #ffffff, #9ca3af);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -417,15 +486,20 @@
     .metric-item p {
         font-family: monospace;
         font-size: 0.75rem;
-        color: #4b5563;
+        color: #6b7280;
         text-transform: uppercase;
         margin-bottom: 0;
         letter-spacing: 2px;
     }
 
     .pipeline-container {
-        background: #04060b;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-top-color: rgba(255, 255, 255, 0.15) !important;
+        border-left-color: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(24px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
         border-radius: 32px;
         padding: 60px;
         position: relative;
@@ -445,7 +519,7 @@
     .pipeline-progress-bar {
         height: 2px;
         width: 100%;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.04);
         position: relative;
         margin: 40px 0;
         border-radius: 2px;
@@ -455,33 +529,28 @@
     .pipeline-progress-fill {
         height: 100%;
         width: 75%;
-        background: linear-gradient(90deg, #007bff, #8a2be2);
+        background: linear-gradient(90deg, #007bff, #06b6d4, #8a2be2);
         animation: activeCore 3s ease-in-out infinite alternate;
     }
 
     @keyframes activeCore {
-        0% {
-            opacity: 0.6;
-            width: 45%;
-        }
-
-        100% {
-            opacity: 1;
-            width: 80%;
-        }
+        0% { opacity: 0.6; width: 45%; }
+        100% { opacity: 1; width: 80%; }
     }
 
     .pipeline-step-box {
-        padding: 20px;
-        background: #060911;
-        border: 1px solid rgba(255, 255, 255, 0.01);
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.01) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
         border-radius: 16px;
         transition: all 0.3s ease;
     }
 
     .pipeline-step-box:hover {
-        border-color: rgba(0, 123, 255, 0.15);
-        background: #080d1a;
+        border-color: rgba(6, 182, 212, 0.2);
+        background: rgba(255, 255, 255, 0.03);
     }
 
     .pipeline-step-box h4 {
@@ -497,21 +566,21 @@
     .pipeline-step-box h4 span {
         font-family: monospace;
         font-size: 0.8rem;
-        color: #007bff;
-        background: rgba(0, 123, 255, 0.06);
+        color: #06b6d4;
+        background: rgba(6, 182, 212, 0.06);
         padding: 2px 8px;
         border-radius: 4px;
     }
 
     .pipeline-step-box p {
         font-size: 0.88rem;
-        color: #8e9aa8;
+        color: #9ca3af;
         line-height: 1.6;
         margin-bottom: 0;
     }
 
     .tech-showcase-section {
-        padding: 120px 0 60px 0;
+        padding: 100px 0 40px 0;
     }
 
     .showcase-grid {
@@ -522,8 +591,13 @@
     }
 
     .showcase-card {
-        background: #04060b;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-top-color: rgba(255, 255, 255, 0.15) !important;
+        border-left-color: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(24px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
         border-radius: 24px;
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -531,56 +605,58 @@
 
     .showcase-card:hover {
         transform: translateY(-6px);
-        border-color: rgba(138, 43, 226, 0.2);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 50px rgba(138, 43, 226, 0.05);
     }
 
     .showcase-img-wrap {
-        height: 220px;
+        height: 240px;
         width: 100%;
         overflow: hidden;
         position: relative;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.01);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        background: #030712;
     }
 
     .showcase-img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.6);
+        filter: brightness(0.65);
         transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .showcase-card:hover .showcase-img-wrap img {
-        transform: scale(1.05);
+        transform: scale(1.04);
         filter: brightness(0.8);
     }
 
     .showcase-body {
-        padding: 30px;
+        padding: 35px;
     }
 
     .showcase-tag {
         font-family: monospace;
         font-size: 0.75rem;
-        color: #8a2be2;
+        color: #06b6d4;
         text-transform: uppercase;
         letter-spacing: 1px;
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        font-weight: 600;
     }
 
     .showcase-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
         font-weight: 700;
         color: #ffffff;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 
     .showcase-desc {
-        font-size: 0.88rem;
-        color: #8e9aa8;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        color: #9ca3af;
+        line-height: 1.6;
         margin-bottom: 0;
     }
 
@@ -592,8 +668,13 @@
     }
 
     .infra-interactive-card {
-        background: #04060b;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-top-color: rgba(255, 255, 255, 0.15) !important;
+        border-left-color: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(24px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
         padding: 45px 35px;
         border-radius: 24px;
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -604,21 +685,17 @@
     .infra-interactive-card::after {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(138, 43, 226, 0.02) 0%, transparent 60%);
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.03) 0%, transparent 60%);
         opacity: 0;
         transition: opacity 0.4s ease;
         pointer-events: none;
     }
 
     .infra-interactive-card:hover {
-        border-color: rgba(138, 43, 226, 0.2);
-        background: #060911;
+        border-color: rgba(6, 182, 212, 0.3);
         transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
 
     .infra-interactive-card:hover::after {
@@ -642,12 +719,12 @@
     }
 
     .infra-interactive-card:hover .infra-card-title i {
-        color: #8a2be2;
+        color: #06b6d4;
         transform: scale(1.1);
     }
 
     .infra-card-desc {
-        color: #8e9aa8;
+        color: #9ca3af;
         font-size: 0.9rem;
         line-height: 1.6;
         margin-bottom: 0;
@@ -664,13 +741,23 @@
         transform: translateY(0);
     }
 
-    .site-footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.03);
-        padding: 60px 0 30px 0;
-        color: #4b5563;
-        position: relative;
-        z-index: 3;
-        background: #020408;
+    .main-footer {
+        background: #030712 !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+        padding: 20px !important;
+        font-size: 0.85rem !important;
+        color: #6b7280 !important;
+        text-align: center !important;
+    }
+
+    .main-footer strong, .main-footer a {
+        color: #9ca3af !important;
+        text-decoration: none !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .main-footer a:hover {
+        color: #06b6d4 !important;
     }
 </style>
 
@@ -683,13 +770,11 @@
                     <div class="hero-headline-wrap">
                         <h1 class="hero-headline">
                             <span class="headline-main-row">Ingeniería avanzada enfocada en:</span>
-                            <span class="dna-gradient-text" id="typed-target">arquitecturas web.</span><span
-                                class="typed-cursor">|</span>
+                            <span class="dna-gradient-text" id="typed-target">arquitecturas web.</span><span class="typed-cursor">|</span>
                         </h1>
                     </div>
                     <p class="hero-subtext">
-                        Diseñamos sistemas modulares de alto rendimiento e infraestructura blindada a la medida para la
-                        automatización operativa de tu empresa.
+                        Diseñamos sistemas modulares de alto rendimiento e infraestructura blindada a la medida para la automatización operativa de tu empresa.
                     </p>
                     <a href="https://wa.me/tu_numero" target="_blank" class="btn-ohio-text">
                         <span>Iniciar Consultoría Técnica</span>
@@ -699,24 +784,40 @@
             </div>
 
             <div class="col-12 col-lg-6 d-none d-lg-block">
-                <div class="lux-cluster-stage">
-                    <div class="lux-grid-floor"></div>
-                    <div class="lux-glass-plate"></div>
-                    <div class="lux-node-system">
-                        <div class="lux-core-ring" style="width: 180px; height: 180px; top: 25%; left: 25%;"></div>
-                        <div class="lux-laser-line"></div>
-                        <div class="lux-dot-anchor anchor-web">
+                <div class="logo-animation-stage">
+                    <div class="energy-beam"></div>
+
+                    <div class="circuit-ring ring-1">
+                        <div class="quantum-node node-blue">
                             <div class="lux-floating-label">Laravel Full-Stack Engine</div>
                         </div>
-                        <div class="lux-dot-anchor anchor-sast">
-                            <div class="lux-floating-label">SAST Shield Active</div>
-                        </div>
-                        <div class="lux-dot-anchor anchor-cloud">
-                            <div class="lux-floating-label">Cloud Cluster Node</div>
-                        </div>
-                        <div class="lux-dot-anchor anchor-data">
+                        <div class="quantum-node node-cyan">
                             <div class="lux-floating-label">Data Pipeline Core</div>
                         </div>
+                    </div>
+
+                    <div class="circuit-ring ring-2">
+                        <div class="quantum-node node-purple">
+                            <div class="lux-floating-label">SAST Shield Active</div>
+                        </div>
+                        <div class="quantum-node node-cyan">
+                            <div class="lux-floating-label">Cloud Cluster Node</div>
+                        </div>
+                    </div>
+
+                    <div class="circuit-ring ring-3">
+                        <div class="quantum-node node-blue">
+                            <div class="lux-floating-label">Automation Core</div>
+                        </div>
+                        <div class="quantum-node node-purple">
+                            <div class="lux-floating-label">Cripto Security Panel</div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-core-container">
+                        <div class="cyber-mainframe"></div>
+                        <div class="cyber-mainframe-inner"></div>
+                        <div class="cyber-core-glow"></div>
                     </div>
                 </div>
             </div>
@@ -725,12 +826,12 @@
 
     @auth
     <div class="container my-4 reveal">
-        <div class="auth-banner-panel d-flex align-items-center justify-content-between" style="background: #090d16; border: 1px solid rgba(138, 43, 226, 0.3); border-left: 5px solid #8a2be2; padding: 25px 35px; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);">
+        <div class="auth-banner-panel d-flex align-items-center justify-content-between" style="background: #090d16 !important; border: 1px solid rgba(138, 43, 226, 0.4) !important; border-left: 5px solid #8a2be2 !important; padding: 25px 35px !important; border-radius: 16px !important; box-shadow: 0 15px 35px rgba(0,0,0,0.6) !important;">
             <div>
-                <span style="font-family: monospace; font-size: 0.9rem; color: #a78bfa; font-weight: 700; letter-spacing: 1px; display: block; margin-bottom: 6px;">NÚCLEO INICIADO // {{ Auth::user()->name }}</span>
-                <p style="color: #e2e8f0 !important; font-size: 0.9rem; margin-bottom: 0; font-weight: 400; opacity: 1 !important;">Portal administrativo activo. Los módulos internos de control y gestión se encuentran enlazados de forma transparente.</p>
+                <span style="font-family: monospace !important; font-size: 0.95rem !important; color: #a78bfa !important; font-weight: 700 !important; letter-spacing: 1px !important; display: block !important; margin-bottom: 6px !important;">NÚCLEO INICIADO // {{ Auth::user()->name }}</span>
+                <p style="color: #ffffff !important; font-size: 0.9rem !important; margin-bottom: 0 !important; font-weight: 400 !important; opacity: 1 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;">Portal administrativo activo. Los módulos internos de control y gestión se encuentran enlazados de forma transparente.</p>
             </div>
-            <div style="width: 8px; height: 8px; background: #007bff; border-radius: 50%; box-shadow: 0 0 12px #007bff;"></div>
+            <div style="width: 8px; height: 8px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 12px #06b6d4;"></div>
         </div>
     </div>
     @endauth
@@ -802,22 +903,19 @@
                 <div class="col-12 col-md-4">
                     <div class="pipeline-step-box">
                         <h4><span>01</span> Desarrollo Local</h4>
-                        <p>Ambientes aislados e independientes para la programación y estructuración de la arquitectura
-                            base sin alterar sistemas activos.</p>
+                        <p>Ambientes aislados e independientes para la programación y estructuración de la arquitectura base sin alterar sistemas activos.</p>
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="pipeline-step-box">
                         <h4><span>02</span> Entorno de Pruebas</h4>
-                        <p>Fase intermedia automatizada (Staging) dedicada al análisis SAST exhaustivo y validación de
-                            flujos lógicos con datos simulados.</p>
+                        <p>Fase intermedia automatizada (Staging) dedicada al análisis SAST exhaustivo y validación de flujos lógicos con datos simulados.</p>
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="pipeline-step-box">
                         <h4><span>03</span> Despliegue Productivo</h4>
-                        <p>Lanzamiento seguro y optimizado a servidores reales de producción, garantizando cero caídas
-                            de servicio de cara al cliente.</p>
+                        <p>Lanzamiento seguro y optimizado a servidores reales de producción, garantizando cero caídas de servicio de cara al cliente.</p>
                     </div>
                 </div>
             </div>
@@ -826,61 +924,44 @@
 
     <section class="tech-showcase-section container reveal">
         <span class="ohio-headline-label">Showcase</span>
-        <h2 class="text-white fw-800" style="font-size: 2.2rem; letter-spacing: -1px;">Módulos e Infraestructura
-            Desarrollada.</h2>
+        <h2 class="text-white fw-800" style="font-size: 2.2rem; letter-spacing: -1px;">Módulos e Infraestructura Desarrollada.</h2>
 
         <div class="showcase-grid">
             <div class="showcase-card">
                 <div class="showcase-img-wrap">
-                    <img src="{{ asset('images/Oraculo_Logotipo_ConFondo_SoftwareTechnologies.png') }}"
-                        alt="Software Tech IA Oráculo">
+                    <img src="{{ asset('images/Oraculo_Logotipo_ConFondo_SoftwareTechnologies.png') }}" alt="Software Tech IA Oráculo">
                 </div>
                 <div class="showcase-body">
-                    <span class="showcase-tag">Oráculo</span>
-                    <h3 class="showcase-title">Inteligencia Artificial</h3>
-                    <p class="showcase-desc">Agente cognitivo especializado en auditoría estática avanzada y
-                        optimización
-                        sintáctica. Ejecuta flujos automatizados de depuración y análisis predictivo de código fuente
-                        para
-                        garantizar despliegues productivos con tolerancia cero a fallos de compilación y
-                        vulnerabilidades
-                        lógicas estructurales.</p>
+                    <span class="showcase-tag">Software Tech Oráculo</span>
+                    <h3 class="showcase-title">Oraculo Chronos Engine</h3>
+                    <p class="showcase-desc">Agente cognitivo avanzado que automatiza flujos de depuración y optimización sintáctica. Analiza de manera predictiva el código fuente para erradicar errores de compilación y fallas de seguridad lógicas antes del despliegue productivo.</p>
                 </div>
             </div>
 
             <div class="showcase-card">
                 <div class="showcase-img-wrap">
-                    <img src="{{ asset('images/Guardian_Logotipo_ConFondo_SoftwareTechnologies.png') }}"
-                        alt="Software Tech Guardián">
+                    <img src="{{ asset('images/Guardian_Logotipo_ConFondo_SoftwareTechnologies.png') }}" alt="Software Tech Guardián">
                 </div>
                 <div class="showcase-body">
-                    <span class="showcase-tag">Guardián</span>
-                    <h3 class="showcase-title">Core de Seguridad</h3>
-                    <p class="showcase-desc">Núcleo perimetral dedicado al blindaje criptográfico de metadatos y activos
-                        digitales corporativos. Mitiga proactivamente vectores de ataque, inyecciones maliciosas y
-                        filtraciones, estableciendo un estándar hermético para la persistencia e integridad de datos
-                        sensibles de tus clientes.</p>
+                    <span class="showcase-tag">Software Tech Guardián</span>
+                    <h3 class="showcase-title">Guardian Code-Shield</h3>
+                    <p class="showcase-desc">Núcleo perimetral dedicado al blindaje criptográfico de metadatos y bases de datos corporativas. Neutraliza virus, malware y accesos no autorizados, garantizando la máxima integridad y persistencia segura de la información de los clientes.</p>
                 </div>
             </div>
 
             <div class="showcase-card">
                 <div class="showcase-img-wrap">
-                    <img src="{{ asset('images/Nexus_Logotipo_ConFondo_SoftwareTechnologies.png') }}"
-                        alt="Software Tech Nexus">
+                    <img src="{{ asset('images/Nexus_Logotipo_ConFondo_SoftwareTechnologies.png') }}" alt="Software Tech Nexus">
                 </div>
                 <div class="showcase-body">
-                    <span class="showcase-tag">Nexus</span>
-                    <h3 class="showcase-title">Predicción de Datos</h3>
-                    <p class="showcase-desc">Motor inteligente de automatización de flujos y control de tiempos
-                        operativos.
-                        Optimiza de manera exponencial la gestión de inventarios y control de stock en almacenes
-                        complejos,
-                        transformando procesos manuales críticos de horas en ciclos de ejecución eficientes de minutos.
-                    </p>
+                    <span class="showcase-tag">Software Tech Nexus</span>
+                    <h3 class="showcase-title">Nexus Blueprint Studio</h3>
+                    <p class="showcase-desc">Motor automatizado de arquitectura que compila plataformas web, aplicaciones y APIs en minutos mediante lenguaje natural. Elimina la barrera técnica para creadores digitales con despliegues instantáneos y acelera la producción en entornos corporativos.</p>
                 </div>
             </div>
         </div>
     </section>
+
     <section class="container section-wrapper reveal" style="padding-bottom: 120px;">
         <span class="ohio-headline-label">Infraestructura</span>
         <h2 class="text-white fw-800" style="font-size: 2.2rem; letter-spacing: -1px;">Estándar operativo.</h2>
@@ -890,32 +971,28 @@
                 <h3 class="infra-card-title">
                     <i class="fas fa-rocket"></i> Misión de Estabilidad
                 </h3>
-                <p class="infra-card-desc">Acelerar la transformación digital mediante el despliegue de lógicas web
-                    limpias, modulares e inmunes al fallo de concurrencia.</p>
+                <p class="infra-card-desc">Acelerar la transformación digital mediante el despliegles de lógicas web limpias, modulares e inmunes al fallo de concurrencia.</p>
             </div>
 
             <div class="infra-interactive-card">
                 <h3 class="infra-card-title">
                     <i class="fas fa-eye"></i> Visión Tecnológica
                 </h3>
-                <p class="infra-card-desc">Establecer a Software Tech como el sello de confianza definitivo en
-                    ingeniería de sistemas avanzados y ciberseguridad corporativa.</p>
+                <p class="infra-card-desc">Establecer a Software Tech como el sello de confianza definitivo en ingeniería de sistemas avanzados y ciberseguridad corporativa.</p>
             </div>
 
             <div class="infra-interactive-card">
                 <h3 class="infra-card-title">
                     <i class="fas fa-lock"></i> Integridad Criptográfica
                 </h3>
-                <p class="infra-card-desc">Garantizar una transparencia absoluta en la ingeniería de bases de datos,
-                    resguardando los activos lógicos corporativos bajo blindaje preventivo.</p>
+                <p class="infra-card-desc">Garantizar una transparencia absoluta en la ingeniería de bases de datos, resguardando los activos lógicos corporativos bajo blindaje preventivo.</p>
             </div>
 
             <div class="infra-interactive-card">
                 <h3 class="infra-card-title">
                     <i class="fas fa-bolt"></i> Agilidad Operativa
                 </h3>
-                <p class="infra-card-desc">Ejecución fluida mediante pipelines de integración continua, reduciendo
-                    drásticamente los tiempos muertos en entornos productivos.</p>
+                <p class="infra-card-desc">Ejecución fluida mediante pipelines de integración continua, reduciendo drásticamente los tiempos muertos en entornos productivos.</p>
             </div>
         </div>
     </section>
