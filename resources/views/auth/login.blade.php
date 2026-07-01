@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -141,7 +142,7 @@
                 <i class="fas fa-exclamation-circle" style="color: #ef4444; margin-top: 3px;"></i>
                 <div>
                     @foreach ($errors->all() as $error)
-                        {{ $error }}
+                        {{ $error }}<br>
                     @endforeach
                 </div>
             </div>

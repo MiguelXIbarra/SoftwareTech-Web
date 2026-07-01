@@ -4,30 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model
 {
-
-    use SoftDeletes;
-    
-    protected $dates = ['deleted_at']; 
-
     protected $fillable = [
-        'client_id',
-        'title',
-        'description',
-        'category',
-        'status',
+        'nombre',
+        'servicio',
+        'user_id',
+        'developer_id',
+        'estado',
+        'progreso',
+        'siguiente_entrega',
+        'priority',
+        'clickup_list_id'
     ];
 
-    public function client(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'client_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function assets()
+    public function developer(): BelongsTo
     {
-        return $this->morphMany(\App\Models\Asset::class, 'assetable');
+        return $this->belongsTo(User::class, 'developer_id');
     }
 }

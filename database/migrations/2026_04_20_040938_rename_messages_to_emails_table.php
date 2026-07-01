@@ -6,23 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
+        if (Schema::hasTable('messages') && !Schema::hasTable('emails')) {
+            Schema::rename('messages', 'emails');
+        }
+
         Schema::table('emails', function (Blueprint $table) {
-            if (!Schema::hasColumn('emails', 'subject')) {
-                $table->string('subject')->after('id')->default('Sin Asunto');
-            }
-            if (!Schema::hasColumn('emails', 'is_important')) {
-                $table->boolean('is_important')->after('content')->default(false);
-            }
+            $table->string('subject')->default('Sin Asunto')->after('id');
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('emails', function (Blueprint $table) {
-            $table->dropColumn(['subject', 'is_important']);
-        });
-        Schema::rename('emails', 'messages');
+        if (Schema::hasTable('emails')) {
+            Schema::table('emails', function (Blueprint $table) {
+                $table->dropColumn('subject');
+            });
+
+            Schema::rename('emails', 'messages');
+        }
     }
 };

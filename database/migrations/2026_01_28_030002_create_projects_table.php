@@ -6,25 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->string('title');
-            $table->text('description');
-            $table->enum('category', ['IA', 'Web', 'Mobile', 'Video Games']);
-            $table->enum('status', ['Lead', 'In Progress', 'Testing', 'Completed'])->default('Lead');
+            $table->string('nombre');
+            $table->string('modulo');
+
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+
+            $table->foreignId('developer_id')->nullable()->constrained('users')->onDelete('set null');
+
+            $table->string('estado')->default('');
+            $table->integer('progreso')->default(0);
+            $table->date('siguiente_entrega')->nullable();
+            $table->enum('priority', ['critico', 'alto', 'medio', 'bajo'])->default('medio');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('projects');

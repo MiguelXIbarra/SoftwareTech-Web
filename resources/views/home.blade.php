@@ -699,8 +699,8 @@
                     <img src="{{ asset('images/Oraculo_Logotipo_ConFondo_SoftwareTechnologies.png') }}" alt="Software Tech IA Oráculo">
                 </div>
                 <div class="showcase-body">
-                    <span class="showcase-tag">Oráculo</span>
-                    <h3 class="showcase-title">Oráculo Chronos Engine</h3>
+                    <span class="showcase-tag">Oraculo</span>
+                    <h3 class="showcase-title">Oraculo Chronos Engine</h3>
                     <p class="showcase-desc">Agente cognitivo avanzado que automatiza flujos de depuración y optimización sintáctica. Analiza de manera predictiva el código fuente para erradicar errores de compilación y fallas de seguridad lógicas antes del despliegue productivo.</p>
                 </div>
             </div>
