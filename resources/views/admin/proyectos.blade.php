@@ -675,7 +675,7 @@
                         document.getElementById('modalClient').innerText = data.user ? data.user.name : 'No asignado';
                         document.getElementById('modalLeader').innerText = data.developer ? data.developer.name : 'Sin asignar';
                         document.getElementById('modalService').innerText = data.servicio;
-                        document.getElementById('modalPriority').innerText = `// ${data.priority.toUpperCase()}`;
+                        document.getElementById('modalPriority').innerText = `${data.priority.toUpperCase()}`;
                         document.getElementById('modalStatusLabel').innerText = data.estado.toUpperCase();
 
                         document.getElementById('modalDeleteForm').action = `{{ url('/console/proyectos') }}/${data.id}`;
