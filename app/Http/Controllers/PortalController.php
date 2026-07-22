@@ -2,63 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
+use App\Models\Project;
+use App\Models\User;
 
 class PortalController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $proyectos = Project::where('user_id', $user->id)->get();
+        $user = auth()->user();
+
+        $proyectos = \App\Models\Project::where('user_id', $user->id)->get();
 
         return view('portal.dashboard', compact('proyectos'));
     }
 
-    public function adminDashboard()
-    {
-        $proyectosActivos = class_exists(Project::class) ? Project::count() : 0;
-
-        $clientesRegistrados = User::where('role', 'cliente')->where('active', 1)->count();
-        $invitacionesPendientes = User::where('role', 'cliente')->where('active', 0)->count();
-        $clientesDesactivados = User::where('role', 'cliente')->where('active', 2)->count();
-
-        return view('admin.dashboard', compact('proyectosActivos', 'clientesRegistrados', 'invitacionesPendientes', 'clientesDesactivados'));
-    }
-
     public function proyecto($id)
     {
-        $user = Auth::user();
-        $proyecto = Project::with(['user', 'developer'])
-            ->where('id', $id)
-            ->where('user_id', $user->id)
-            ->firstOrFail();
+        $user = auth()->user();
+
+        if (in_array($user->role, ['superadmin', 'admin'])) {
+            $proyecto = Project::with(['user', 'developer', 'team'])->findOrFail($id);
+        } else {
+            $proyecto = Project::with(['user', 'developer', 'team'])
+                ->where('user_id', $user->id)
+                ->findOrFail($id);
+        }
 
         return view('portal.proyecto', compact('proyecto'));
     }
 
-    public function adminClientes()
+    public function adminDashboard()
     {
-        $clientes = User::where('role', 'cliente')->orderBy('created_at', 'desc')->get();
-        return view('admin.clientes', compact('clientes'));
+        $user = auth()->user();
+
+        $totalProyectosGlobal = Project::count();
+        $promedioProgresoGlobal = $totalProyectosGlobal > 0 ? round(Project::avg('progreso'), 1) : 0;
+
+        $fasesGlobal = [
+            'proyectosProspecto'   => Project::where('estado', 'Prospecto')->count(),
+            'proyectosDesarrollo'  => Project::where('estado', 'En Desarrollo')->count(),
+            'proyectosPruebas'     => Project::where('estado', 'En Pruebas')->count(),
+            'proyectosFinalizados' => Project::where('estado', 'Finalizado')->count(),
+        ];
+
+        $totalPorFasesGlobal = array_sum($fasesGlobal);
+
+        if ($user->role === 'superadmin') {
+            $proyectos = Project::with(['user', 'developer'])->get();
+            $clientesRegistrados = User::where('role', 'cliente')->count();
+            $proyectosActivos = Project::whereIn('estado', ['En Desarrollo', 'En Pruebas'])->count();
+            $invitacionesPendientes = 0;
+        } else {
+            $proyectos = $user->proyectos()->with(['user', 'developer'])->get();
+            $clientesRegistrados = 0;
+            $proyectosActivos = $proyectos->whereIn('estado', ['En Desarrollo', 'En Pruebas'])->count();
+            $invitacionesPendientes = 0;
+        }
+
+        return view('admin.dashboard', compact(
+            'proyectos',
+            'clientesRegistrados',
+            'proyectosActivos',
+            'invitacionesPendientes',
+            'totalProyectosGlobal',
+            'promedioProgresoGlobal',
+            'fasesGlobal',
+            'totalPorFasesGlobal'
+        ));
     }
 
     public function adminProyectos()
     {
-        $proyectos = Project::with(['user', 'developer'])
-            ->orderByRaw("FIELD(priority, 'critico', 'alto', 'medio', 'bajo') ASC")
-            ->get();
+        $user = auth()->user();
+
+        if ($user->role === 'superadmin') {
+            $proyectos = Project::with(['user', 'developer'])->get();
+        } else {
+            $proyectos = $user->proyectos()->with(['user', 'developer'])->get();
+        }
 
         return view('admin.proyectos', compact('proyectos'));
     }
 
     public function adminProyectosCrear()
     {
-        $clientes = User::where('role', 'cliente')->where('active', 1)->get();
-        $desarrolladores = User::whereIn('role', ['superadmin', 'admin', 'empleado'])->get();
+        if (!in_array(auth()->user()->role, ['superadmin', 'admin'])) {
+            abort(403);
+        }
+
+        $clientes = User::where('role', 'cliente')->get();
+        $desarrolladores = User::whereIn('role', ['admin', 'empleado'])->get();
 
         return view('admin.proyectos_crear', compact('clientes', 'desarrolladores'));
     }
@@ -66,139 +100,209 @@ class PortalController extends Controller
     public function adminProyectosStore(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'servicio' => 'required|in:IA,Desarrollo Web,Desarrollo Móvil,Ciberseguridad',
-            'user_id' => 'required|exists:users,id',
-            'developer_id' => 'required|exists:users,id',
-            'priority' => 'required|in:critico,alto,medio,bajo',
-            'siguiente_entrega' => 'nullable|date',
+            'nombre'           => 'required|string|max:255',
+            'descripcion'      => 'required|string',
+            'servicio'         => 'required|string',
+            'user_id'          => 'required|exists:users,id',
+            'developer_id'     => 'required|exists:users,id',
+            'priority'         => 'required|string',
+            'siguiente_entrega'=> 'nullable|date',
         ]);
 
-        $clickupListId = null;
-        $tokenClickUp = env('CLICK_UP_API_TOKEN');
-        $folderId = env('CLICK_UP_FOLDER_ID');
-
-        if ($tokenClickUp && $folderId) {
-            $response = Http::withHeaders([
-                'Authorization' => $tokenClickUp,
-                'Content-Type' => 'application/json',
-            ])->post("https://api.clickup.com/api/v2/folder/{$folderId}/list", [
-                'name' => $request->nombre,
-            ]);
-
-            if ($response->successful()) {
-                $clickupListId = $response->json()['id'] ?? null;
-            }
-        }
-
-        Project::create([
-            'nombre' => $request->nombre,
-            'servicio' => $request->servicio,
-            'user_id' => $request->user_id,
-            'developer_id' => $request->developer_id,
-            'priority' => $request->priority,
-            'estado' => 'Prospecto',
-            'progreso' => 0,
+        $proyecto = \App\Models\Project::create([
+            'nombre'            => $request->nombre,
+            'descripcion'       => $request->descripcion,
+            'servicio'          => $request->servicio,
+            'user_id'           => $request->user_id,
+            'developer_id'      => $request->developer_id,
+            'priority'          => $request->priority,
             'siguiente_entrega' => $request->siguiente_entrega,
-            'clickup_list_id' => $clickupListId,
+            'estado'            => 'Prospecto',
         ]);
 
-        return redirect()->route('admin.proyectos.index')->with('success', 'Proyecto registrado.');
-    }
-
-    public function handleClickUpWebhook(Request $request)
-    {
-        // Extraemos el parent_id desde el historial del evento que manda ClickUp
-        $listId = $request->input('history_items.0.parent_id') ?? $request->input('list_id');
-
-        if (!$listId) {
-            \Log::error("No se detectó ID de lista.");
-            return response()->json(['status' => 'success']);
-        }
-
-        \Log::info("1. Webhook recibido con éxito para LIST_ID: " . $listId);
-
-        // Buscamos el proyecto con el número largo (901417603153)
-        $proyecto = Project::where('clickup_list_id', $listId)->first();
-
-        if (!$proyecto) {
-            \Log::warning("2. No se encontró ningún proyecto local con el ID: " . $listId);
-            return response()->json(['status' => 'success']);
-        }
-
-        \Log::info("3. Proyecto local asociado encontrado: " . $proyecto->nombre);
-        $tokenClickUp = env('CLICK_UP_API_TOKEN');
-        $teamId = "90141374013";
-
-        $urlGlobal = "https://api.clickup.com/api/v2/team/{$teamId}/task?list_ids[]={$listId}&include_closed=true";
-
-        $response = Http::withHeaders([
-            'Authorization' => $tokenClickUp,
-        ])->get($urlGlobal);
-
-        if ($response->successful()) {
-            $tasks = $response->json()['tasks'] ?? [];
-            $totalTasks = count($tasks);
-            \Log::info("4. Total de tareas recuperadas de ClickUp: " . $totalTasks);
-
-            if ($totalTasks > 0) {
-                $closedTasks = count(array_filter($tasks, function($task) {
-                    return isset($task['status']['type']) && $task['status']['type'] === 'closed';
-                }));
-                \Log::info("5. Tareas cerradas encontradas: " . $closedTasks);
-
-                $nuevoProgreso = round(($closedTasks / $totalTasks) * 100);
-                $proyecto->progreso = $nuevoProgreso;
-
-                if ($nuevoProgreso >= 100) {
-                    $proyecto->estado = 'Finalizado';
-                } elseif ($nuevoProgreso > 0 && strtolower($proyecto->estado) === 'prospecto') {
-                    $proyecto->estado = 'En Desarrollo';
-                }
-
-                $proyecto->save();
-                \Log::info("6. ¡ÉXITO! Base de datos actualizada con progreso: " . $nuevoProgreso);
-            }
-        } else {
-            \Log::error("Error al consultar tareas en ClickUp. Status: " . $response->status());
-        }
-
-        return response()->json(['status' => 'success']);
-    }
-
-    public function updateStatus(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:projects,id',
-            'estado' => 'required|string'
+        $proyecto->team()->attach($request->developer_id, [
+            'importancia'     => ucfirst($request->priority),
+            'sueldo_proyecto' => 0,
         ]);
 
-        $proyecto = Project::findOrFail($request->id);
-        $proyecto->estado = $request->estado;
-        $proyecto->save();
-
-        return response()->json(['success' => true]);
-    }
-
-    public function destroy($id)
-    {
-        $proyecto = Project::findOrFail($id);
-        $tokenClickUp = env('CLICK_UP_API_TOKEN');
-
-        if ($tokenClickUp && $proyecto->clickup_list_id) {
-            Http::withHeaders([
-                'Authorization' => $tokenClickUp,
-            ])->delete("https://api.clickup.com/api/v2/list/{$proyecto->clickup_list_id}");
-        }
-
-        $proyecto->delete();
-
-        return redirect()->route('admin.proyectos.index')->with('success', 'Proyecto eliminado localmente y en ClickUp.');
+        return redirect()->route('admin.proyectos.index')
+            ->with('success', 'Proyecto registrado y asignado exitosamente.');
     }
 
     public function getProyectoJson($id)
     {
-        $proyecto = Project::with(['user', 'developer'])->findOrFail($id);
-        return response()->json($proyecto);
+        $proyecto = Project::with(['user', 'developer', 'team'])->findOrFail($id);
+
+        return response()->json([
+            'id'          => $proyecto->id,
+            'nombre'      => $proyecto->nombre,
+            'descripcion' => $proyecto->descripcion ?? 'Sin descripción técnica asignada.',
+            'servicio'    => $proyecto->servicio,
+            'estado'      => $proyecto->estado,
+            'priority'    => $proyecto->priority ?? 'medio',
+            'progreso'    => $proyecto->progreso ?? 0,
+            'user'        => $proyecto->user,
+            'developer'   => $proyecto->developer,
+            'team'        => $proyecto->team,
+        ]);
+    }
+
+    public function adminClientes()
+    {
+        if (!in_array(auth()->user()->role, ['superadmin', 'admin'])) {
+            abort(403);
+        }
+
+        $clientes = User::where('role', 'cliente')->orderBy('created_at', 'desc')->get();
+        return view('admin.clientes', compact('clientes'));
+    }
+
+    public function adminEquipo()
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403);
+        }
+
+        $miembros = User::whereIn('role', ['superadmin', 'admin', 'empleado'])
+            ->with(['corporation', 'proyectos'])
+            ->orderBy('role', 'asc')
+            ->get();
+
+        return view('admin.equipo.index', compact('miembros'));
+    }
+
+    public function adminEquipoCrear()
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403);
+        }
+
+        $proyectos = Project::all();
+        return view('admin.equipo.crear', compact('proyectos'));
+    }
+
+    public function adminEquipoStore(Request $request)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:admin,empleado',
+            'edad' => 'nullable|integer|min:18',
+            'capacity' => 'required|integer|between:0,40',
+            'proyectos' => 'nullable|array',
+        ]);
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+            'role' => $data['role'],
+        ]);
+
+        TeamCorporation::create([
+            'user_id' => $user->id,
+            'edad' => $data['edad'],
+            'capacity' => $data['capacity'],
+        ]);
+
+        $syncData = [];
+        if (!empty($request->proyectos)) {
+            foreach ($request->proyectos as $proy) {
+                if (!empty($proy['id'])) {
+                    $syncData[$proy['id']] = [
+                        'sueldo_proyecto' => $proy['sueldo'] ?? 0,
+                        'importancia' => $proy['importancia'] ?? 'Media'
+                    ];
+                }
+            }
+        }
+        $user->proyectos()->sync($syncData);
+
+        return redirect()->route('admin.equipo')->with('success', 'Miembro operativo integrado al Nexo.');
+    }
+
+    public function adminEquipoEditar($id)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403);
+        }
+
+        $miembro = User::with(['corporation', 'proyectos'])->findOrFail($id);
+
+        if (!in_array($miembro->role, ['superadmin', 'admin', 'empleado'])) {
+            abort(404);
+        }
+
+        $proyectos = Project::all();
+        return view('admin.equipo.editar', compact('miembro', 'proyectos'));
+    }
+
+    public function adminEquipoUpdate(Request $request, $id)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403);
+        }
+
+        $miembro = User::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $miembro->id,
+            'password' => 'nullable|string|min:8',
+            'role' => 'required|in:superadmin,admin,empleado',
+            'edad' => 'nullable|integer|min:18',
+            'capacity' => 'required|integer|between:0,40',
+            'proyectos' => 'nullable|array',
+        ]);
+
+        $miembro->name = $data['name'];
+        $miembro->email = $data['email'];
+        $miembro->role = $data['role'];
+        if (!empty($data['password'])) {
+            $miembro->password = bcrypt($data['password']);
+        }
+        $miembro->save();
+
+        $miembro->corporation()->updateOrCreate(
+            ['user_id' => $miembro->id],
+            ['edad' => $data['edad'], 'capacity' => $data['capacity']]
+        );
+
+        $syncData = [];
+        if (!empty($request->proyectos)) {
+            foreach ($request->proyectos as $proy) {
+                if (!empty($proy['id'])) {
+                    $syncData[$proy['id']] = [
+                        'sueldo_proyecto' => $proy['sueldo'] ?? 0,
+                        'importancia' => $proy['importancia'] ?? 'Media'
+                    ];
+                }
+            }
+        }
+        $miembro->proyectos()->sync($syncData);
+
+        return redirect()->route('admin.equipo')->with('success', 'Ecosistema de personal actualizado.');
+    }
+
+    public function adminEquipoDestroy($id)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403);
+        }
+
+        $miembro = User::findOrFail($id);
+
+        if ($miembro->id === auth()->id()) {
+            abort(400);
+        }
+
+        $miembro->delete();
+
+        return redirect()->route('admin.equipo')->with('success', 'Registro purgado del sistema.');
     }
 }

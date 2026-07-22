@@ -2,23 +2,12 @@
 
 @section('content')
 @php
-    // --- ÚNICAMENTE MÉTRICAS DE GRÁFICOS (Sincronizadas con el controlador) ---
-    $totalProyectos = \App\Models\Project::count();
-    $promedioProgreso = $totalProyectos > 0 ? round(\App\Models\Project::avg('progreso'), 1) : 0;
-
-    $proyectosProspecto = \App\Models\Project::where('estado', 'Prospecto')->count();
-    $proyectosDesarrollo = \App\Models\Project::where('estado', 'En Desarrollo')->count();
-    $proyectosPruebas = \App\Models\Project::where('estado', 'En Pruebas')->count();
-    $proyectosFinalizados = \App\Models\Project::where('estado', 'Finalizado')->count();
-
-    $totalPorFases = $proyectosProspecto + $proyectosDesarrollo + $proyectosPruebas + $proyectosFinalizados;
-
     $circunferencia = 2 * 3.14159265359 * 70;
 
-    $pctProspecto = $totalPorFases > 0 ? $proyectosProspecto / $totalPorFases : 0;
-    $pctDesarrollo = $totalPorFases > 0 ? $proyectosDesarrollo / $totalPorFases : 0;
-    $pctPruebas = $totalPorFases > 0 ? $proyectosPruebas / $totalPorFases : 0;
-    $pctFinalizados = $totalPorFases > 0 ? $proyectosFinalizados / $totalPorFases : 0;
+    $pctProspecto = $totalPorFasesGlobal > 0 ? $fasesGlobal['proyectosProspecto'] / $totalPorFasesGlobal : 0;
+    $pctDesarrollo = $totalPorFasesGlobal > 0 ? $fasesGlobal['proyectosDesarrollo'] / $totalPorFasesGlobal : 0;
+    $pctPruebas = $totalPorFasesGlobal > 0 ? $fasesGlobal['proyectosPruebas'] / $totalPorFasesGlobal : 0;
+    $pctFinalizados = $totalPorFasesGlobal > 0 ? $fasesGlobal['proyectosFinalizados'] / $totalPorFasesGlobal : 0;
 
     $dashProspecto = $pctProspecto * $circunferencia;
     $dashDesarrollo = $pctDesarrollo * $circunferencia;
@@ -310,6 +299,8 @@
         top: 0; left: 0; width: 100%; height: 2px;
         background: linear-gradient(90deg, transparent, #06b6d4, transparent);
     }
+
+    .d-flex::-webkit-scrollbar { display: none; }
 </style>
 
 <div class="admin-viewport">
@@ -369,158 +360,179 @@
                             ID Terminal: 1001-1001
                         </span>
                     </div>
+                    @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
                     <div>
                         <a href="{{ route('admin.proyectos.crear') }}" class="action-hud-btn">
                             + Iniciar Nuevo Proyecto
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
 
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-4">
-                    <div class="card-glass-neon">
-                        <span class="stat-title">
-                            <span style="width: 8px; height: 8px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 8px #06b6d4;"></span>
-                            Proyectos Activos
-                        </span>
-                        <div class="stat-number">{{ $proyectosActivos }}</div>
-                        <span class="stat-meta">Desplegados en producción</span>
+            @if(auth()->user()->role === 'superadmin')
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card-glass-neon">
+                            <span class="stat-title">
+                                <span style="width: 8px; height: 8px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 8px #06b6d4;"></span>
+                                Proyectos Activos
+                            </span>
+                            <div class="stat-number">{{ $proyectosActivos }}</div>
+                            <span class="stat-meta">Desplegados en producción</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-4">
-                    <div class="card-glass-neon">
-                        <span class="stat-title">
-                            <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></span>
-                            Clientes Registrados
-                        </span>
-                        <div class="stat-number">{{ $clientesRegistrados }}</div>
-                        <span class="stat-meta">Cuentas verificadas activas</span>
+                    <div class="col-md-4">
+                        <div class="card-glass-neon">
+                            <span class="stat-title">
+                                <span style="width: 8px; height: 8px; background: #a855f7; border-radius: 50%; box-shadow: 0 0 8px #a855f7;"></span>
+                                Clientes Registrados
+                            </span>
+                            <div class="stat-number">{{ $clientesRegistrados }}</div>
+                            <span class="stat-meta">Cuentas verificadas activas</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-4">
-                    <div class="card-glass-neon">
-                        <span class="stat-title">
-                            <span style="width: 8px; height: 8px; background: #a855f7; border-radius: 50%; box-shadow: 0 0 8px #a855f7;"></span>
-                            Invitaciones Pendientes
-                        </span>
-                        <div class="stat-number">{{ $invitacionesPendientes }}</div>
-                        <span class="stat-meta">Esperando activación de acceso</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-panel-grid">
-
-                <div class="panel-section-box">
-                    <div class="panel-header-title">Command Room</div>
-
-                    <div class="donut-svg-container">
-                        <svg viewBox="0 0 160 160" class="w-100 h-100">
-                            <circle cx="80" cy="80" r="70" class="donut-ring" stroke="rgba(255,255,255,0.03)" />
-
-                            @if($totalPorFases > 0)
-                                <circle cx="80" cy="80" r="70" class="donut-ring"
-                                    stroke="#a855f7"
-                                    stroke-dasharray="{{ $dashProspecto }} {{ $circunferencia }}"
-                                    stroke-dashoffset="0"
-                                    style="filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.4));" />
-
-                                <circle cx="80" cy="80" r="70" class="donut-ring"
-                                    stroke="#facc15"
-                                    stroke-dasharray="{{ $dashDesarrollo }} {{ $circunferencia }}"
-                                    stroke-dashoffset="-{{ $offsetDesarrollo }}"
-                                    style="filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.4));" />
-
-                                <circle cx="80" cy="80" r="70" class="donut-ring"
-                                    stroke="#06b6d4"
-                                    stroke-dasharray="{{ $dashPruebas }} {{ $circunferencia }}"
-                                    stroke-dashoffset="-{{ $offsetPruebas }}"
-                                    style="filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.4));" />
-
-                                <circle cx="80" cy="80" r="70" class="donut-ring"
-                                    stroke="#4ade80"
-                                    stroke-dasharray="{{ $dashFinalizados }} {{ $circunferencia }}"
-                                    stroke-dashoffset="-{{ $offsetFinalizados }}"
-                                    style="filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.4));" />
-                            @else
-                                <circle cx="80" cy="80" r="70" class="donut-ring" stroke="rgba(255,255,255,0.08)" />
-                            @endif
-                        </svg>
-
-                        <div class="donut-center-text">
-                            <div class="donut-center-title">Proyectos</div>
-                            <div class="donut-center-number">{{ $totalPorFases }}</div>
-                            <div class="donut-center-label">Total</div>
+                    <div class="col-md-4">
+                        <div class="card-glass-neon">
+                            <span class="stat-title">
+                                <span style="width: 8px; height: 8px; background: #a855f7; border-radius: 50%; box-shadow: 0 0 8px #a855f7;"></span>
+                                Invitaciones Pendientes
+                            </span>
+                            <div class="stat-number">{{ $invitacionesPendientes }}</div>
+                            <span class="stat-meta">Esperando activación de acceso</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="side-metrics-wrapper">
-
-                    <div class="legend-list-container">
-
-                        <div class="custom-legend-card">
-                            <div class="legend-card-number">{{ $proyectosProspecto }}</div>
-                            <div class="legend-card-info">
-                                <div class="legend-card-title" style="color: #a855f7;">
-                                    <span class="legend-card-dot" style="background: #a855f7;"></span>
-                                    Prospectos
-                                </div>
-                                <div class="legend-card-subtitle">Propuestas bajo evaluación</div>
+                <div class="dashboard-panel-grid">
+                    <div class="panel-section-box">
+                        <div class="panel-header-title">Command Room</div>
+                        <div class="donut-svg-container">
+                            <svg viewBox="0 0 160 160" class="w-100 h-100">
+                                <circle cx="80" cy="80" r="70" class="donut-ring" stroke="rgba(255,255,255,0.03)" />
+                                @if($totalPorFasesGlobal > 0)
+                                    <circle cx="80" cy="80" r="70" class="donut-ring" stroke="#a855f7" stroke-dasharray="{{ $dashProspecto }} {{ $circunferencia }}" stroke-dashoffset="0" style="filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.4));" />
+                                    <circle cx="80" cy="80" r="70" class="donut-ring" stroke="#facc15" stroke-dasharray="{{ $dashDesarrollo }} {{ $circunferencia }}" stroke-dashoffset="-{{ $offsetDesarrollo }}" style="filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.4));" />
+                                    <circle cx="80" cy="80" r="70" class="donut-ring" stroke="#06b6d4" stroke-dasharray="{{ $dashPruebas }} {{ $circunferencia }}" stroke-dashoffset="-{{ $offsetPruebas }}" style="filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.4));" />
+                                    <circle cx="80" cy="80" r="70" class="donut-ring" stroke="#4ade80" stroke-dasharray="{{ $dashFinalizados }} {{ $circunferencia }}" stroke-dashoffset="-{{ $offsetFinalizados }}" style="filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.4));" />
+                                @else
+                                    <circle cx="80" cy="80" r="70" class="donut-ring" stroke="rgba(255,255,255,0.08)" />
+                                @endif
+                            </svg>
+                            <div class="donut-center-text">
+                                <div class="donut-center-title">Proyectos</div>
+                                <div class="donut-center-number">{{ $totalPorFasesGlobal }}</div>
+                                <div class="donut-center-label">Total</div>
                             </div>
                         </div>
-
-                        <div class="custom-legend-card">
-                            <div class="legend-card-number">{{ $proyectosDesarrollo }}</div>
-                            <div class="legend-card-info">
-                                <div class="legend-card-title" style="color: #facc15;">
-                                    <span class="legend-card-dot" style="background: #facc15;"></span>
-                                    En Desarrollo
-                                </div>
-                                <div class="legend-card-subtitle">Fase activa de sprint</div>
-                            </div>
-                        </div>
-
-                        <div class="custom-legend-card">
-                            <div class="legend-card-number">{{ $proyectosPruebas }}</div>
-                            <div class="legend-card-info">
-                                <div class="legend-card-title" style="color: #06b6d4;">
-                                    <span class="legend-card-dot" style="background: #06b6d4;"></span>
-                                    En Pruebas
-                                </div>
-                                <div class="legend-card-subtitle">QA y control de estabilidad</div>
-                            </div>
-                        </div>
-
-                        <div class="custom-legend-card">
-                            <div class="legend-card-number">{{ $proyectosFinalizados }}</div>
-                            <div class="legend-card-info">
-                                <div class="legend-card-title" style="color: #4ade80;">
-                                    <span class="legend-card-dot" style="background: #4ade80;"></span>
-                                    Finalizados
-                                </div>
-                                <div class="legend-card-subtitle">Listos para entrega</div>
-                            </div>
-                        </div>
-
                     </div>
 
-                    <div class="sprint-completion-box">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-white small fw-bold">Tasa de Completado de Sprints</span>
-                            <span class="fw-bold" style="color: #cbd5e1; font-size: 0.95rem;">{{ $promedioProgreso }}%</span>
+                    <div class="side-metrics-wrapper">
+                        <div class="legend-list-container">
+                            <div class="custom-legend-card">
+                                <div class="legend-card-number">{{ $fasesGlobal['proyectosProspecto'] }}</div>
+                                <div class="legend-card-info">
+                                    <div class="legend-card-title" style="color: #a855f7;"><span class="legend-card-dot" style="background: #a855f7;"></span>Prospectos</div>
+                                    <div class="legend-card-subtitle">Propuestas bajo evaluación</div>
+                                </div>
+                            </div>
+                            <div class="custom-legend-card">
+                                <div class="legend-card-number">{{ $fasesGlobal['proyectosDesarrollo'] }}</div>
+                                <div class="legend-card-info">
+                                    <div class="legend-card-title" style="color: #facc15;"><span class="legend-card-dot" style="background: #facc15;"></span>En Desarrollo</div>
+                                    <div class="legend-card-subtitle">Fase activa de sprint</div>
+                                </div>
+                            </div>
+                            <div class="custom-legend-card">
+                                <div class="legend-card-number">{{ $fasesGlobal['proyectosPruebas'] }}</div>
+                                <div class="legend-card-info">
+                                    <div class="legend-card-title" style="color: #06b6d4;"><span class="legend-card-dot" style="background: #06b6d4;"></span>En Pruebas</div>
+                                    <div class="legend-card-subtitle">QA y control de estabilidad</div>
+                                </div>
+                            </div>
+                            <div class="custom-legend-card">
+                                <div class="legend-card-number">{{ $fasesGlobal['proyectosFinalizados'] }}</div>
+                                <div class="legend-card-info">
+                                    <div class="legend-card-title" style="color: #4ade80;"><span class="legend-card-dot" style="background: #4ade80;"></span>Finalizados</div>
+                                    <div class="legend-card-subtitle">Listos para entrega</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="progress-track-tech">
-                            <div class="progress-bar-neon" style="width: {{ $promedioProgreso }}%"></div>
+                        <div class="sprint-completion-box">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-white small fw-bold">Tasa de Completado de Sprints</span>
+                                <span class="fw-bold" style="color: #cbd5e1; font-size: 0.95rem;">{{ $promedioProgresoGlobal }}%</span>
+                            </div>
+                            <div class="progress-track-tech">
+                                <div class="progress-bar-neon" style="width: {{ $promedioProgresoGlobal }}%"></div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
+            @else
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h4 class="fw-bold text-white mb-4" style="font-size: 0.85rem; font-family: monospace; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5);">
+                            Proyectos Activos Asignados
+                        </h4>
 
-            </div>
+                        <div class="d-flex gap-4 overflow-auto pb-3" style="scrollbar-width: none; -ms-overflow-style: none;">
+                            @forelse($proyectos as $proy)
+                                <div style="min-width: 330px; max-width: 360px; flex: 1;">
+                                    <div class="card-glass-neon position-relative" style="border-left: 4px solid {{ $proy->priority === 'critico' ? '#ef4444' : ($proy->priority === 'alto' ? '#f97316' : ($proy->priority === 'medio' ? '#06b6d4' : '#8a2be2')) }} !important; padding: 24px 20px;">
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span style="font-family: monospace; font-size: 0.65rem; color: #22d3ee; letter-spacing: 1px; text-transform: uppercase; font-weight: 700;">
+                                                En {{ $proy->estado }}
+                                            </span>
+                                            <span class="fw-bold text-info" style="font-size: 0.8rem; font-family: monospace;">
+                                                {{ $proy->progreso }}%
+                                            </span>
+                                        </div>
+
+                                        <h4 class="fw-bold text-white mb-3" style="font-size: 1.15rem; letter-spacing: -0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;">
+                                            {{ $proy->nombre }}
+                                        </h4>
+
+                                        <div class="d-flex flex-column gap-2" style="font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; color: rgba(255,255,255,0.6);">
+                                            <div class="d-flex justify-content-between">
+                                                <span style="color: rgba(255,255,255,0.35); font-family: monospace;">TIPO:</span>
+                                                <span class="text-white-50 fw-semibold">{{ $proy->servicio }}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span style="color: rgba(255,255,255,0.35); font-family: monospace;">ENTREGA:</span>
+                                                <span class="text-white-50 font-mono">{{ $proy->siguiente_entrega ?? 'Por definir' }}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span style="color: rgba(255,255,255,0.35); font-family: monospace;">CLIENTE:</span>
+                                                <span class="text-white-50 fw-semibold">{{ $proy->user->name ?? 'Sin asignar' }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4 pt-2 text-end">
+                                            <a href="{{ route('admin.proyectos.index') }}" class="action-hud-btn" style="font-size: 0.65rem; padding: 6px 12px;">
+                                                Ver Kanban <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="w-100 py-5 text-center" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 35px;">
+                                    <div class="empty-icon" style="width: 65px; height: 65px; background: rgba(6, 182, 212, 0.03); border: 1px solid rgba(6, 182, 212, 0.12); color: #06b6d4; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 24px auto; box-shadow: 0 0 20px rgba(6, 182, 212, 0.05);">
+                                        <i class="fas fa-terminal"></i>
+                                    </div>
+                                    <span class="font-mono" style="color: #64748b; font-size: 0.8rem; letter-spacing: 0.5px;">
+                                        [SYSTEM_INFO]: No cuentas con proyectos activos asignados.
+                                    </span>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            @endif
         @endif
 
     </div>

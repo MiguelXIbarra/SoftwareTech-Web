@@ -227,7 +227,7 @@
                     Tu cuenta se ha sincronizado correctamente. Actualmente nuestro equipo está configurando los módulos base de tu servicio en el administrador para mapear tus despliegues.
                 </p>
                 <div class="font-mono" style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.2); letter-spacing: 1px;">
-                    ESTADO DE RED: EN_ESPERA_DE_ASIGNACION_NEXUS
+                    ESTADO DE RED: En espera de Asignación
                 </div>
             </div>
         @endif

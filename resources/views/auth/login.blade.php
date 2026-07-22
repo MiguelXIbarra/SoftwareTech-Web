@@ -31,6 +31,13 @@
         pointer-events: none;
     }
 
+    .login-wrapper {
+        max-width: 440px;
+        width: 100%;
+        position: relative;
+        z-index: 5;
+    }
+
     .login-container {
         background: rgba(255, 255, 255, 0.02) !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -41,10 +48,7 @@
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6) !important;
         border-radius: 24px;
         padding: 45px;
-        max-width: 440px;
         width: 100%;
-        position: relative;
-        z-index: 5;
     }
 
     .login-header h2 {
@@ -128,41 +132,58 @@
         align-items: flex-start;
         gap: 10px;
     }
+
+    /* ESTILO PARA EL TEXTO INFORMATIVO */
+    .login-info-text {
+        margin-top: 24px;
+        padding: 0 10px;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.45);
+        text-align: center;
+    }
 </style>
 
 <div class="login-viewport">
-    <div class="login-container">
-        <div class="login-header text-center">
-            <h2>Acceso al Sistema</h2>
-            <span>Autenticación de Terminal</span>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-header text-center">
+                <h2>Acceso al Sistema</h2>
+                <span>Autenticación de Terminal</span>
+            </div>
+
+            @if ($errors->any())
+                <div class="custom-error-panel">
+                    <i class="fas fa-exclamation-circle" style="color: #ef4444; margin-top: 3px;"></i>
+                    <div>
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}<br>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <form action="{{ route('login') }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <input type="email" name="email" class="form-control form-glass" placeholder="Correo Corporativo" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <input type="password" name="password" class="form-control form-glass" placeholder="Clave de Acceso" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn-login-submit w-100 border-0">
+                    <span>Iniciar Sesión</span>
+                    <i class="fas fa-sign-in-alt"></i>
+                </button>
+            </form>
         </div>
 
-        @if ($errors->any())
-            <div class="custom-error-panel">
-                <i class="fas fa-exclamation-circle" style="color: #ef4444; margin-top: 3px;"></i>
-                <div>
-                    @foreach ($errors->all() as $error)
-                        {{ $error }}<br>
-                    @endforeach
-                </div>
-            </div>
-        @endif
-
-        <form action="{{ route('login') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <input type="email" name="email" class="form-control form-glass" placeholder="Correo Corporativo" value="{{ old('email') }}" required autocomplete="email" autofocus>
-            </div>
-
-            <div class="mb-4">
-                <input type="password" name="password" class="form-control form-glass" placeholder="Clave de Acceso" required autocomplete="current-password">
-            </div>
-
-            <button type="submit" class="btn-login-submit w-100 border-0">
-                <span>Iniciar Sesión</span>
-                <i class="fas fa-sign-in-alt"></i>
-            </button>
-        </form>
+        <!-- TEXTO INFORMATIVO BAJO EL CUADRO -->
+        <p class="login-info-text">
+            Recuerda que para tener acceso al sistema, se debió de haber aprobado previamente la solicitud para tu proyecto empresarial. Si no lo has hecho, te invitamos a ponerte en contacto con nosotros.
+        </p>
     </div>
 </div>
 @endsection

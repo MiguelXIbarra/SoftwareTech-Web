@@ -5,61 +5,44 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Project;
 
 class User extends Authenticatable
 {
-    use SoftDeletes;
-
-    protected $dates = ['deleted_at'];
-
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'active', 'activation_token', 'profile_photo',
-        'two_factor_secret',
-        'two_factor_confirmed_at',
+        'name',
+        'email',
+        'password',
+        'role',
+        'activation_token',
+        'active',
+        'email_verified_at',
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
-        'two_factor_secret',
+        'password',
+        'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    public function setPasswordAttribute($value)
+    protected function casts(): array
     {
-        if (!empty($value)) {
-            $this->attributes['password'] = password_get_info($value)['algo'] === 0
-                ? bcrypt($value)
-                : $value;
-        }
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
-    public function getAuthPassword()
+    public function proyectos()
     {
-        if (strlen($this->password) === 64) {
-            return password_hash($this->password, PASSWORD_BCRYPT);
-        }
-
-        return $this->password;
+        return $this->belongsToMany(Project::class, 'project_user', 'user_id', 'project_id')
+                    ->withPivot('sueldo_proyecto', 'importancia')
+                    ->withTimestamps();
     }
 
-    public function adminlte_desc()
+    public function corporation()
     {
-        return 'Super Admin';
+        return $this->hasOne(TeamCorporation::class, 'user_id');
     }
-
-    public function assets()
-    {
-        return $this->morphMany(\App\Models\Asset::class, 'assetable');
-    }
-
-    public function projects(): HasMany { return $this->hasMany(Project::class, 'user_id'); }
-    public function messages(): HasMany { return $this->hasMany(Message::class, 'sender_id'); }
-    public function labPosts(): HasMany { return $this->hasMany(LabPost::class, 'author_id'); }
 }

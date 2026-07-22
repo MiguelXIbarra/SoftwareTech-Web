@@ -200,7 +200,7 @@
 
         <div class="mb-4">
             <a href="{{ route('portal.dashboard') }}" class="btn-back-portal">
-                <i class="fas fa-arrow-left"></i> Volver a la Consola
+                <i class="fas fa-arrow-left"></i> Volver al Dashboard
             </a>
         </div>
 

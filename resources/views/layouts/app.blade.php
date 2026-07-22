@@ -157,13 +157,11 @@
             box-shadow: none !important;
         }
 
-        /* Corregir el fondo de las opciones del select cuando se despliegan */
         .form-select option {
             background: #030712 !important;
             color: #fff !important;
         }
 
-        /* Mantener consistencia en el texto del placeholder deshabilitado */
         .form-select option[value=""] {
             color: rgba(255, 255, 255, 0.4) !important;
         }
@@ -175,7 +173,6 @@
             background: rgba(255, 255, 255, 0.02) !important;
         }
 
-        /* Corregir el icono del calendario nativo en inputs de fecha */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             opacity: 0.4;
@@ -218,19 +215,29 @@
                         <ul class="navbar-nav ms-auto align-items-center mb-0">
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.proyectos.index') ? 'active' : '' }}" href="{{ route('admin.proyectos.index') }}">Proyectos</a>
-                            </td>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.clientes.index') ? 'active' : '' }}" href="{{ route('admin.clientes.index') }}">Clientes</a>
-                            </td>
+                            </li>
+
+                            @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('admin.clientes.index') ? 'active' : '' }}" href="{{ route('admin.clientes.index') }}">Clientes</a>
+                                </li>
+                            @endif
+
+                            @if(auth()->user()->role === 'superadmin')
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('admin.equipo*') ? 'active' : '' }}" href="{{ route('admin.equipo') }}">Equipo</a>
+                                </li>
+                            @endif
+
                             <li class="nav-item ms-lg-4 mt-2 mt-lg-0">
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn-logout">Salir</button>
                                 </form>
-                            </td>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -251,19 +258,19 @@
                         <ul class="navbar-nav ms-auto align-items-center mb-0">
                             <li class="nav-item">
                                 <a class="nav-link" href="#servicios">Servicios</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#tecnologia">Tecnología</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#proceso">Proceso</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#contacto">Contacto</a>
-                            </td>
+                            </li>
                             <li class="nav-item ms-3">
                                 <a href="/login" class="btn-portal">Portal Clientes</a>
-                            </td>
+                            </li>
                         </ul>
                     </div>
                 </div>

@@ -22,16 +22,28 @@ Route::middleware(['auth', 'role:cliente'])->prefix('portal')->name('portal.')->
 
 Route::middleware(['auth', 'role:superadmin,admin,empleado'])->prefix('console')->name('admin.')->group(function () {
     Route::get('/dashboard', [PortalController::class, 'adminDashboard'])->name('dashboard');
-    Route::get('/clientes', [PortalController::class, 'adminClientes'])->name('clientes.index');
-    Route::post('/clientes/store', [ActivationController::class, 'storeCliente'])->name('clientes.store');
+
+    Route::middleware(['role:superadmin'])->group(function () {
+        Route::get('/equipo', [PortalController::class, 'adminEquipo'])->name('equipo');
+        Route::get('/equipo/crear', [PortalController::class, 'adminEquipoCrear'])->name('equipo.crear');
+        Route::post('/equipo/store', [PortalController::class, 'adminEquipoStore'])->name('equipo.store');
+        Route::get('/equipo/editar/{id}', [PortalController::class, 'adminEquipoEditar'])->name('equipo.editar');
+        Route::post('/equipo/update/{id}', [PortalController::class, 'adminEquipoUpdate'])->name('equipo.update');
+        Route::delete('/equipo/destroy/{id}', [PortalController::class, 'adminEquipoDestroy'])->name('equipo.destroy');
+    });
+
+    Route::middleware(['role:superadmin,admin'])->group(function () {
+        Route::get('/clientes', [PortalController::class, 'adminClientes'])->name('clientes.index');
+        Route::post('/clientes/store', [ActivationController::class, 'storeCliente'])->name('clientes.store');
+
+        Route::get('/proyectos/crear', [PortalController::class, 'adminProyectosCrear'])->name('proyectos.crear');
+        Route::post('/proyectos/store', [PortalController::class, 'adminProyectosStore'])->name('proyectos.store');
+        Route::delete('/proyectos/{id}', [PortalController::class, 'destroy'])->name('proyectos.destroy');
+    });
 
     Route::get('/proyectos', [PortalController::class, 'adminProyectos'])->name('proyectos.index');
-    Route::get('/proyectos/crear', [PortalController::class, 'adminProyectosCrear'])->name('proyectos.crear');
-    Route::post('/proyectos/store', [PortalController::class, 'adminProyectosStore'])->name('proyectos.store');
     Route::post('/proyectos/update-status', [PortalController::class, 'updateStatus'])->name('proyectos.updateStatus');
-
     Route::get('/api/proyectos/{id}', [PortalController::class, 'getProyectoJson'])->name('api.proyectos.show');
-    Route::delete('/proyectos/{id}', [PortalController::class, 'destroy'])->name('proyectos.destroy');
 });
 
 Route::post('/api/clickup/webhook', [PortalController::class, 'handleClickUpWebhook']);

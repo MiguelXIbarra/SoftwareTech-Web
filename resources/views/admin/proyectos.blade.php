@@ -333,7 +333,7 @@
                     Sprint Board & Gestión Operativa
                 </h2>
                 <p class="mx-auto mb-4 small" style="max-width: 600px; color: #94a3b8 !important;">
-                    Control centralizado de flujos de trabajo en el Módulo Nexus. Supervisa infraestructura y despliegues ágiles en tiempo real.
+                    Control centralizado de flujos intermediados por el método Kanban. Supervisa infraestructura y despliegues ágiles en tiempo real con conexión a ClickUp .
                 </p>
 
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 py-3" style="border-top: 1px solid rgba(255, 255, 255, 0.04); border-bottom: 1px solid rgba(255, 255, 255, 0.04);">
@@ -350,11 +350,13 @@
                         </div>
                     </div>
 
+                    @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
                     <div>
                         <a href="{{ route('admin.proyectos.crear') }}" class="filter-btn active" style="background: rgba(6, 182, 212, 0.15); border-color: var(--neon-cyan); color: #fff; box-shadow: 0 0 12px var(--neon-glow-cyan);">
                             + Nuevo Proyecto
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -385,7 +387,18 @@
 
                             <div class="cards-container" style="min-height: 200px;">
                                 @foreach($proyectosFiltrados as $proyecto)
-                                    <div class="kanban-card prio-border-{{ $proyecto->priority }} proyecto-card" id="project-card-{{ $proyecto->id }}" draggable="true" ondragstart="drag(event)" data-priority="{{ $proyecto->priority }}" data-id="{{ $proyecto->id }}" style="cursor: pointer;">
+                                    @php
+                                        // Validamos si el usuario actual tiene permisos de edición corporativa
+                                        $puedeGestionar = in_array(auth()->user()->role, ['superadmin', 'admin']);
+                                    @endphp
+
+                                    <div class="kanban-card prio-border-{{ $proyecto->priority }} proyecto-card"
+                                        id="project-card-{{ $proyecto->id }}"
+                                        draggable="{{ $puedeGestionar ? 'true' : 'false' }}"
+                                        @if($puedeGestionar) ondragstart="drag(event)" @endif
+                                        data-priority="{{ $proyecto->priority }}"
+                                        data-id="{{ $proyecto->id }}"
+                                        style="cursor: {{ $puedeGestionar ? 'grab' : 'pointer' }};">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                             <span class="tag-prio text-{{ $proyecto->priority }} font-mono">
                                                  {{ $proyecto->priority }}
@@ -500,7 +513,7 @@
 
                             <div class="col-12 mt-4">
                                 <span class="d-block mb-2" style="font-size: 0.75rem !important; color: #94a3b8 !important; font-weight: 500 !important; font-family: 'Plus Jakarta Sans', sans-serif !important;">
-                                    <i class="fas fa-users me-2" style="color: #00d4ff; font-size: 0.75rem;"></i>Célula operativa de desarrollo
+                                    <i class="fas fa-users me-2" style="color: #00d4ff; font-size: 0.75rem;"></i>Personal operativo asignado
                                 </span>
                                 <div class="d-flex flex-wrap gap-2" id="modalOperators" style="color: #94a3b8 !important; font-size: 0.85rem !important; font-family: 'Plus Jakarta Sans', sans-serif !important;"></div>
                             </div>
@@ -514,6 +527,7 @@
                             En desarrollo
                         </div>
 
+                        @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
                         <div class="my-4">
                             <form id="modalDeleteForm" action="/proyectos" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este proyecto? Se borrará también en ClickUp.');" style="margin: 0 !important; padding: 0 !important; background: transparent !important;">
                                 @csrf
@@ -523,6 +537,7 @@
                                 </button>
                             </form>
                         </div>
+                        @endif
 
                         <div class="mt-4">
                             <span style="font-size: 0.75rem !important; color: #94a3b8 !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-weight: 600 !important; letter-spacing: 0.5px !important; display: block !important; margin-bottom: 15px !important;">Trazabilidad de hitos de fase</span>
@@ -530,22 +545,30 @@
                             <div class="timeline-mini-jira" style="display: flex !important; flex-direction: column !important; gap: 14px !important; padding-left: 15px !important;">
 
                                 <div class="timeline-mini-item d-flex align-items-center" id="step-prospecto" style="opacity: 1 !important; padding-bottom: 0 !important; margin-bottom: 2px !important;">
-                                    <div class="timeline-mini-dot" style="background: #00d4ff !important; border: 2px solid #030712 !important; width: 8px; height: 8px;"></div>
+                                    <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 20px; height: 20px; border-radius: 50%; background: #00d4ff; color: #030712; font-size: 0.55rem; font-weight: bold;">
+                                        <i class="fas fa-check"></i>
+                                    </div>
                                     <span class="text-white small fw-semibold ms-2" style="font-size: 0.85rem !important; font-family: 'Plus Jakarta Sans', sans-serif !important;">01 / Inicialización</span>
                                 </div>
 
                                 <div class="timeline-mini-item d-flex align-items-center" id="step-desarrollo" style="opacity: 1 !important; padding-bottom: 0 !important; margin-bottom: 2px !important;">
-                                    <div class="timeline-mini-dot" style="background: #00d4ff !important; border: 2px solid #030712 !important; width: 8px; height: 8px;"></div>
+                                    <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 20px; height: 20px; border-radius: 50%; background: #00d4ff; color: #030712; font-size: 0.55rem; font-weight: bold;">
+                                        <i class="fas fa-hammer"></i>
+                                    </div>
                                     <span class="text-white small fw-semibold ms-2" style="font-size: 0.85rem !important; font-family: 'Plus Jakarta Sans', sans-serif !important;">02 / En Desarrollo</span>
                                 </div>
 
                                 <div class="timeline-mini-item d-flex align-items-center" id="step-pruebas" style="opacity: 1 !important; padding-bottom: 0 !important; margin-bottom: 2px !important;">
-                                    <div class="timeline-mini-dot" style="background: #475569 !important; border: 2px solid #030712 !important; width: 8px; height: 8px;"></div>
-                                    <span class="small fw-normal ms-2" style="font-size: 0.85rem !important; color: #64748b !important; font-family: 'Plus Jakarta Sans', sans-serif !important;">03 / En Pruebas</span>
+                                    <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 20px; height: 20px; border-radius: 50%; background: #00d4ff; color: #030712; font-size: 0.55rem; font-weight: bold; box-shadow: 0 0 8px #00d4ff;">
+                                        <i class="fas fa-vial"></i>
+                                    </div>
+                                    <span class="small fw-normal ms-2" style="font-size: 0.85rem !important; color: #cbd5e1 !important; font-family: 'Plus Jakarta Sans', sans-serif !important;">03 / En Pruebas</span>
                                 </div>
 
-                                <div class="timeline-mini-item d-flex align-items-center" id="step-finalizado" style="opacity: 1 !important; padding-bottom: 0 !important;">
-                                    <div class="timeline-mini-dot" style="background: #475569 !important; border: 2px solid #030712 !important; width: 8px; height: 8px;"></div>
+                                <div class="timeline-mini-item d-flex align-items-center" id="step-finalizado" style="opacity: 0.4 !important; padding-bottom: 0 !important;">
+                                    <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.55rem;">
+                                        <i class="fas fa-rocket"></i>
+                                    </div>
                                     <span class="small fw-normal ms-2" style="font-size: 0.85rem !important; color: #64748b !important; font-family: 'Plus Jakarta Sans', sans-serif !important;">04 / Despliegue</span>
                                 </div>
 
@@ -557,7 +580,7 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-between align-items-center" style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 15px 24px; background: rgba(5, 8, 14, 0.4);">
-                <span style="font-size: 0.65rem; color: #6c757d; letter-spacing: 0.5px;">Nexus Terminal v3.2.0 Sistemas Operando OK</span>
+                <span style="font-size: 0.65rem; color: #6c757d; letter-spacing: 0.5px;">Terminal v1.0.0 Sistemas Operando OK</span>
                 <button type="button" class="btn" data-bs-dismiss="modal" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #8892b0; font-size: 0.75rem; padding: 6px 16px; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='#8892b0';">Volver al tablero</button>
             </div>
 
@@ -602,6 +625,9 @@
 
     function drop(ev) {
         ev.preventDefault();
+        const userRole = "{{ auth()->user()->role }}";
+        if (userRole !== 'superadmin' && userRole !== 'admin') return;
+
         const column = ev.target.closest('.kanban-column');
         if (!column) return;
         column.classList.remove('drag-over');
@@ -670,7 +696,7 @@
                 fetch(`{{ url('/console/api/proyectos') }}/${projectId}`)
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('modalProjectName').innerText = data.nombre;
+                        document.getElementById('modalProjectName').innerText = data.nombre || 'SYSTEM_OFFLINE';
                         document.getElementById('modalDescription').innerText = data.descripcion || 'Sin descripción técnica asignada.';
                         document.getElementById('modalClient').innerText = data.user ? data.user.name : 'No asignado';
                         document.getElementById('modalLeader').innerText = data.developer ? data.developer.name : 'Sin asignar';
@@ -678,89 +704,100 @@
                         document.getElementById('modalPriority').innerText = `// ${data.priority.toUpperCase()}`;
                         document.getElementById('modalStatusLabel').innerText = data.estado.toUpperCase();
 
-                        document.getElementById('modalDeleteForm').action = `{{ url('/console/proyectos') }}/${data.id}`;
+                        const deleteForm = document.getElementById('modalDeleteForm');
+                        if (deleteForm) deleteForm.action = `{{ url('/console/proyectos') }}/${data.id}`;
 
                         const priorityEl = document.getElementById('modalPriority');
                         priorityEl.className = 'meta-value-modal text-uppercase ' + (data.priority === 'critico' ? 'text-danger' : 'text-info');
 
                         const operatorsContainer = document.getElementById('modalOperators');
-                        operatorsContainer.innerHTML = '';
-                        if (data.team && data.team.length > 0) {
-                            data.team.forEach(emp => {
-                                operatorsContainer.innerHTML += `<span class="badge font-mono" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); padding: 5px 10px;">${emp.name}</span>`;
-                            });
-                        } else {
-                            operatorsContainer.innerHTML = '<span style="color: #94a3b8 !important; font-size: 0.85rem !important; font-weight: 500 !important;">Célula operativa compuesta únicamente por el Líder Desarrollador.</span>';
+                        if (operatorsContainer) {
+                            operatorsContainer.innerHTML = '';
+                            if (data.team && data.team.length > 0) {
+                                data.team.forEach(emp => {
+                                    operatorsContainer.innerHTML += `<span class="badge font-mono" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); padding: 5px 10px;">${emp.name}</span>`;
+                                });
+                            } else {
+                                operatorsContainer.innerHTML = '<span style="color: #94a3b8 !important; font-size: 0.85rem !important;">Proyecto compuesto únicamente por el Líder Desarrollador.</span>';
+                            }
                         }
 
                         const progress = parseInt(data.progreso) || 0;
                         document.getElementById('modalProgressText').innerText = `${progress}%`;
 
                         const circle = document.getElementById('modalProgressCircle');
-                        const radius = circle.r.baseVal.value;
-                        const circumference = 2 * Math.PI * radius;
-                        const offset = circumference - (progress / 100) * circumference;
-                        circle.style.strokeDashoffset = offset;
+                        if (circle) {
+                            const radius = circle.r.baseVal.value;
+                            const circumference = 2 * Math.PI * radius;
+                            const offset = circumference - (progress / 100) * circumference;
+                            circle.style.strokeDashoffset = offset;
+                        }
 
-                        const estado = data.estado.toLowerCase();
+                        const estado = (data.estado || '').toLowerCase();
 
-                        document.querySelectorAll('.timeline-mini-item').forEach(item => {
-                            item.classList.remove('timeline-active');
-                            item.style.setProperty('opacity', '1', 'important');
-                            const textSpan = item.querySelector('span');
-                            if (textSpan) {
-                                textSpan.style.setProperty('color', '#94a3b8', 'important');
-                            }
-                            const dotDiv = item.querySelector('.timeline-mini-dot');
-                            if (dotDiv) {
-                                dotDiv.style.setProperty('background', '#334155', 'important');
-                                dotDiv.style.setProperty('box-shadow', 'none', 'important');
+                        ['step-prospecto', 'step-desarrollo', 'step-pruebas', 'step-finalizado'].forEach(stepId => {
+                            const item = document.getElementById(stepId);
+                            if (item) {
+                                item.style.setProperty('opacity', '0.4', 'important');
+                                const textSpan = item.querySelector('span');
+                                if (textSpan) {
+                                    textSpan.style.setProperty('color', '#64748b', 'important');
+                                    textSpan.classList.remove('fw-semibold', 'text-white');
+                                }
+                                const iconBox = item.querySelector('div');
+                                if (iconBox) {
+                                    iconBox.style.background = 'rgba(255,255,255,0.1)';
+                                    iconBox.style.color = '#fff';
+                                    iconBox.style.boxShadow = 'none';
+                                }
                             }
                         });
 
-                        const stepProspecto = document.getElementById('step-prospecto');
-                        if (stepProspecto) {
-                            stepProspecto.classList.add('timeline-active');
-                            stepProspecto.querySelector('span').style.setProperty('color', '#ffffff', 'important');
-                            stepProspecto.querySelector('.timeline-mini-dot').style.setProperty('background', '#06b6d4', 'important');
+                        function activarPaso(stepId) {
+                            const item = document.getElementById(stepId);
+                            if (item) {
+                                item.style.setProperty('opacity', '1', 'important');
+                                const textSpan = item.querySelector('span');
+                                if (textSpan) {
+                                    textSpan.style.setProperty('color', '#ffffff', 'important');
+                                    textSpan.classList.add('fw-semibold');
+                                }
+                                const iconBox = item.querySelector('div');
+                                if (iconBox) {
+                                    iconBox.style.background = '#00d4ff';
+                                    iconBox.style.color = '#030712';
+                                    iconBox.style.boxShadow = '0 0 8px #00d4ff';
+                                }
+                            }
                         }
 
+                        activarPaso('step-prospecto');
+
                         if (['en desarrollo', 'en pruebas', 'finalizado', 'completado'].includes(estado)) {
-                            const stepDesarrollo = document.getElementById('step-desarrollo');
-                            if (stepDesarrollo) {
-                                stepDesarrollo.classList.add('timeline-active');
-                                stepDesarrollo.querySelector('span').style.setProperty('color', '#ffffff', 'important');
-                                stepDesarrollo.querySelector('.timeline-mini-dot').style.setProperty('background', '#06b6d4', 'important');
-                            }
+                            activarPaso('step-desarrollo');
                         }
 
                         if (['en pruebas', 'finalizado', 'completado'].includes(estado)) {
-                            const stepPruebas = document.getElementById('step-pruebas');
-                            if (stepPruebas) {
-                                stepPruebas.classList.add('timeline-active');
-                                stepPruebas.querySelector('span').style.setProperty('color', '#ffffff', 'important');
-                                stepPruebas.querySelector('.timeline-mini-dot').style.setProperty('background', '#06b6d4', 'important');
-                            }
+                            activarPaso('step-pruebas');
                         }
 
                         if (['finalizado', 'completado'].includes(estado)) {
-                            const stepFinalizado = document.getElementById('step-finalizado');
-                            if (stepFinalizado) {
-                                stepFinalizado.classList.add('timeline-active');
-                                stepFinalizado.querySelector('span').style.setProperty('color', '#ffffff', 'important');
-                                stepFinalizado.querySelector('.timeline-mini-dot').style.setProperty('background', '#06b6d4', 'important');
-                            }
+                            activarPaso('step-finalizado');
                         }
 
                         const modalTarget = document.getElementById('projectDetailsModal');
-                        modalTarget.classList.add('show');
-                        modalTarget.style.display = 'block';
-                        document.body.classList.add('modal-open');
+                        if (modalTarget) {
+                            modalTarget.classList.add('show');
+                            modalTarget.style.display = 'block';
+                            document.body.classList.add('modal-open');
 
-                        const backdrop = document.createElement('div');
-                        backdrop.className = 'modal-backdrop fade show';
-                        backdrop.id = 'modal-backdrop-nexus';
-                        document.body.appendChild(backdrop);
+                            if (!document.getElementById('modal-backdrop-nexus')) {
+                                const backdrop = document.createElement('div');
+                                backdrop.className = 'modal-backdrop fade show';
+                                backdrop.id = 'modal-backdrop-nexus';
+                                document.body.appendChild(backdrop);
+                            }
+                        }
                     })
                     .catch(error => console.error('Error fetching data:', error));
             });

@@ -113,7 +113,7 @@
                 <h2 class="fw-bold text-white" style="font-size: 2.2rem; letter-spacing: -1px; margin-bottom: 6px;">
                     Control de Accesos</h2>
                 <span style="font-family: monospace; font-size: 0.75rem; color: rgba(255,255,255,0.4); letter-spacing: 2px; text-transform: uppercase;">
-                    Módulo Nexus: Alta de Clientes</span>
+                    Panel de Alta de Clientes</span>
             </div>
         </div>
 
