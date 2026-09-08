@@ -707,10 +707,10 @@
 
             <div class="showcase-card">
                 <div class="showcase-img-wrap">
-                    <img src="{{ asset('images/Guardian_Logotipo_ConFondo_SoftwareTechnologies.png') }}" alt="Software Tech Guardián">
+                    <img src="{{ asset('images/Guardian_Logotipo_ConFondo_SoftwareTechnologies.png') }}" alt="Software Tech Guardian">
                 </div>
                 <div class="showcase-body">
-                    <span class="showcase-tag">Guardián</span>
+                    <span class="showcase-tag">Guardian</span>
                     <h3 class="showcase-title">Guardian Code-Shield</h3>
                     <p class="showcase-desc">Núcleo perimetral dedicado al blindaje criptográfico de metadatos y bases de datos corporativas. Neutraliza virus, malware y accesos no autorizados, garantizando la máxima integridad y persistencia segura de la información de los clientes.</p>
                 </div>
