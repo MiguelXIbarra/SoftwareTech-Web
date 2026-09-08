@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 40px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {
@@ -616,15 +616,23 @@
                         <tbody id="teamTableBody">
                             @foreach($miembros as $miembro)
                                 @php
-                                    $numProyectos = $miembro->proyectos->count();
+                                    $proyectosLiderados = $miembro->proyectosLiderados ?? collect([]);
+                                    $esLider = $proyectosLiderados->count() > 0;
+                                    $nombresLiderados = $proyectosLiderados->pluck('nombre')->toArray();
+
+                                    // Combinar proyectos donde está en equipo o es líder asignado
+                                    $todosProyectos = $miembro->proyectos->concat($proyectosLiderados)->unique('id');
+                                    $numProyectos = $todosProyectos->count();
                                     $proyectosArray = [];
 
-                                    foreach($miembro->proyectos->take(3) as $p) {
+                                    foreach($todosProyectos->take(3) as $p) {
+                                        $esLiderDeEste = ($p->developer_id == $miembro->id);
                                         $proyectosArray[] = [
                                             'nombre'      => $p->nombre,
                                             'descripcion' => $p->descripcion ?? 'Sin descripción disponible',
-                                            'importancia' => $p->pivot->importancia ?? 'Media',
-                                            'sueldo'      => $p->pivot->sueldo_proyecto ?? 0
+                                            'importancia' => $p->pivot->importancia ?? ($esLiderDeEste ? 'Crítica' : 'Media'),
+                                            'sueldo'      => $p->pivot->sueldo_proyecto ?? 0,
+                                            'es_lider'    => $esLiderDeEste
                                         ];
                                     }
 
@@ -648,6 +656,8 @@
                                     'edad' => $edad,
                                     'email' => $miembro->email,
                                     'rol' => $miembro->role,
+                                    'es_lider' => $esLider,
+                                    'proyectos_liderados' => implode(', ', $nombresLiderados),
                                     'proyectos_count' => $numProyectos,
                                     'proyectos' => $proyectosArray,
                                     'capacity' => $capacity,
@@ -655,7 +665,14 @@
                                     'capacity_status' => $capacityStatus
                                     ]) }}">
                                     <td>
-                                        <div class="fw-bold text-white" style="font-size: 0.95rem;">{{ $miembro->name }}</div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold text-white" style="font-size: 0.95rem;">{{ $miembro->name }}</span>
+                                            @if($esLider)
+                                                <span class="badge font-mono" style="background: rgba(250, 204, 21, 0.15); border: 1px solid rgba(250, 204, 21, 0.45); color: #facc15; font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;" title="Líder asignado de proyecto">
+                                                    <i class="fas fa-crown text-warning" style="font-size: 0.65rem;"></i> Líder
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
                                         <span class="role-badge role-{{ $miembro->role }}">{{ $miembro->role }}</span>
@@ -938,11 +955,18 @@
                     importanceColor = '#ef4444';
                 }
 
+                const leaderIconHtml = p.es_lider 
+                    ? `<i class="fas fa-crown text-warning" title="Líder asignado del proyecto" style="font-size: 0.85rem; filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.7));"></i>`
+                    : '';
+
                 const miniCard = document.createElement('div');
                 miniCard.className = 'project-mini-card';
                 miniCard.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="fw-bold text-white" style="font-size: 0.9rem;">${p.nombre || 'Sin nombre'}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-white" style="font-size: 0.9rem;">${p.nombre || 'Sin nombre'}</span>
+                            ${leaderIconHtml}
+                        </div>
                         <span class="text-info fw-bold" style="font-size: 0.8rem;">$${Number(p.sueldo || 0).toLocaleString()} MXN</span>
                     </div>
                     <p class="text-white-50 mb-2" style="font-size: 0.75rem; line-height: 1.2;">

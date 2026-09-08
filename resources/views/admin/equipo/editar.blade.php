@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 40px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .form-box-neon {
@@ -243,6 +243,12 @@
         transition: all 0.3s ease;
         text-decoration: none;
     }
+
+    .custom-leader-switch:checked {
+        background-color: #facc15 !important;
+        border-color: #facc15 !important;
+        box-shadow: 0 0 10px rgba(250, 204, 21, 0.5) !important;
+    }
 </style>
 
 <div class="admin-viewport">
@@ -258,6 +264,7 @@
         <div class="form-box-neon">
             <form action="{{ route('admin.equipo.update', $miembro->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
@@ -307,9 +314,12 @@
                 <div id="wrapperProyectosAsignados" style="max-width: 780px;">
                     @php $idx = 0; @endphp
                     @foreach($miembro->proyectos as $assignedProject)
+                        @php
+                            $esLiderProyecto = ($assignedProject->developer_id == $miembro->id);
+                        @endphp
                         <div class="project-row-wrapper" id="project_slot_{{ $idx }}">
                             <div class="project-row-input row align-items-center g-2">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Proyecto</label>
 
                                     <div class="custom-dropdown">
@@ -324,11 +334,11 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Sueldo Asignado ($)</label>
                                     <input type="number" name="proyectos[{{ $idx }}][sueldo]" class="form-control" min="0" value="{{ $assignedProject->pivot->sueldo_proyecto ?? 0 }}" required>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Importancia / Rol Crítico</label>
 
                                     <div class="custom-dropdown">
@@ -344,6 +354,15 @@
                                         </ul>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <label class="form-label font-mono text-white-50 d-block" style="font-size: 0.65rem;">¿Líder del Proyecto?</label>
+                                    <div class="form-check form-switch d-flex align-items-center gap-2 pt-1">
+                                        <input class="form-check-input custom-leader-switch" type="checkbox" name="proyectos[{{ $idx }}][es_lider]" id="proy_leader_{{ $idx }}" value="1" {{ $esLiderProyecto ? 'checked' : '' }} style="cursor: pointer; width: 2.2em; height: 1.2em; background-color: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25);">
+                                        <label class="form-check-label font-mono text-warning" for="proy_leader_{{ $idx }}" style="font-size: 0.75rem; cursor: pointer;">
+                                            <i class="fas fa-crown"></i> Líder
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <button type="button" class="btn-row-delete" onclick="removeProjectSlot({{ $idx }})">
                                 <i class="fas fa-trash-alt"></i>
@@ -355,7 +374,7 @@
                     @if($miembro->proyectos->count() == 0)
                         <div class="project-row-wrapper" id="project_slot_0">
                             <div class="project-row-input row align-items-center g-2">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Proyecto</label>
 
                                     <div class="custom-dropdown">
@@ -370,11 +389,11 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Sueldo Asignado ($)</label>
                                     <input type="number" name="proyectos[0][sueldo]" class="form-control" min="0" value="0">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Importancia / Rol Crítico</label>
 
                                     <div class="custom-dropdown">
@@ -388,6 +407,15 @@
                                             <li data-value="Alta" onclick="selectDropdownOption(this, 'proy_imp_0')">Alta</li>
                                             <li data-value="Crítica" onclick="selectDropdownOption(this, 'proy_imp_0')">Crítica</li>
                                         </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label font-mono text-white-50 d-block" style="font-size: 0.65rem;">¿Líder del Proyecto?</label>
+                                    <div class="form-check form-switch d-flex align-items-center gap-2 pt-1">
+                                        <input class="form-check-input custom-leader-switch" type="checkbox" name="proyectos[0][es_lider]" id="proy_leader_0" value="1" style="cursor: pointer; width: 2.2em; height: 1.2em; background-color: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25);">
+                                        <label class="form-check-label font-mono text-warning" for="proy_leader_0" style="font-size: 0.75rem; cursor: pointer;">
+                                            <i class="fas fa-crown"></i> Líder
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -468,7 +496,7 @@
         div.id = `project_slot_${projectIndex}`;
         div.innerHTML = `
             <div class="project-row-input row align-items-center g-2">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Proyecto</label>
 
                     <div class="custom-dropdown">
@@ -483,11 +511,11 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Sueldo Asignado ($)</label>
                     <input type="number" name="proyectos[${projectIndex}][sueldo]" class="form-control" min="0" value="0" required>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label font-mono text-white-50" style="font-size: 0.65rem;">Importancia / Rol Crítico</label>
 
                     <div class="custom-dropdown">
@@ -501,6 +529,15 @@
                             <li data-value="Alta" onclick="selectDropdownOption(this, 'proy_imp_${projectIndex}')">Alta</li>
                             <li data-value="Crítica" onclick="selectDropdownOption(this, 'proy_imp_${projectIndex}')">Crítica</li>
                         </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-mono text-white-50 d-block" style="font-size: 0.65rem;">¿Líder del Proyecto?</label>
+                    <div class="form-check form-switch d-flex align-items-center gap-2 pt-1">
+                        <input class="form-check-input custom-leader-switch" type="checkbox" name="proyectos[${projectIndex}][es_lider]" id="proy_leader_${projectIndex}" value="1" style="cursor: pointer; width: 2.2em; height: 1.2em; background-color: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25);">
+                        <label class="form-check-label font-mono text-warning" for="proy_leader_${projectIndex}" style="font-size: 0.75rem; cursor: pointer;">
+                            <i class="fas fa-crown"></i> Líder
+                        </label>
                     </div>
                 </div>
             </div>

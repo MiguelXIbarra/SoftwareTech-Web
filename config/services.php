@@ -35,4 +35,21 @@ return [
         ],
     ],
 
+    'clickup' => [
+        'token' => env('CLICK_UP_API_TOKEN'),
+        'folder_id' => env('CLICK_UP_FOLDER_ID'),
+    ],
+
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'service_key' => env('SUPABASE_SERVICE_KEY'),
+    ],
+
+    'bank' => [
+        'banco' => env('BANK_NAME', 'BBVA'),
+        'beneficiario' => env('BANK_BENEFICIARY', 'Miguel Ibarra (Propietario)'),
+        'clabe' => env('BANK_CLABE', '012180015609353103'),
+        'cuenta' => env('BANK_ACCOUNT', '1560935310'),
+        'rfc' => env('BANK_RFC', null),
+    ],
 ];

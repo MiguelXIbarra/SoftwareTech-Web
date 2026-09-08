@@ -8,13 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('team_corporation', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->integer('edad')->nullable();
-            $table->integer('capacity')->default(0);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('team_corporation')) {
+            Schema::create('team_corporation', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+                $table->integer('edad')->nullable();
+                $table->integer('capacity')->default(0);
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void

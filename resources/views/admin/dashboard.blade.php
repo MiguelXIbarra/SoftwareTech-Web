@@ -28,7 +28,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 40px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {
@@ -478,7 +478,7 @@
                             Proyectos Activos Asignados
                         </h4>
 
-                        <div class="d-flex gap-4 overflow-auto pb-3" style="scrollbar-width: none; -ms-overflow-style: none;">
+                        <div class="d-flex gap-4 overflow-auto pt-3 pb-4 px-2" style="scrollbar-width: none; -ms-overflow-style: none; margin-top: -12px;">
                             @forelse($proyectos as $proy)
                                 <div style="min-width: 330px; max-width: 360px; flex: 1;">
                                     <div class="card-glass-neon position-relative" style="border-left: 4px solid {{ $proy->priority === 'critico' ? '#ef4444' : ($proy->priority === 'alto' ? '#f97316' : ($proy->priority === 'medio' ? '#06b6d4' : '#8a2be2')) }} !important; padding: 24px 20px;">

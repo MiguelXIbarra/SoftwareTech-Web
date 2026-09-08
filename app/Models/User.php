@@ -18,7 +18,6 @@ class User extends Authenticatable
         'role',
         'activation_token',
         'active',
-        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -29,7 +28,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -44,5 +42,10 @@ class User extends Authenticatable
     public function corporation()
     {
         return $this->hasOne(TeamCorporation::class, 'user_id');
+    }
+
+    public function proyectosLiderados()
+    {
+        return $this->hasMany(Project::class, 'developer_id');
     }
 }

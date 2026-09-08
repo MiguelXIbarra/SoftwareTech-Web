@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 60px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {

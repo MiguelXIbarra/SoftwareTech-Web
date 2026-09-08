@@ -52,6 +52,21 @@
         box-shadow: 0 0 15px rgba(6, 182, 212, 0.2) !important;
         background: rgba(255, 255, 255, 0.05) !important;
     }
+
+    .btn-portal {
+        background: #06b6d4 !important;
+        color: #ffffff !important;
+        font-weight: 700;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .btn-portal:hover {
+        background: #0891b2 !important;
+        box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+        transform: translateY(-2px);
+    }
 </style>
 
 <div class="auth-viewport">

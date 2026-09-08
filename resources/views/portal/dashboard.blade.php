@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 60px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {
@@ -181,7 +181,7 @@
                                 </h3>
                             </div>
                             <div class="tech-badge">
-                                <i class="fas fa-sync-alt fa-spin me-2" style="font-size: 0.7rem;"></i> En {{ $proyecto->estado }}
+                                <i class="fas fa-sync-alt fa-spin me-2" style="font-size: 0.7rem;"></i> {{ $proyecto->estado }}
                             </div>
                         </div>
 

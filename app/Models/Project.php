@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'nombre',
@@ -20,6 +21,7 @@ class Project extends Model
         'siguiente_entrega',
         'user_id',
         'developer_id',
+        'clickup_list_id',
     ];
 
     public function user()
@@ -35,7 +37,17 @@ class Project extends Model
     public function team()
     {
         return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id')
-                    ->withPivot('sueldo_proyecto', 'importancia')
-                    ->withTimestamps();
+            ->withPivot('sueldo_proyecto', 'importancia')
+            ->withTimestamps();
+    }
+
+    public function milestones()
+    {
+        return $this->hasMany(Milestone::class);
+    }
+
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'assetable');
     }
 }

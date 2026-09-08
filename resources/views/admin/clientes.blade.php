@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 80px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {
@@ -118,16 +118,33 @@
         </div>
 
         @if(session('success'))
+            @php
+                $actLink = session('activation_link') ?? (str_contains(session('success'), 'http') ? explode('Link de activación: ', session('success'))[1] ?? '' : '');
+                $clienteNombre = session('cliente_nombre') ?? 'estimado cliente';
+                $mensajeWhatsApp = urlencode("¡Hola {$clienteNombre}! Te damos la bienvenida a Software Tech. Aquí tienes tu enlace oficial para activar tu portal y dar seguimiento a tu proyecto en tiempo real:\n\n{$actLink}");
+            @endphp
             <div class="row mb-4" style="position: relative; z-index: 5;">
                 <div class="col-md-12">
-                    <div class="alert alert-success border-0 px-4 py-3" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2) !important; border-radius: 12px; color: #4ade80;">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                            <span class="small font-mono">
-                                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-                            </span>
-                            <button class="btn btn-sm btn-outline-success font-mono px-3" style="font-size: 0.7rem; border-radius: 8px;" onclick="navigator.clipboard.writeText('{{ str_replace('Cliente registrado. Link de activación: ', '', session('success')) }}'); alert('¡Link copiado al portapapeles!');">
-                                <i class="fas fa-copy me-1"></i> Copiar Link
-                            </button>
+                    <div class="alert alert-success border-0 px-4 py-3" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4) !important; border-radius: 14px; color: #34d399;">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div>
+                                <h6 class="mb-1 fw-bold text-white"><i class="fas fa-check-circle text-success me-2"></i>{{ session('success') }}</h6>
+                                @if($actLink)
+                                    <div class="font-mono text-truncate" style="font-size: 0.78rem; color: rgba(255,255,255,0.7); max-width: 600px;">
+                                        {{ $actLink }}
+                                    </div>
+                                @endif
+                            </div>
+                            @if($actLink)
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-light font-mono px-3" style="font-size: 0.75rem; border-radius: 8px;" onclick="copiarAlPortapapeles('{{ $actLink }}', this)">
+                                        <i class="fas fa-copy me-1"></i> Copiar Link
+                                    </button>
+                                    <a href="https://wa.me/?text={{ $mensajeWhatsApp }}" target="_blank" class="btn btn-sm font-mono px-3 text-white" style="font-size: 0.75rem; border-radius: 8px; background: #25D366; border: 1px solid #20ba5a;">
+                                        <i class="fab fa-whatsapp me-1"></i> Enviar por WhatsApp
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -145,18 +162,18 @@
                             <label class="form-label text-white-50 small fw-bold" style="letter-spacing: 0.5px;">
                                 Nombre del Cliente
                             </label>
-                            <input type="text" name="name" class="form-control form-glass" required autocomplete="off">
+                            <input type="text" name="name" class="form-control form-glass" required autocomplete="off" placeholder="Ej. Juan Pérez">
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-white-50 small fw-bold" style="letter-spacing: 0.5px;">
                                 Correo de Destino
                             </label>
-                            <input type="email" name="email" class="form-control form-glass" required autocomplete="off">
+                            <input type="email" name="email" class="form-control form-glass" required autocomplete="off" placeholder="cliente@empresa.com">
                         </div>
 
                         <button type="submit" class="btn btn-info w-100 py-2.5 fw-bold text-white"
                             style="background: #06b6d4; border: none; border-radius: 12px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);">
-                            Enviar Invitación
+                            Generar Invitación
                         </button>
                     </form>
                 </div>
@@ -172,10 +189,15 @@
                                     <th>Cliente</th>
                                     <th>Correo Electrónico</th>
                                     <th>Estado</th>
+                                    <th style="text-align: right;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($clientes as $cliente)
+                                    @php
+                                        $linkCliente = $cliente->activation_token ? route('portal.activate.form', $cliente->activation_token) : null;
+                                        $waText = $linkCliente ? urlencode("¡Hola {$cliente->name}! Te damos la bienvenida a Software Tech. Aquí tienes tu enlace oficial para activar tu portal de cliente:\n\n{$linkCliente}") : '';
+                                    @endphp
                                     <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.02);">
                                         <td style="color: #ffffff !important; padding: 16px 0; font-size: 0.9rem; font-weight: 600;">
                                             {{ $cliente->name }}
@@ -183,7 +205,7 @@
                                         <td style="color: rgba(255, 255, 255, 0.5) !important; padding: 16px 0; font-family: monospace; font-size: 0.85rem;">
                                             {{ $cliente->email }}
                                         </td>
-                                        <td style="padding: 16px 0; text-align: right;">
+                                        <td style="padding: 16px 0;">
                                             @if($cliente->active == 1)
                                                 <span class="badge" style="background: rgba(74, 222, 128, 0.05); border: 1px solid rgba(74, 222, 128, 0.3); color: #4ade80; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
                                                     <span style="display: inline-block; width: 6px; height: 6px; background: #4ade80; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px #4ade80;"></span>Activado
@@ -198,6 +220,20 @@
                                                 </span>
                                             @endif
                                         </td>
+                                        <td style="padding: 16px 0; text-align: right;">
+                                            @if($cliente->active == 0 && $linkCliente)
+                                                <div class="d-inline-flex gap-2">
+                                                    <button type="button" class="btn btn-sm btn-outline-info font-mono" style="font-size: 0.7rem; border-radius: 6px; padding: 4px 10px;" onclick="copiarAlPortapapeles('{{ $linkCliente }}', this)" title="Copiar link de activación">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                    <a href="https://wa.me/?text={{ $waText }}" target="_blank" class="btn btn-sm font-mono text-white" style="font-size: 0.7rem; border-radius: 6px; background: #25D366; padding: 4px 10px;" title="Enviar por WhatsApp">
+                                                        <i class="fab fa-whatsapp"></i>
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <span style="font-size: 0.75rem; color: rgba(255,255,255,0.3); font-family: monospace;">-</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -208,4 +244,30 @@
         </div>
     </div>
 </div>
+
+<script>
+function copiarAlPortapapeles(texto, btn) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto).then(() => {
+            mostrarCopiado(btn);
+        });
+    } else {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = texto;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        mostrarCopiado(btn);
+    }
+}
+
+function mostrarCopiado(btn) {
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check text-success"></i> ¡Copiado!';
+    setTimeout(() => {
+        btn.innerHTML = originalHtml;
+    }, 2000);
+}
+</script>
 @endsection

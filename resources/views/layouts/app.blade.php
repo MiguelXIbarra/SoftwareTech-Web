@@ -5,7 +5,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Software Tech | Sistema</title>
+
+    {{-- SEO Meta Tags Principales --}}
+    <title>@yield('title', 'Software Tech | Arquitecturas Web, Ciberseguridad & Ecosistemas Digitales')</title>
+    <meta name="description" content="@yield('meta_description', 'Desarrollo de software a medida, arquitecturas web escalables, auditoría de ciberseguridad y automatización digital corporativa.')">
+    <meta name="keywords" content="desarrollo de software, arquitecturas web, ciberseguridad SAST, aplicaciones móviles, automatización, cloud, consultoría tecnológica, Software Tech">
+    <meta name="author" content="Software Technologies">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#030712">
+
+    {{-- Favicon Corporativo (Ultra-visible vector SVG & PNG Fallback) --}}
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=2">
+    <link rel="alternate icon" type="image/png" href="{{ asset('images/Software-Technologies_Isotipo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/Software-Technologies_Isotipo.png') }}">
+
+    {{-- Open Graph / Tarjetas para WhatsApp, Facebook, LinkedIn, Slack --}}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('og_title', 'Software Tech | Innovación en Ingeniería de Software')">
+    <meta property="og:description" content="@yield('og_description', 'Construimos infraestructuras web robustas, ciberseguridad SAST y soluciones digitales a la medida de tu corporación.')">
+    <meta property="og:image" content="{{ asset('images/Software-Technologies_Isologo.png') }}">
+    <meta property="og:site_name" content="Software Tech">
+    <meta property="og:locale" content="es_ES">
+
+    {{-- Twitter Cards --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', 'Software Tech | Innovación en Ingeniería de Software')">
+    <meta name="twitter:description" content="@yield('og_description', 'Construimos infraestructuras web robustas, ciberseguridad SAST y soluciones digitales a la medida.')">
+    <meta name="twitter:image" content="{{ asset('images/Software-Technologies_Isologo.png') }}">
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito:400,700,800" rel="stylesheet">
@@ -103,7 +130,7 @@
             min-height: calc(100vh - 75px);
             color: #ffffff;
             position: relative;
-            padding: 80px 20px;
+            padding: 120px 20px 60px 20px;
         }
 
         .admin-viewport::before {
