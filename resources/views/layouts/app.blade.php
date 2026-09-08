@@ -15,9 +15,9 @@
     <meta name="theme-color" content="#030712">
 
     {{-- Favicon Corporativo (Ultra-visible vector SVG & PNG Fallback) --}}
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=2">
-    <link rel="alternate icon" type="image/png" href="{{ asset('images/Software-Technologies_Isotipo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/Software-Technologies_Isotipo.png') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=4">
+    <link rel="alternate icon" type="image/png" href="{{ asset('images/Software-Technologies_Isotipo-SinFondo.png') }}?v=4">
+    <link rel="apple-touch-icon" href="{{ asset('images/Software-Technologies_Isotipo-SinFondo.png') }}?v=4">
 
     {{-- Open Graph / Tarjetas para WhatsApp, Facebook, LinkedIn, Slack --}}
     <meta property="og:type" content="website">

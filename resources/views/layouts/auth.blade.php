@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Software Tech | Inicio</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=4">
+    <link rel="alternate icon" type="image/png" href="{{ asset('images/Software-Technologies_Isotipo-SinFondo.png') }}?v=4">
+    <link rel="apple-touch-icon" href="{{ asset('images/Software-Technologies_Isotipo-SinFondo.png') }}?v=4">
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito:400,700,800" rel="stylesheet">
