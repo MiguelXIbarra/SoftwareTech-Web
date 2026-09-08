@@ -1,5 +1,7 @@
 <?php
 
-use App\Http\Controllers\PortalController;
+use App\Http\Controllers\Webhook\ClickUpWebhookController;
+use Illuminate\Support\Facades\Route;
 
-Route::post('/clickup/webhook', [PortalController::class, 'handleClickUpWebhook']);
+Route::post('/clickup/webhook', [ClickUpWebhookController::class, 'handle']);
+

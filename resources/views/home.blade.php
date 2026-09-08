@@ -774,41 +774,104 @@
         <div class="row justify-content-center mx-0">
             <div class="col-12 col-md-10 col-lg-7 px-4 px-md-0">
                 <div class="pipeline-container p-4 p-sm-5">
-                    <form onsubmit="mandarWhatsApp(event)">
+                    <div id="contact-alert" class="d-none mb-3 p-3 rounded" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; font-size: 0.88rem;">
+                        <i class="fas fa-check-circle me-2"></i> <span id="contact-alert-text"></span>
+                    </div>
+
+                    <form id="contactForm" onsubmit="enviarContacto(event)">
+                        @csrf
                         <div class="row g-3">
                             <div class="col-12 col-sm-6">
-                                <input type="text" id="form-empresa" class="form-control form-glass" placeholder="Nombre Corporativo" required>
+                                <input type="text" id="form-empresa" name="empresa" class="form-control form-glass" placeholder="Nombre Corporativo">
                             </div>
                             <div class="col-12 col-sm-6">
-                                <input type="email" id="form-correo" class="form-control form-glass" placeholder="Correo Electrónico de Enlace" required>
+                                <input type="email" id="form-correo" name="email" class="form-control form-glass" placeholder="Correo Electrónico de Enlace *" required>
                             </div>
                             <div class="col-12">
-                                <input type="text" id="form-asunto" class="form-control form-glass" placeholder="Asunto / Módulo de Requerimiento">
+                                <input type="text" id="form-asunto" name="asunto" class="form-control form-glass" placeholder="Asunto / Módulo de Requerimiento">
                             </div>
                             <div class="col-12">
-                                <textarea id="form-mensaje" class="form-control form-glass" rows="4" placeholder="Describe brevemente las necesidades de tu ecosistema tecnológico..." required></textarea>
+                                <textarea id="form-mensaje" name="mensaje" class="form-control form-glass" rows="4" placeholder="Describe brevemente las necesidades de tu ecosistema tecnológico... *" required></textarea>
                             </div>
                             <div class="col-12 text-center mt-4">
-                                <button type="submit" class="btn-ohio-text border-0 w-100 justify-content-center">
-                                    <span>Solicitar Consultoría Técnica</span>
-                                    <i class="fas fa-paper-plane"></i>
+                                <button type="submit" id="btn-submit-contacto" class="btn-ohio-text border-0 w-100 justify-content-center">
+                                    <span id="btn-text">Solicitar Consultoría Técnica</span>
+                                    <i id="btn-icon" class="fas fa-paper-plane"></i>
                                 </button>
                             </div>
                         </div>
                     </form>
 
                     <script>
-                    function mandarWhatsApp(event) {
+                    async function enviarContacto(event) {
                         event.preventDefault();
+                        
+                        const btn = document.getElementById('btn-submit-contacto');
+                        const btnText = document.getElementById('btn-text');
+                        const btnIcon = document.getElementById('btn-icon');
+                        const alertBox = document.getElementById('contact-alert');
+                        const alertText = document.getElementById('contact-alert-text');
+
                         const empresa = document.getElementById('form-empresa').value;
-                        const correo = document.getElementById('form-correo').value;
+                        const email = document.getElementById('form-correo').value;
                         const asunto = document.getElementById('form-asunto').value;
                         const mensaje = document.getElementById('form-mensaje').value;
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
-                        const numero = "523328395366";
-                        const texto = `Hola, me interesa una consultoría técnica.%0A%0A*Empresa:* ${empresa}%0A*Correo:* ${correo}%0A*Asunto:* ${asunto}%0A*Detalles:* ${mensaje}`;
+                        // Estado de carga
+                        btn.disabled = true;
+                        btnText.textContent = "Procesando y Conectando...";
+                        btnIcon.className = "fas fa-spinner fa-spin";
 
-                        window.open(`https://wa.me/${numero}?text=${texto}`, '_blank');
+                        try {
+                            const response = await fetch("{{ route('contacto.store') }}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    empresa: empresa,
+                                    email: email,
+                                    asunto: asunto,
+                                    mensaje: mensaje
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok && data.success) {
+                                alertBox.className = "mb-3 p-3 rounded d-block";
+                                alertBox.style.background = "rgba(16, 185, 129, 0.15)";
+                                alertBox.style.border = "1px solid rgba(16, 185, 129, 0.5)";
+                                alertBox.style.color = "#34d399";
+                                alertText.textContent = data.message;
+
+                                document.getElementById('contactForm').reset();
+
+                                // Abrir WhatsApp con el lead
+                                if (data.whatsapp_url) {
+                                    window.open(data.whatsapp_url, '_blank');
+                                }
+                            } else {
+                                alertBox.className = "mb-3 p-3 rounded d-block";
+                                alertBox.style.background = "rgba(239, 68, 68, 0.15)";
+                                alertBox.style.border = "1px solid rgba(239, 68, 68, 0.5)";
+                                alertBox.style.color = "#f87171";
+                                alertText.textContent = data.message || "Ocurrió un detalle al registrar tu mensaje. Por favor intenta de nuevo.";
+                            }
+                        } catch (error) {
+                            alertBox.className = "mb-3 p-3 rounded d-block";
+                            alertBox.style.background = "rgba(239, 68, 68, 0.15)";
+                            alertBox.style.border = "1px solid rgba(239, 68, 68, 0.5)";
+                            alertBox.style.color = "#f87171";
+                            alertText.textContent = "Error de conexión. Inténtalo de nuevo en unos momentos.";
+                        } finally {
+                            btn.disabled = false;
+                            btnText.textContent = "Solicitar Consultoría Técnica";
+                            btnIcon.className = "fas fa-paper-plane";
+                        }
                     }
                     </script>
                 </div>

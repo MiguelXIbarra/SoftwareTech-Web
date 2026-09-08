@@ -15,10 +15,11 @@ class Milestone extends Model
 
     protected $fillable = [
         'project_id',
-        'title',
+        'name',
         'cost',
         'is_paid',
         'due_date',
+        'status',
     ];
 
     protected $casts = [
@@ -33,5 +34,10 @@ class Milestone extends Model
     public function assets()
     {
         return $this->morphMany(\App\Models\Asset::class, 'assetable');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(\App\Models\Payment::class);
     }
 }

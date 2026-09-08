@@ -5,7 +5,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Software Tech | Sistema</title>
+
+    {{-- SEO Meta Tags Principales --}}
+    <title>@yield('title', 'Software Tech | Arquitecturas Web, Ciberseguridad & Ecosistemas Digitales')</title>
+    <meta name="description" content="@yield('meta_description', 'Desarrollo de software a medida, arquitecturas web escalables, auditoría de ciberseguridad y automatización digital corporativa.')">
+    <meta name="keywords" content="desarrollo de software, arquitecturas web, ciberseguridad SAST, aplicaciones móviles, automatización, cloud, consultoría tecnológica, Software Tech">
+    <meta name="author" content="Software Technologies">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#030712">
+
+    {{-- Favicon Corporativo (Ultra-visible vector SVG & PNG Fallback) --}}
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=2">
+    <link rel="alternate icon" type="image/png" href="{{ asset('images/Software-Technologies_Isotipo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/Software-Technologies_Isotipo.png') }}">
+
+    {{-- Open Graph / Tarjetas para WhatsApp, Facebook, LinkedIn, Slack --}}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('og_title', 'Software Tech | Innovación en Ingeniería de Software')">
+    <meta property="og:description" content="@yield('og_description', 'Construimos infraestructuras web robustas, ciberseguridad SAST y soluciones digitales a la medida de tu corporación.')">
+    <meta property="og:image" content="{{ asset('images/Software-Technologies_Isologo.png') }}">
+    <meta property="og:site_name" content="Software Tech">
+    <meta property="og:locale" content="es_ES">
+
+    {{-- Twitter Cards --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', 'Software Tech | Innovación en Ingeniería de Software')">
+    <meta name="twitter:description" content="@yield('og_description', 'Construimos infraestructuras web robustas, ciberseguridad SAST y soluciones digitales a la medida.')">
+    <meta name="twitter:image" content="{{ asset('images/Software-Technologies_Isologo.png') }}">
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito:400,700,800" rel="stylesheet">
@@ -103,7 +130,7 @@
             min-height: calc(100vh - 75px);
             color: #ffffff;
             position: relative;
-            padding: 80px 20px;
+            padding: 120px 20px 60px 20px;
         }
 
         .admin-viewport::before {
@@ -157,13 +184,11 @@
             box-shadow: none !important;
         }
 
-        /* Corregir el fondo de las opciones del select cuando se despliegan */
         .form-select option {
             background: #030712 !important;
             color: #fff !important;
         }
 
-        /* Mantener consistencia en el texto del placeholder deshabilitado */
         .form-select option[value=""] {
             color: rgba(255, 255, 255, 0.4) !important;
         }
@@ -175,7 +200,6 @@
             background: rgba(255, 255, 255, 0.02) !important;
         }
 
-        /* Corregir el icono del calendario nativo en inputs de fecha */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             opacity: 0.4;
@@ -218,19 +242,29 @@
                         <ul class="navbar-nav ms-auto align-items-center mb-0">
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.proyectos.index') ? 'active' : '' }}" href="{{ route('admin.proyectos.index') }}">Proyectos</a>
-                            </td>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.clientes.index') ? 'active' : '' }}" href="{{ route('admin.clientes.index') }}">Clientes</a>
-                            </td>
+                            </li>
+
+                            @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('admin.clientes.index') ? 'active' : '' }}" href="{{ route('admin.clientes.index') }}">Clientes</a>
+                                </li>
+                            @endif
+
+                            @if(auth()->user()->role === 'superadmin')
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('admin.equipo*') ? 'active' : '' }}" href="{{ route('admin.equipo') }}">Equipo</a>
+                                </li>
+                            @endif
+
                             <li class="nav-item ms-lg-4 mt-2 mt-lg-0">
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn-logout">Salir</button>
                                 </form>
-                            </td>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -251,19 +285,19 @@
                         <ul class="navbar-nav ms-auto align-items-center mb-0">
                             <li class="nav-item">
                                 <a class="nav-link" href="#servicios">Servicios</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#tecnologia">Tecnología</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#proceso">Proceso</a>
-                            </td>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#contacto">Contacto</a>
-                            </td>
+                            </li>
                             <li class="nav-item ms-3">
                                 <a href="/login" class="btn-portal">Portal Clientes</a>
-                            </td>
+                            </li>
                         </ul>
                     </div>
                 </div>

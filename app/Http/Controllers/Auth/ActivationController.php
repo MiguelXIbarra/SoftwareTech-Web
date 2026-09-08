@@ -17,43 +17,46 @@ class ActivationController extends Controller
     }
 
     public function activate(Request $request, $token)
-{
-    $request->validate([
-        'password' => 'required|min:8|confirmed',
-    ]);
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-    $user = User::where('activation_token', $token)->firstOrFail();
+        $user = User::where('activation_token', $token)->firstOrFail();
 
-    $user->update([
-        'password' => Hash::make($request->password),
-        'active' => 1,
-        'activation_token' => null,
-        'email_verified_at' => now(),
-    ]);
+        $user->update([
+            'password' => Hash::make($request->password),
+            'active' => 1,
+            'activation_token' => null,
+        ]);
 
-    return redirect()->route('login')->with('success', '¡Cuenta activada correctamente! Ya puedes iniciar sesión.');
-}
+        return redirect()->route('login')->with('success', '¡Cuenta activada correctamente! Ya puedes iniciar sesión.');
+    }
 
     public function storeCliente(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+        ]);
 
-    $token = Str::random(60);
+        $token = Str::random(60);
 
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make(Str::random(16)),
-        'role' => 'cliente',
-        'active' => 0,
-        'activation_token' => $token,
-    ]);
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make(Str::random(16)),
+            'role' => 'cliente',
+            'active' => 0,
+            'activation_token' => $token,
+        ]);
 
-    $linkActivacion = route('portal.activate.form', $token);
+        $linkActivacion = route('portal.activate.form', $token);
 
-    return redirect('/console/clientes')->with('success', 'Cliente registrado. Link de activación: ' . $linkActivacion);
-}
+        return redirect('/console/clientes')->with([
+            'success' => 'Cliente registrado exitosamente en el sistema.',
+            'cliente_nombre' => $request->name,
+            'activation_link' => $linkActivacion,
+        ]);
+    }
 }

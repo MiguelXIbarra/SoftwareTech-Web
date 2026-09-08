@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 60px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {
@@ -196,6 +196,11 @@
                         </div>
 
                         <div class="mb-4">
+                            <label class="form-label-tech">Descripción del Proyecto</label>
+                            <textarea name="descripcion" class="form-control-tech w-100" rows="3" placeholder="Detalles u objetivos del proyecto..." required style="resize: none;"></textarea>
+                        </div>
+
+                        <div class="mb-4">
                             <label class="form-label-tech">Tipo de Servicio</label>
                             <div class="custom-dropdown" id="dropdown-servicio">
                                 <div class="form-control-tech dropdown-trigger w-100">
@@ -323,3 +328,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+@

@@ -6,25 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ClickUpWebhookController extends Controller
 {
     public function handle(Request $request)
     {
-        if ($request->input('event') === 'listDeleted') {
-            $listId = $request->input('list_id');
+        $tokenClickUp = config('services.clickup.token');
 
-            if ($listId) {
-                $proyecto = Project::where('clickup_list_id', $listId)->first();
-                if ($proyecto) {
-                    $proyecto->delete();
-                    return response()->json(['status' => 'project_soft_deleted'], 200);
-                }
-            }
-            return response()->json(['status' => 'list_deleted_ignored'], 200);
-        }
-
-        $listId = $request->input('list_id');
+        // Extraer el ID de lista desde la carga del webhook (eventos de tareas)
+        $listId = $request->input('list_id')
+            ?? $request->input('task.list.id')
+            ?? $request->input('history_items.0.parent_id');
 
         if (!$listId) {
             return response()->json(['status' => 'no_list_id'], 200);
@@ -36,29 +29,35 @@ class ClickUpWebhookController extends Controller
             return response()->json(['status' => 'ignored'], 200);
         }
 
-        $tokenClickUp = env('CLICK_UP_API_TOKEN');
-
+        // Recalcular únicamente el porcentaje de avance del proyecto basado en tareas completadas
         if ($tokenClickUp) {
-            $response = Http::withHeaders([
-                'Authorization' => $tokenClickUp,
-            ])->get("https://api.clickup.com/api/v2/list/{$listId}/task", [
-                'include_closed' => true
-            ]);
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => $tokenClickUp,
+                ])->timeout(5)->get("https://api.clickup.com/api/v2/list/{$listId}/task", [
+                            'include_closed' => true
+                        ]);
 
-            if ($response->successful()) {
-                $tasks = $response->json()['tasks'] ?? [];
-                $totalTasks = count($tasks);
+                if ($response->successful()) {
+                    $tasks = $response->json()['tasks'] ?? [];
+                    $totalTasks = count($tasks);
 
-                if ($totalTasks > 0) {
-                    $closedTasks = 0;
+                    if ($totalTasks > 0) {
+                        $closedTasks = 0;
 
-                    foreach ($tasks as $task) {
-                        if (isset($task['status']['type']) && $task['status']['type'] === 'closed') {
-                            $closedTasks++;
+                        foreach ($tasks as $task) {
+                            $statusType = strtolower($task['status']['type'] ?? '');
+                            $statusName = strtolower($task['status']['status'] ?? '');
+
+                            if (in_array($statusType, ['closed', 'done']) || in_array($statusName, ['complete', 'closed', 'done', 'completado', 'finalizado'])) {
+                                $closedTasks++;
+                            }
                         }
-                    }
 
-                    $nuevoProgreso = round(($closedTasks / $totalTasks) * 100, 1);
+                        $nuevoProgreso = round(($closedTasks / $totalTasks) * 100, 1);
+                    } else {
+                        $nuevoProgreso = 0;
+                    }
 
                     if ($proyecto->progreso != $nuevoProgreso) {
                         $proyecto->progreso = $nuevoProgreso;
@@ -72,6 +71,8 @@ class ClickUpWebhookController extends Controller
                         $proyecto->save();
                     }
                 }
+            } catch (\Exception $e) {
+                Log::error("Error de conexión con ClickUp al calcular progreso: " . $e->getMessage());
             }
         }
 

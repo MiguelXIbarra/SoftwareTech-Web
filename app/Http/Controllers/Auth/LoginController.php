@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class LoginController extends Controller
 {
@@ -22,32 +24,14 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
             $user = Auth::user();
 
-            if ((int)$user->active !== 1) {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'Esta cuenta de acceso no ha sido activada aún.',
-                ]);
-            }
-
-            switch ($user->role) {
-                case 'superadmin':
-                case 'admin':
-                case 'empleado':
-                    return redirect()->route('admin.dashboard');
-                case 'cliente':
-                    return redirect()->route('portal.dashboard');
-                default:
-                    Auth::logout();
-                    return redirect()->route('login');
-            }
+            return redirect()->route($user->role === 'cliente' ? 'portal.dashboard' : 'admin.dashboard');
         }
 
         return back()->withErrors([
             'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-        ]);
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)

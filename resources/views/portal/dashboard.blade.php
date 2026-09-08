@@ -10,7 +10,7 @@
         min-height: calc(100vh - 75px);
         color: #ffffff;
         position: relative;
-        padding: 60px 20px;
+        padding: 120px 20px 60px 20px;
     }
 
     .admin-viewport::before {
@@ -181,7 +181,7 @@
                                 </h3>
                             </div>
                             <div class="tech-badge">
-                                <i class="fas fa-sync-alt fa-spin me-2" style="font-size: 0.7rem;"></i> En {{ $proyecto->estado }}
+                                <i class="fas fa-sync-alt fa-spin me-2" style="font-size: 0.7rem;"></i> {{ $proyecto->estado }}
                             </div>
                         </div>
 
@@ -227,7 +227,7 @@
                     Tu cuenta se ha sincronizado correctamente. Actualmente nuestro equipo está configurando los módulos base de tu servicio en el administrador para mapear tus despliegues.
                 </p>
                 <div class="font-mono" style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.2); letter-spacing: 1px;">
-                    ESTADO DE RED: EN_ESPERA_DE_ASIGNACION_NEXUS
+                    ESTADO DE RED: En espera de Asignación
                 </div>
             </div>
         @endif

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="35%" stop-color="#818cf8" />
+      <stop offset="70%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#00f0ff" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#00f0ff" flood-opacity="0.8" />
+    </filter>
+  </defs>
+
+  <!-- High-contrast dark badge container so it shines on both dark and light browser tabs -->
+  <rect x="1.5" y="1.5" width="61" height="61" rx="14" fill="#040813" stroke="#1e293b" stroke-width="1.5" />
+
+  <!-- Signature Software Tech Bracket Frame (Bottom-Left Open) -->
+  <path d="M 14 36 L 14 13 L 51 13 L 51 51 L 32 51" 
+        fill="none" 
+        stroke="url(#neonGrad)" 
+        stroke-width="4.5" 
+        stroke-linecap="square" 
+        stroke-linejoin="miter" />
+
+  <!-- ST Monogram Letters (Bold & High Luminance) -->
+  <text x="32.5" y="39.5" 
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Montserrat', 'Plus Jakarta Sans', Arial, sans-serif" 
+        font-size="22" 
+        font-weight="900" 
+        letter-spacing="0.5"
+        text-anchor="middle" 
+        fill="url(#textGrad)">ST</text>
+</svg>
