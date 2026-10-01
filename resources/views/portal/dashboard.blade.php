@@ -144,7 +144,7 @@
 <div class="admin-viewport">
     <div class="container portal-container">
 
-        <div class="welcome-card d-flex flex-wrap justify-content-between align-items-center gap-3 mb-5">
+        <div class="welcome-card mb-5">
             <div>
                 <span style="font-family: monospace; font-size: 0.7rem; color: rgba(255,255,255,0.4); letter-spacing: 2px; text-transform: uppercase;">
                     CONSOLA DE CONTROL // INTEGRIDAD ESTABLE
@@ -152,14 +152,6 @@
                 <h1 class="fw-bold text-white mt-1 mb-0" style="font-size: 2rem; letter-spacing: -0.5px; font-weight: 800 !important;">
                     Bienvenido, {{ auth()->user()->name }}
                 </h1>
-            </div>
-            <div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="action-btn-portal" style="color: #f87171; border-color: rgba(248,113,113,0.15); background: rgba(248,113,113,0.02);">
-                        <i class="fas fa-power-off me-2"></i> Cerrar Sesión
-                    </button>
-                </form>
             </div>
         </div>
 

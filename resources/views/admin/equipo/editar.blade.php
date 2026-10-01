@@ -297,13 +297,28 @@
                 </div>
 
                 <div class="row g-3 mb-4" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 24px;">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label font-mono text-white-50" style="font-size: 0.75rem;">Edad Cronológica</label>
                         <input type="number" name="edad" class="form-control" value="{{ $miembro->corporation->edad ?? '' }}" min="18">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label font-mono text-white-50" style="font-size: 0.75rem;">Horas de Trabajo Semanales</label>
+                    <div class="col-md-4">
+                        <label class="form-label font-mono text-white-50" style="font-size: 0.75rem;">Horas Semanales</label>
                         <input type="number" name="capacity" class="form-control" min="0" max="40" value="{{ $miembro->corporation->capacity ?? 0 }}" placeholder="Ej. 40" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label font-mono text-white-50 d-flex justify-content-between" style="font-size: 0.75rem;">
+                            <span>ID ClickUp (Opcional)</span>
+                            @if(!empty($miembro->clickup_user_id))
+                                <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.65rem;">
+                                    <i class="fas fa-check-circle"></i> Sincronizado
+                                </span>
+                            @else
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.65rem;">
+                                    <i class="fas fa-magic"></i> Auto por Email
+                                </span>
+                            @endif
+                        </label>
+                        <input type="text" name="clickup_user_id" class="form-control" value="{{ old('clickup_user_id', $miembro->clickup_user_id) }}" placeholder="Ej. 12345678">
                     </div>
                 </div>
 

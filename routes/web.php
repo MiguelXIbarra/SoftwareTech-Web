@@ -12,7 +12,10 @@ Route::post('/contacto', [HomeController::class, 'guardarContacto'])->name('cont
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/two-factor-challenge', [LoginController::class, 'showTwoFactorForm'])->name('two-factor.login');
+Route::post('/two-factor-challenge', [LoginController::class, 'verifyTwoFactor'])->name('two-factor.verify');
+Route::post('/two-factor-cancel', [LoginController::class, 'cancelTwoFactor'])->name('two-factor.cancel');
+Route::match(['get', 'post'], '/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/portal/activar/{token}', [ActivationController::class, 'showActivationForm'])->name('portal.activate.form');
 Route::post('/portal/activar/{token}', [ActivationController::class, 'activate'])->name('portal.activate.submit');
@@ -23,6 +26,12 @@ use App\Http\Controllers\AssetController;
 Route::middleware(['auth', 'role:cliente'])->prefix('portal')->name('portal.')->group(function () {
     Route::get('/dashboard', [PortalController::class, 'index'])->name('dashboard');
     Route::get('/proyecto/{id}', [PortalController::class, 'proyecto'])->name('proyecto');
+    Route::get('/configuracion', [PortalController::class, 'configuracion'])->name('configuracion');
+    Route::put('/configuracion/perfil', [PortalController::class, 'updatePerfil'])->name('configuracion.perfil');
+    Route::put('/configuracion/password', [PortalController::class, 'updatePassword'])->name('configuracion.password');
+    Route::put('/configuracion/2fa', [PortalController::class, 'updateTwoFactor'])->name('configuracion.twofactor');
+    Route::put('/configuracion/notificaciones', [PortalController::class, 'updateNotificaciones'])->name('configuracion.notificaciones');
+    Route::put('/configuracion/preferencias', [PortalController::class, 'updatePreferencias'])->name('configuracion.preferencias');
     Route::post('/milestones/{id}/pay-card', [PaymentController::class, 'payWithCard'])->name('milestones.payCard');
     Route::post('/milestones/{id}/comprobante', [AssetController::class, 'uploadMilestoneReceipt'])->name('milestones.comprobante');
 });
@@ -34,6 +43,9 @@ Route::middleware(['auth'])->prefix('console')->name('admin.')->group(function (
         Route::get('/equipo', [PortalController::class, 'adminEquipo'])->name('equipo');
         Route::get('/equipo/crear', [PortalController::class, 'adminEquipoCrear'])->name('equipo.crear');
         Route::post('/equipo/store', [PortalController::class, 'adminEquipoStore'])->name('equipo.store');
+        Route::get('/equipo/clickup/preview', [PortalController::class, 'adminEquipoClickUpPreview'])->name('equipo.clickup.preview');
+        Route::post('/equipo/clickup/import', [PortalController::class, 'adminEquipoClickUpImport'])->name('equipo.clickup.import');
+        Route::post('/equipo/{id}/send-activation', [PortalController::class, 'adminEquipoSendActivation'])->name('equipo.sendActivation');
         Route::get('/equipo/{id}/editar', [PortalController::class, 'adminEquipoEditar'])->name('equipo.editar');
         Route::match(['put', 'post'], '/equipo/{id}', [PortalController::class, 'adminEquipoUpdate'])->name('equipo.update');
         Route::delete('/equipo/{id}', [PortalController::class, 'adminEquipoDestroy'])->name('equipo.destroy');
@@ -59,6 +71,13 @@ Route::middleware(['auth'])->prefix('console')->name('admin.')->group(function (
     Route::get('/proyectos', [PortalController::class, 'adminProyectos'])->name('proyectos.index');
     Route::post('/proyectos/update-status', [PortalController::class, 'updateStatus'])->name('proyectos.updateStatus');
     Route::get('/api/proyectos/{id}', [PortalController::class, 'getProyectoJson'])->name('api.proyectos.show');
+
+    // Configuración operativa y de seguridad para Empleado, Admin y Superadmin
+    Route::get('/configuracion', [PortalController::class, 'adminConfiguracion'])->name('configuracion');
+    Route::put('/configuracion/perfil', [PortalController::class, 'adminUpdatePerfil'])->name('configuracion.perfil');
+    Route::put('/configuracion/password', [PortalController::class, 'adminUpdatePassword'])->name('configuracion.password');
+    Route::put('/configuracion/2fa', [PortalController::class, 'adminUpdateTwoFactor'])->name('configuracion.twofactor');
+    Route::put('/configuracion/notificaciones', [PortalController::class, 'adminUpdateNotificaciones'])->name('configuracion.notificaciones');
 
     // Rutas de archivos y entregables
     Route::post('/proyectos/{id}/assets', [AssetController::class, 'storeProjectAsset'])->name('proyectos.assets.store');

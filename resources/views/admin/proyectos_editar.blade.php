@@ -186,10 +186,15 @@
                 <div class="card-glass-minimal">
 
                     @if ($errors->any())
-                        <div class="alert alert-danger bg-danger rgba-10 text-danger border-0 small mb-4" style="border-radius: 10px;">
-                            @foreach ($errors->all() as $error)
-                                <div>● {{ $error }}</div>
-                            @endforeach
+                        <div class="mb-4 text-start p-3" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-left: 4px solid #ef4444; border-radius: 12px; backdrop-filter: blur(10px);">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fas fa-exclamation-triangle text-danger mt-1" style="font-size: 0.9rem; flex-shrink: 0;"></i>
+                                <div style="color: #fecaca; font-size: 0.82rem; line-height: 1.45;">
+                                    @foreach ($errors->all() as $error)
+                                        <div class="fw-semibold">{{ $error }}</div>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
                     @endif
 
@@ -245,7 +250,12 @@
 
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label-tech">Cliente Asociado</label>
+                                <label class="form-label-tech d-flex justify-content-between align-items-center">
+                                    <span>Cliente Asociado</span>
+                                    <span class="badge" style="background: rgba(6, 182, 212, 0.1); color: #22d3ee; font-size: 0.65rem; border: 1px solid rgba(6, 182, 212, 0.3); font-weight: 600;">
+                                        <i class="fas fa-user-shield me-1"></i>Portal Exclusivo
+                                    </span>
+                                </label>
                                 <div class="custom-dropdown" id="dropdown-cliente">
                                     <div class="form-control-tech dropdown-trigger w-100">
                                         <span class="selected-text">{{ $proyecto->user ? $proyecto->user->name : 'Seleccionar Cliente' }}</span>
@@ -261,7 +271,12 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label-tech">Líder Técnico / Developer</label>
+                                <label class="form-label-tech d-flex justify-content-between align-items-center">
+                                    <span>Líder Técnico / Developer</span>
+                                    <span class="badge" style="background: rgba(250, 204, 21, 0.1); color: #facc15; font-size: 0.65rem; border: 1px solid rgba(250, 204, 21, 0.3); font-weight: 600;">
+                                        <i class="fas fa-crown me-1"></i>Admin en ClickUp
+                                    </span>
+                                </label>
                                 <div class="custom-dropdown" id="dropdown-developer">
                                     <div class="form-control-tech dropdown-trigger w-100">
                                         <span class="selected-text">{{ $proyecto->developer ? $proyecto->developer->name : 'Seleccionar Encargado' }}</span>

@@ -313,13 +313,22 @@
                 </div>
 
                 <div class="row g-3 mb-4" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 24px;">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label font-mono text-white-50" style="font-size: 0.75rem;">Edad Cronológica</label>
                         <input type="number" name="edad" class="form-control form-control-tech" min="18">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label font-mono text-white-50" style="font-size: 0.75rem;">Horas de Trabajo Semanales</label>
+                    <div class="col-md-4">
+                        <label class="form-label font-mono text-white-50" style="font-size: 0.75rem;">Horas Semanales</label>
                         <input type="number" name="capacity" class="form-control form-control-tech" min="0" max="40" value="40" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label font-mono text-white-50 d-flex justify-content-between" style="font-size: 0.75rem;">
+                            <span>ID ClickUp (Opcional)</span>
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.65rem;">
+                                <i class="fas fa-magic"></i> Auto por Email
+                            </span>
+                        </label>
+                        <input type="text" name="clickup_user_id" class="form-control form-control-tech" placeholder="Ej. 12345678">
                     </div>
                 </div>
 

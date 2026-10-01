@@ -7,8 +7,13 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\TeamCorporation;
 use App\Models\Milestone;
+use App\Services\ClickUpService;
+use App\Mail\EmployeeActivationMail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class PortalController extends Controller
 {
@@ -19,6 +24,230 @@ class PortalController extends Controller
         $proyectos = \App\Models\Project::where('user_id', $user->id)->get();
 
         return view('portal.dashboard', compact('proyectos'));
+    }
+
+    public function configuracion()
+    {
+        $user = auth()->user();
+
+        // Retrieve existing secret or generate new one using TwoFactorService
+        $totpSecret = $user->two_factor_secret ?: \App\Services\TwoFactorService::generateSecretKey();
+        $isTwoFactorActive = $user->hasTwoFactorEnabled();
+        $qrCodeUrl = \App\Services\TwoFactorService::getQrCodeUrl($user->email, $totpSecret);
+        $otpauthUri = \App\Services\TwoFactorService::getOtpAuthUri($user->email, $totpSecret);
+
+        return view('portal.configuracion', compact('user', 'totpSecret', 'isTwoFactorActive', 'qrCodeUrl', 'otpauthUri'));
+    }
+
+    public function updatePerfil(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ], [
+            'name.required' => 'El nombre es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'Debe ingresar un correo electrónico válido.',
+            'email.unique' => 'Este correo electrónico ya está registrado por otro usuario.',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return redirect()->route('portal.configuracion')->with('success', 'Perfil corporativo actualizado correctamente.');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Debes ingresar tu contraseña actual.',
+            'password.required' => 'Debes ingresar una nueva contraseña.',
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+        ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'La contraseña actual ingresada es incorrecta.']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Notificar alerta de seguridad
+        \App\Services\NotificationService::notifySecurityAlert($user, 'Cambio de Contraseña', 'Tu contraseña de acceso al portal fue actualizada exitosamente.', $request->ip(), $request->userAgent());
+
+        return redirect()->route('portal.configuracion')->with('success', 'Contraseña actualizada con éxito.');
+    }
+
+    public function updateTwoFactor(Request $request)
+    {
+        $user = auth()->user();
+        $enabled = $request->has('two_factor_enabled');
+
+        if ($enabled) {
+            $secret = $request->input('two_factor_secret') ?: ($user->two_factor_secret ?: \App\Services\TwoFactorService::generateSecretKey());
+            $user->two_factor_secret = $secret;
+            $user->two_factor_confirmed_at = now();
+            $user->save();
+
+            // Notificar alerta de seguridad
+            \App\Services\NotificationService::notifySecurityAlert($user, 'Activación de 2FA', 'La autenticación en dos pasos (2FA) ha sido activada y vinculada en tu cuenta corporativa.', $request->ip(), $request->userAgent());
+
+            return redirect()->route('portal.configuracion')->with('success', 'Autenticación en dos pasos (2FA) activada y guardada correctamente.');
+        } else {
+            $user->two_factor_confirmed_at = null;
+            $user->save();
+
+            // Notificar alerta de seguridad
+            \App\Services\NotificationService::notifySecurityAlert($user, 'Desactivación de 2FA', 'La autenticación en dos pasos (2FA) ha sido desactivada en tu cuenta corporativa.', $request->ip(), $request->userAgent());
+
+            return redirect()->route('portal.configuracion')->with('success', 'Autenticación en dos pasos (2FA) desactivada con éxito.');
+        }
+    }
+
+    public function updateNotificaciones(Request $request)
+    {
+        $user = auth()->user();
+        $user->notification_preferences = [
+            'notif_milestones' => $request->has('notif_milestones') ? 1 : 0,
+            'notif_deployments' => $request->has('notif_deployments') ? 1 : 0,
+            'notif_security' => $request->has('notif_security') ? 1 : 0,
+            'notif_weekly_digest' => $request->has('notif_weekly_digest') ? 1 : 0,
+        ];
+        $user->save();
+
+        return redirect()->route('portal.configuracion')->with('success', 'Preferencias de notificaciones guardadas exitosamente.');
+    }
+
+    public function adminConfiguracion()
+    {
+        $user = auth()->user();
+
+        // Retrieve existing secret or generate new one using TwoFactorService
+        $totpSecret = $user->two_factor_secret ?: \App\Services\TwoFactorService::generateSecretKey();
+        $isTwoFactorActive = $user->hasTwoFactorEnabled();
+        $qrCodeUrl = \App\Services\TwoFactorService::getQrCodeUrl($user->email, $totpSecret);
+        $otpauthUri = \App\Services\TwoFactorService::getOtpAuthUri($user->email, $totpSecret);
+        $corporation = $user->corporation;
+
+        return view('admin.configuracion', compact('user', 'corporation', 'totpSecret', 'isTwoFactorActive', 'qrCodeUrl', 'otpauthUri'));
+    }
+
+    public function adminUpdatePerfil(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'capacity' => 'nullable|integer|between:0,40',
+            'edad' => 'nullable|integer|min:18',
+        ], [
+            'name.required' => 'El nombre es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'Debe ingresar un correo electrónico válido.',
+            'email.unique' => 'Este correo ya se encuentra en uso por otro miembro.',
+            'capacity.between' => 'La capacidad semanal debe estar entre 0 y 40 horas.',
+            'edad.min' => 'La edad debe ser mayor o igual a 18 años.',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        if ($request->has('capacity') || $request->has('edad')) {
+            $user->corporation()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'capacity' => $request->input('capacity', 40),
+                    'edad' => $request->input('edad'),
+                ]
+            );
+        }
+
+        return redirect()->route('admin.configuracion')->with('success', 'Perfil operativo actualizado correctamente.');
+    }
+
+    public function adminUpdatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Debes ingresar tu contraseña actual.',
+            'password.required' => 'Debes ingresar una nueva contraseña.',
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+        ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'La contraseña actual ingresada es incorrecta.']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Notificar alerta de seguridad
+        \App\Services\NotificationService::notifySecurityAlert($user, 'Cambio de Contraseña Operativa', 'Tu contraseña de acceso a la consola de administración fue actualizada exitosamente.', $request->ip(), $request->userAgent());
+
+        return redirect()->route('admin.configuracion')->with('success', 'Contraseña operativa actualizada con éxito.');
+    }
+
+    public function adminUpdateTwoFactor(Request $request)
+    {
+        $user = auth()->user();
+        $enabled = $request->has('two_factor_enabled');
+
+        if ($enabled) {
+            $secret = $request->input('two_factor_secret') ?: ($user->two_factor_secret ?: \App\Services\TwoFactorService::generateSecretKey());
+            $user->two_factor_secret = $secret;
+            $user->two_factor_confirmed_at = now();
+            $user->save();
+
+            // Notificar alerta de seguridad
+            \App\Services\NotificationService::notifySecurityAlert($user, 'Activación de 2FA Operativo', 'La autenticación en dos pasos (2FA) ha sido activada en tu cuenta de equipo/administración.', $request->ip(), $request->userAgent());
+
+            return redirect()->route('admin.configuracion')->with('success', 'Autenticación en dos pasos (2FA) activada y guardada correctamente.');
+        } else {
+            $user->two_factor_confirmed_at = null;
+            $user->save();
+
+            // Notificar alerta de seguridad
+            \App\Services\NotificationService::notifySecurityAlert($user, 'Desactivación de 2FA Operativo', 'La autenticación en dos pasos (2FA) ha sido desactivada en tu cuenta de equipo/administración.', $request->ip(), $request->userAgent());
+
+            return redirect()->route('admin.configuracion')->with('success', 'Autenticación en dos pasos (2FA) desactivada con éxito.');
+        }
+    }
+
+    public function adminUpdateNotificaciones(Request $request)
+    {
+        $user = auth()->user();
+        $user->notification_preferences = [
+            'notif_team_assignment' => $request->has('notif_team_assignment') ? 1 : 0,
+            'notif_deployments' => $request->has('notif_deployments') ? 1 : 0,
+            'notif_security' => $request->has('notif_security') ? 1 : 0,
+            'notif_weekly_digest' => $request->has('notif_weekly_digest') ? 1 : 0,
+        ];
+        $user->save();
+
+        return redirect()->route('admin.configuracion')->with('success', 'Preferencias operativas y de notificaciones guardadas exitosamente.');
+    }
+
+    public function updatePreferencias(Request $request)
+    {
+        return redirect()->route('portal.configuracion')->with('success', 'Preferencias guardadas con éxito.');
     }
 
     public function store(Request $request)
@@ -125,6 +354,9 @@ class PortalController extends Controller
         $proyecto->estado = $request->estado;
         $proyecto->save();
 
+        // Notificar despliegue / cambio de fase al cliente dueño del proyecto
+        \App\Services\NotificationService::notifyDeployment($proyecto, "El estado del proyecto ha sido actualizado a '{$proyecto->estado}'.");
+
         return response()->json([
             'success' => true,
             'message' => 'Estado actualizado correctamente.'
@@ -189,6 +421,10 @@ class PortalController extends Controller
         }
 
         $nuevoLider = User::find($request->developer_id);
+
+        if ($nuevoLider) {
+            \App\Services\NotificationService::notifyTeamAssignment($nuevoLider, $proyecto, 'Líder de Proyecto');
+        }
 
         return response()->json([
             'success' => true,
@@ -283,7 +519,7 @@ class PortalController extends Controller
         return view('admin.proyectos_editar', compact('proyecto', 'clientes', 'desarrolladores'));
     }
 
-    public function adminProyectosUpdate(Request $request, $id)
+    public function adminProyectosUpdate(Request $request, $id, ClickUpService $clickUpService)
     {
         if (!in_array(auth()->user()->role, ['superadmin', 'admin'])) {
             abort(403);
@@ -327,11 +563,19 @@ class PortalController extends Controller
             }
         }
 
+        // Sincronizar permisos de líder y colaboradores en ClickUp (excluyendo cliente)
+        if ($proyecto->clickup_list_id) {
+            $clickUpService->syncProjectMembers($proyecto);
+        }
+
+        // Notificar actualización al cliente si cambió fase o especificación
+        \App\Services\NotificationService::notifyDeployment($proyecto, "Se han actualizado las especificaciones y estado del proyecto a '{$proyecto->estado}' con avance del {$proyecto->progreso}%.");
+
         return redirect()->route('admin.proyectos.index')
-            ->with('success', 'Proyecto actualizado exitosamente.');
+            ->with('success', 'Proyecto actualizado y roles sincronizados exitosamente.');
     }
 
-    public function adminProyectosStore(Request $request)
+    public function adminProyectosStore(Request $request, ClickUpService $clickUpService)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -343,28 +587,8 @@ class PortalController extends Controller
             'siguiente_entrega' => 'nullable|date',
         ]);
 
-        $tokenClickUp = config('services.clickup.token');
-        $folderId = config('services.clickup.folder_id');
-        $clickupListId = null;
-
-        if ($tokenClickUp && $folderId) {
-            try {
-                $response = Http::withHeaders([
-                    'Authorization' => $tokenClickUp,
-                    'Content-Type' => 'application/json',
-                ])->timeout(10)->post("https://api.clickup.com/api/v2/folder/{$folderId}/list", [
-                    'name' => $request->nombre,
-                ]);
-
-                if ($response->successful()) {
-                    $clickupListId = $response->json('id') ?? null;
-                } else {
-                    Log::warning("No se pudo crear la lista en ClickUp: " . $response->body());
-                }
-            } catch (\Exception $e) {
-                Log::error("Error de conexión al crear lista en ClickUp: " . $e->getMessage());
-            }
-        }
+        // Crear la lista en ClickUp si está configurado
+        $clickupListId = $clickUpService->createProjectList($request->nombre, $request->descripcion);
 
         $proyecto = \App\Models\Project::create([
             'nombre' => $request->nombre,
@@ -383,8 +607,13 @@ class PortalController extends Controller
             'sueldo_proyecto' => 0,
         ]);
 
+        // Sincronizar al líder con permisos de admin/full en ClickUp (el cliente NO se incluye)
+        if ($clickupListId) {
+            $clickUpService->syncProjectMembers($proyecto);
+        }
+
         return redirect()->route('admin.proyectos.index')
-            ->with('success', 'Proyecto registrado y asignado exitosamente.');
+            ->with('success', 'Proyecto registrado y sincronizado en ClickUp exitosamente.');
     }
 
     public function getProyectoJson($id)
@@ -440,7 +669,7 @@ class PortalController extends Controller
         return view('admin.equipo.crear', compact('proyectos'));
     }
 
-    public function adminEquipoStore(Request $request)
+    public function adminEquipoStore(Request $request, ClickUpService $clickUpService)
     {
         if (auth()->user()->role !== 'superadmin') {
             abort(403);
@@ -451,6 +680,7 @@ class PortalController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,empleado',
+            'clickup_user_id' => 'nullable|string|max:100',
             'edad' => 'nullable|integer|min:18',
             'capacity' => 'required|integer|between:0,40',
             'proyectos' => 'nullable|array',
@@ -461,7 +691,13 @@ class PortalController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'role' => $data['role'],
+            'clickup_user_id' => $data['clickup_user_id'] ?? null,
         ]);
+
+        // Intentar auto-resolver el ClickUp User ID si no se proporcionó manualmente
+        if (empty($user->clickup_user_id)) {
+            $clickUpService->resolveClickUpUserId($user);
+        }
 
         TeamCorporation::create([
             'user_id' => $user->id,
@@ -470,6 +706,7 @@ class PortalController extends Controller
         ]);
 
         $syncData = [];
+        $affectedProjects = [];
         if (!empty($request->proyectos)) {
             foreach ($request->proyectos as $proy) {
                 if (!empty($proy['id'])) {
@@ -477,6 +714,7 @@ class PortalController extends Controller
                         'sueldo_proyecto' => $proy['sueldo'] ?? 0,
                         'importancia' => $proy['importancia'] ?? 'Media'
                     ];
+                    $affectedProjects[] = $proy['id'];
 
                     if (!empty($proy['es_lider']) && $proy['es_lider'] == '1') {
                         Project::where('id', $proy['id'])->update(['developer_id' => $user->id]);
@@ -486,7 +724,15 @@ class PortalController extends Controller
         }
         $user->proyectos()->sync($syncData);
 
-        return redirect()->route('admin.equipo')->with('success', 'Miembro operativo integrado al Nexo.');
+        // Sincronizar permisos en las listas de ClickUp de los proyectos asociados
+        foreach ($affectedProjects as $proyId) {
+            $proyModel = Project::find($proyId);
+            if ($proyModel && $proyModel->clickup_list_id) {
+                $clickUpService->syncProjectMembers($proyModel);
+            }
+        }
+
+        return redirect()->route('admin.equipo')->with('success', 'Miembro operativo integrado y sincronizado.');
     }
 
     public function adminEquipoEditar($id)
@@ -505,7 +751,7 @@ class PortalController extends Controller
         return view('admin.equipo.editar', compact('miembro', 'proyectos'));
     }
 
-    public function adminEquipoUpdate(Request $request, $id)
+    public function adminEquipoUpdate(Request $request, $id, ClickUpService $clickUpService)
     {
         if (auth()->user()->role !== 'superadmin') {
             abort(403);
@@ -518,6 +764,7 @@ class PortalController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $miembro->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:superadmin,admin,empleado',
+            'clickup_user_id' => 'nullable|string|max:100',
             'edad' => 'nullable|integer|min:18',
             'capacity' => 'required|integer|between:0,40',
             'proyectos' => 'nullable|array',
@@ -526,10 +773,18 @@ class PortalController extends Controller
         $miembro->name = $data['name'];
         $miembro->email = $data['email'];
         $miembro->role = $data['role'];
+        if (array_key_exists('clickup_user_id', $data)) {
+            $miembro->clickup_user_id = $data['clickup_user_id'];
+        }
         if (!empty($data['password'])) {
             $miembro->password = bcrypt($data['password']);
         }
         $miembro->save();
+
+        // Si no tiene ClickUp User ID, intentar auto-resolverlo
+        if (empty($miembro->clickup_user_id)) {
+            $clickUpService->resolveClickUpUserId($miembro);
+        }
 
         $miembro->corporation()->updateOrCreate(
             ['user_id' => $miembro->id],
@@ -537,6 +792,8 @@ class PortalController extends Controller
         );
 
         $syncData = [];
+        $affectedProjects = $miembro->proyectos->pluck('id')->toArray();
+
         if (!empty($request->proyectos)) {
             foreach ($request->proyectos as $proy) {
                 if (!empty($proy['id'])) {
@@ -544,6 +801,7 @@ class PortalController extends Controller
                         'sueldo_proyecto' => $proy['sueldo'] ?? 0,
                         'importancia' => $proy['importancia'] ?? 'Media',
                     ];
+                    $affectedProjects[] = $proy['id'];
 
                     $esLider = !empty($proy['es_lider']) && $proy['es_lider'] == '1';
                     if ($esLider) {
@@ -562,7 +820,16 @@ class PortalController extends Controller
         // Sincronizar tabla pivote project_user (miembro asignado a trabajar en el proyecto)
         $miembro->proyectos()->sync($syncData);
 
-        return redirect()->route('admin.equipo')->with('success', 'Ecosistema de personal actualizado.');
+        // Sincronizar listas en ClickUp de todos los proyectos afectados
+        $affectedProjects = array_unique($affectedProjects);
+        foreach ($affectedProjects as $proyId) {
+            $proyModel = Project::find($proyId);
+            if ($proyModel && $proyModel->clickup_list_id) {
+                $clickUpService->syncProjectMembers($proyModel);
+            }
+        }
+
+        return redirect()->route('admin.equipo')->with('success', 'Ecosistema de personal y permisos en ClickUp actualizados.');
     }
 
     public function adminEquipoDestroy($id)
@@ -582,7 +849,7 @@ class PortalController extends Controller
         return redirect()->route('admin.equipo')->with('success', 'Registro purgado del sistema.');
     }
 
-    public function destroy($id)
+    public function destroy($id, ClickUpService $clickUpService)
     {
         if (!in_array(auth()->user()->role, ['superadmin', 'admin'])) {
             abort(403, 'No tienes permisos para eliminar proyectos.');
@@ -590,15 +857,8 @@ class PortalController extends Controller
 
         $proyecto = \App\Models\Project::findOrFail($id);
 
-        $tokenClickUp = config('services.clickup.token');
-        if ($proyecto->clickup_list_id && $tokenClickUp) {
-            try {
-                Http::withHeaders([
-                    'Authorization' => $tokenClickUp,
-                ])->delete("https://api.clickup.com/api/v2/list/{$proyecto->clickup_list_id}");
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("Error al eliminar lista en ClickUp: " . $e->getMessage());
-            }
+        if ($proyecto->clickup_list_id) {
+            $clickUpService->deleteProjectList($proyecto->clickup_list_id);
         }
 
         $proyecto->delete();
@@ -661,6 +921,9 @@ class PortalController extends Controller
                 'status' => 'pending',
             ]);
             $incomingIds[] = $newMilestone->id;
+
+            // Notificar al cliente la creación del nuevo hito
+            \App\Services\NotificationService::notifyMilestone($newMilestone, 'created');
         }
 
         // Eliminar los hitos que fueron retirados en la UI
@@ -676,4 +939,223 @@ class PortalController extends Controller
             'milestones' => $milestones
         ]);
     }
+
+    /**
+     * Consulta ClickUp y devuelve los usuarios disponibles para importar al portal.
+     */
+    public function adminEquipoClickUpPreview(ClickUpService $clickUpService)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            return response()->json(['success' => false, 'message' => 'No autorizado.'], 403);
+        }
+
+        if (!$clickUpService->isConfigured()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'ClickUp no está configurado en el sistema.'
+            ], 400);
+        }
+
+        $workspaceUsers = $clickUpService->getWorkspaceUsers();
+        $clickUpError = $clickUpService->getLastError();
+
+        if (empty($workspaceUsers) && !empty($clickUpError)) {
+            return response()->json([
+                'success' => false,
+                'message' => "ClickUp reportó: {$clickUpError}. Verifica tu Token de API o genera uno nuevo en ClickUp (Settings > Apps) si reiniciaste tu Workspace."
+            ], 400);
+        }
+
+        $existingUsers = User::all()->keyBy(function ($u) {
+            return strtolower(trim($u->email));
+        });
+
+        $available = [];
+        $existing = [];
+
+        foreach ($workspaceUsers as $email => $u) {
+            if ($existingUsers->has($email)) {
+                $localUser = $existingUsers->get($email);
+                // Si existe pero no tenía clickup_user_id guardado, actualizarlo
+                if (empty($localUser->clickup_user_id) && !empty($u['id']) && !$localUser->isClient()) {
+                    $localUser->clickup_user_id = $u['id'];
+                    $localUser->saveQuietly();
+                }
+
+                $existing[] = [
+                    'id' => $localUser->id,
+                    'name' => $localUser->name,
+                    'email' => $localUser->email,
+                    'role' => $localUser->role,
+                    'active' => $localUser->active,
+                    'clickup_id' => $u['id'],
+                    'status' => $localUser->active == 1 ? 'Activo' : 'Pendiente de Activación',
+                ];
+            } else {
+                $available[] = [
+                    'clickup_id' => $u['id'],
+                    'name' => $u['username'] ?: explode('@', $email)[0],
+                    'email' => $email,
+                    'clickup_role' => $u['role'] ?? null,
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'total_clickup' => count($workspaceUsers),
+            'available' => $available,
+            'already_in_portal' => $existing,
+        ]);
+    }
+
+    /**
+     * Importa uno o varios usuarios de ClickUp al portal generando token de activación.
+     */
+    public function adminEquipoClickUpImport(Request $request, ClickUpService $clickUpService)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            return response()->json(['success' => false, 'message' => 'No autorizado.'], 403);
+        }
+
+        $request->validate([
+            'users' => 'required|array|min:1',
+            'users.*.name' => 'required|string|max:255',
+            'users.*.email' => 'required|email|max:255',
+            'users.*.clickup_id' => 'required|string|max:100',
+            'users.*.role' => 'nullable|string|in:empleado,admin,superadmin',
+            'send_emails' => 'nullable|boolean',
+        ]);
+
+        $imported = [];
+        $shouldSendEmails = $request->boolean('send_emails', true);
+
+        foreach ($request->users as $userData) {
+            $email = strtolower(trim($userData['email']));
+
+            // Verificar si ya existe
+            $existing = User::where('email', $email)->first();
+            if ($existing) {
+                if (empty($existing->clickup_user_id)) {
+                    $existing->clickup_user_id = $userData['clickup_id'];
+                    $existing->save();
+                }
+                continue;
+            }
+
+            $token = Str::random(60);
+            $userRole = $userData['role'] ?? 'empleado';
+
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $email,
+                'password' => Hash::make(Str::random(24)),
+                'role' => $userRole,
+                'clickup_user_id' => $userData['clickup_id'],
+                'active' => 0,
+                'activation_token' => $token,
+            ]);
+
+            TeamCorporation::create([
+                'user_id' => $user->id,
+                'capacity' => 40,
+                'edad' => null,
+            ]);
+
+            $activationUrl = route('portal.activate.form', $token);
+            $emailSent = false;
+
+            if ($shouldSendEmails) {
+                $maxRetries = 2;
+                for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+                    try {
+                        Mail::to($user->email)->send(new EmployeeActivationMail($user, $activationUrl));
+                        $emailSent = true;
+                        break;
+                    } catch (\Exception $e) {
+                        Log::warning("ClickUp Import: Intento {$attempt} al enviar email a {$user->email} falló: " . $e->getMessage());
+                        if ($attempt < $maxRetries) {
+                            sleep(2); // Esperar 2 segundos antes de reintentar para superar rate limits (e.g., Mailtrap)
+                        } else {
+                            Log::error("ClickUp Import: Error definitivo enviando email de activación a {$user->email} - " . $e->getMessage());
+                        }
+                    }
+                }
+                // Pausa preventiva de 1.2 segundos entre envíos para respetar límites de SMTP/Mailtrap Free (1 msg/seg)
+                usleep(1200000);
+            }
+
+            $imported[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'activation_url' => $activationUrl,
+                'email_sent' => $emailSent,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => count($imported) . ' usuarios importados exitosamente desde ClickUp.',
+            'imported' => $imported,
+        ]);
+    }
+
+    /**
+     * Envía o reenvía el correo de activación con el enlace de acceso a un miembro del equipo.
+     */
+    public function adminEquipoSendActivation($id)
+    {
+        if (auth()->user()->role !== 'superadmin') {
+            return response()->json(['success' => false, 'message' => 'No autorizado.'], 403);
+        }
+
+        $user = User::findOrFail($id);
+
+        if ($user->isClient()) {
+            return response()->json(['success' => false, 'message' => 'Los clientes se gestionan desde el panel de clientes.'], 400);
+        }
+
+        if (empty($user->activation_token)) {
+            $user->activation_token = Str::random(60);
+            $user->active = 0;
+            $user->save();
+        }
+
+        $activationUrl = route('portal.activate.form', $user->activation_token);
+        $emailSent = false;
+        $errorMessage = null;
+
+        try {
+            Mail::to($user->email)->send(new EmployeeActivationMail($user, $activationUrl));
+            $emailSent = true;
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error("Error enviando email de activación a {$user->email}: " . $e->getMessage());
+        }
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'email_sent' => $emailSent,
+                'activation_url' => $activationUrl,
+                'user_name' => $user->name,
+                'user_email' => $user->email,
+                'message' => $emailSent
+                    ? "Correo de activación enviado exitosamente a {$user->email}."
+                    : "No se pudo enviar el correo automáticamente ({$errorMessage}), pero puedes copiar el enlace directo.",
+            ]);
+        }
+
+        $msg = $emailSent
+            ? "Correo de activación enviado a {$user->email}."
+            : "Enlace generado. No se pudo enviar el correo automático.";
+
+        return redirect()->route('admin.equipo')
+            ->with('success', $msg)
+            ->with('activation_link', $activationUrl)
+            ->with('user_name', $user->name);
+    }
 }
+

@@ -218,7 +218,12 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label-tech">Cliente Asociado</label>
+                            <label class="form-label-tech d-flex justify-content-between align-items-center">
+                                <span>Cliente Asociado</span>
+                                <span class="badge" style="background: rgba(6, 182, 212, 0.1); color: #22d3ee; font-size: 0.65rem; border: 1px solid rgba(6, 182, 212, 0.3); font-weight: 600;">
+                                    <i class="fas fa-user-shield me-1"></i>Portal Exclusivo (Sin ClickUp)
+                                </span>
+                            </label>
                             <div class="custom-dropdown" id="dropdown-cliente">
                                 <div class="form-control-tech dropdown-trigger w-100">
                                     <span class="selected-text">Seleccionar Cliente</span>
@@ -234,7 +239,12 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label-tech">Encargado / Developer</label>
+                            <label class="form-label-tech d-flex justify-content-between align-items-center">
+                                <span>Encargado / Líder</span>
+                                <span class="badge" style="background: rgba(250, 204, 21, 0.1); color: #facc15; font-size: 0.65rem; border: 1px solid rgba(250, 204, 21, 0.3); font-weight: 600;">
+                                    <i class="fas fa-crown me-1"></i>Líder / Full en ClickUp
+                                </span>
+                            </label>
                             <div class="custom-dropdown" id="dropdown-developer">
                                 <div class="form-control-tech dropdown-trigger w-100">
                                     <span class="selected-text">Seleccionar Encargado</span>

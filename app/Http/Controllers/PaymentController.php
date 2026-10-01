@@ -53,6 +53,9 @@ class PaymentController extends Controller
             'status' => 'Liquidado'
         ]);
 
+        // Notificar por correo electrónico según las preferencias del usuario
+        \App\Services\NotificationService::notifyMilestone($milestone, 'paid');
+
         return back()->with('success', "¡Pago de \${$milestone->cost} USD procesado exitosamente! Código de autorización: {$transactionId}");
     }
 
@@ -107,13 +110,16 @@ class PaymentController extends Controller
             'status' => $newStatus ? 'Liquidado' : 'Pendiente'
         ]);
 
-        if ($newStatus && $milestone->payments()->count() === 0) {
-            Payment::create([
-                'milestone_id' => $milestone->id,
-                'amount' => $milestone->cost,
-                'transaction_id' => 'MANUAL-SPEI-' . strtoupper(Str::random(8)),
-                'payment_method' => 'bank_transfer_manual',
-            ]);
+        if ($newStatus) {
+            if ($milestone->payments()->count() === 0) {
+                Payment::create([
+                    'milestone_id' => $milestone->id,
+                    'amount' => $milestone->cost,
+                    'transaction_id' => 'MANUAL-SPEI-' . strtoupper(Str::random(8)),
+                    'payment_method' => 'bank_transfer_manual',
+                ]);
+            }
+            \App\Services\NotificationService::notifyMilestone($milestone, 'paid');
         }
 
         if ($request->wantsJson() || $request->ajax()) {

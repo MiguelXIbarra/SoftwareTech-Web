@@ -46,3 +46,45 @@ Artisan::command('clickup:register-webhook {url?}', function ($url = null) {
     }
 })->purpose('Registrar webhook en ClickUp para sincronizar creación y eliminación de listas');
 
+Artisan::command('clickup:sync-team', function (\App\Services\ClickUpService $clickUpService) {
+    if (!$clickUpService->isConfigured()) {
+        $this->error('ClickUp no está configurado en .env o config/services.php.');
+        return;
+    }
+
+    $this->info('Consultando usuarios del Workspace de ClickUp...');
+    $workspaceUsers = $clickUpService->getWorkspaceUsers();
+    $this->info('Usuarios encontrados en ClickUp: ' . count($workspaceUsers));
+
+    $teamUsers = \App\Models\User::whereIn('role', ['superadmin', 'admin', 'empleado'])->get();
+    $this->info('Miembros del equipo local (excluyendo clientes): ' . $teamUsers->count());
+
+    $rows = [];
+    foreach ($teamUsers as $user) {
+        $clickupId = $clickUpService->resolveClickUpUserId($user);
+        $rows[] = [
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->role,
+            $clickupId ?? 'NO ENCONTRADO EN CLICKUP',
+            $clickupId ? 'Vinculado' : 'Pendiente / Email no coincide',
+        ];
+    }
+
+    $this->table(['ID', 'Nombre', 'Email', 'Rol', 'ClickUp User ID', 'Estado'], $rows);
+})->purpose('Sincronizar usuarios del equipo operativo con IDs de ClickUp');
+
+Artisan::command('clickup:sync-project {id}', function ($id, \App\Services\ClickUpService $clickUpService) {
+    $project = \App\Models\Project::with(['developer', 'team', 'user'])->find($id);
+
+    if (!$project) {
+        $this->error("Proyecto #{$id} no encontrado.");
+        return;
+    }
+
+    $this->info("Sincronizando proyecto: {$project->nombre} (Lista ID: {$project->clickup_list_id})");
+    $result = $clickUpService->syncProjectMembers($project);
+    $this->line(json_encode($result, JSON_PRETTY_PRINT));
+})->purpose('Sincronizar líder y desarrolladores de un proyecto con su lista de ClickUp');
+

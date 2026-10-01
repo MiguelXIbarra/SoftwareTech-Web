@@ -142,6 +142,62 @@
         color: rgba(255, 255, 255, 0.45);
         text-align: center;
     }
+    .password-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-input-wrapper .form-glass {
+        padding-right: 40px !important;
+    }
+
+    .btn-toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        color: rgba(255, 255, 255, 0.35);
+        padding: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease, color 0.2s ease, transform 0.2s ease;
+        border-radius: 6px;
+        z-index: 10;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .password-input-wrapper:hover .btn-toggle-password,
+    .password-input-wrapper:focus-within .btn-toggle-password,
+    .password-input-wrapper.has-value .btn-toggle-password {
+        opacity: 0.45;
+        pointer-events: auto;
+    }
+
+    .btn-toggle-password:hover {
+        opacity: 1 !important;
+        color: #06b6d4 !important;
+    }
+
+    .btn-toggle-password:focus,
+    .btn-toggle-password:active {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .btn-toggle-password:focus:not(:hover) {
+        color: rgba(255, 255, 255, 0.45) !important;
+        opacity: 0.5 !important;
+    }
 </style>
 
 <div class="login-viewport">
@@ -170,7 +226,12 @@
                 </div>
 
                 <div class="mb-4">
-                    <input type="password" name="password" class="form-control form-glass" placeholder="Clave de Acceso" required autocomplete="current-password">
+                    <div class="password-input-wrapper" id="wrap_loginPassword">
+                        <input type="password" id="loginPassword" name="password" class="form-control form-glass" placeholder="Clave de Acceso" required autocomplete="current-password" oninput="checkInputVal(this)">
+                        <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('loginPassword', this)" title="Mostrar / Ocultar contraseña" aria-label="Mostrar contraseña" tabindex="-1">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-login-submit w-100 border-0">
@@ -186,4 +247,43 @@
         </p>
     </div>
 </div>
+
+<script>
+function checkInputVal(input) {
+    const wrap = input.closest('.password-input-wrapper');
+    if (wrap) {
+        if (input.value.trim().length > 0) {
+            wrap.classList.add('has-value');
+        } else {
+            wrap.classList.remove('has-value');
+        }
+    }
+}
+
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+            icon.className = 'far fa-eye-slash';
+        }
+        btn.setAttribute('aria-label', 'Ocultar contraseña');
+    } else {
+        input.type = 'password';
+        if (icon) {
+            icon.className = 'far fa-eye';
+        }
+        btn.setAttribute('aria-label', 'Mostrar contraseña');
+    }
+
+    btn.blur();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.password-input-wrapper input').forEach(inp => checkInputVal(inp));
+});
+</script>
 @endsection

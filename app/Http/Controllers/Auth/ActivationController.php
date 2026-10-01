@@ -20,12 +20,16 @@ class ActivationController extends Controller
     {
         $request->validate([
             'password' => 'required|min:8|confirmed',
+        ], [
+            'password.required' => 'Debes ingresar una contraseña.',
+            'password.min' => 'La contraseña debe contener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $user = User::where('activation_token', $token)->firstOrFail();
 
         $user->update([
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'active' => 1,
             'activation_token' => null,
         ]);
