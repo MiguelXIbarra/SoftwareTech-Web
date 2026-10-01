@@ -33,7 +33,9 @@ Route::middleware(['auth', 'role:cliente'])->prefix('portal')->name('portal.')->
     Route::put('/configuracion/notificaciones', [PortalController::class, 'updateNotificaciones'])->name('configuracion.notificaciones');
     Route::put('/configuracion/preferencias', [PortalController::class, 'updatePreferencias'])->name('configuracion.preferencias');
     Route::post('/milestones/{id}/pay-card', [PaymentController::class, 'payWithCard'])->name('milestones.payCard');
-    Route::post('/milestones/{id}/comprobante', [AssetController::class, 'uploadMilestoneReceipt'])->name('milestones.comprobante');
+    Route::post('/milestones/{id}/comprobante', [PaymentController::class, 'uploadReceipt'])->name('milestones.comprobante');
+    Route::post('/milestones/{id}/approve', [PaymentController::class, 'approveMilestone'])->name('milestones.approve');
+    Route::post('/milestones/{id}/request-changes', [PaymentController::class, 'requestMilestoneChanges'])->name('milestones.requestChanges');
 });
 
 Route::middleware(['auth'])->prefix('console')->name('admin.')->group(function () {
@@ -62,7 +64,10 @@ Route::middleware(['auth'])->prefix('console')->name('admin.')->group(function (
         Route::delete('/proyectos/{id}', [PortalController::class, 'destroy'])->name('proyectos.destroy');
         Route::post('/proyectos/restaurar/{id}', [PortalController::class, 'restore'])->name('proyectos.restore');
         Route::post('/proyectos/sync-clickup', [PortalController::class, 'syncClickUpManual'])->name('proyectos.syncClickup');
+        Route::post('/proyectos/sync-all-clickup', [PortalController::class, 'adminSyncAllClickUp'])->name('proyectos.syncAllClickup');
+        Route::post('/webhooks/{id}/retry', [PortalController::class, 'adminRetryWebhook'])->name('webhooks.retry');
         Route::post('/milestones/{id}/toggle-payment', [PaymentController::class, 'togglePaymentStatus'])->name('milestones.togglePayment');
+        Route::post('/milestones/{id}/set-review', [PaymentController::class, 'setReviewStatus'])->name('milestones.setReview');
         Route::post('/proyectos/update-leader', [PortalController::class, 'updateLeader'])->name('proyectos.updateLeader');
         Route::delete('/assets/{id}', [AssetController::class, 'destroy'])->name('assets.destroy');
         Route::post('/proyectos/{id}/milestones/save', [PortalController::class, 'saveProjectMilestones'])->name('proyectos.milestones.save');
@@ -84,7 +89,9 @@ Route::middleware(['auth'])->prefix('console')->name('admin.')->group(function (
     Route::post('/milestones/{id}/receipt', [AssetController::class, 'uploadMilestoneReceipt'])->name('milestones.receipt.store');
 });
 
-// Descarga autenticada de assets
+// Descargas autenticadas
 Route::get('/assets/{id}/download', [AssetController::class, 'download'])->middleware('auth')->name('assets.download');
+Route::get('/milestones/{id}/receipt-pdf', [PaymentController::class, 'downloadReceiptPdf'])->middleware('auth')->name('milestones.receiptPdf');
 
 Route::post('/api/clickup/webhook', [ClickUpWebhookController::class, 'handle']);
+

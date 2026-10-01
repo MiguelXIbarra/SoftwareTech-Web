@@ -436,62 +436,20 @@ class PortalController extends Controller
 
     public function syncClickUpManual(Request $request)
     {
-        $tokenClickUp = config('services.clickup.token');
-        if (!$tokenClickUp) {
-            return response()->json(['success' => false, 'message' => 'Token de ClickUp no configurado.'], 400);
-        }
-
-        $proyectos = Project::whereNotNull('clickup_list_id')->get();
-        $actualizados = 0;
-
-        foreach ($proyectos as $proyecto) {
-            try {
-                $taskResponse = Http::withHeaders([
-                    'Authorization' => $tokenClickUp,
-                ])->timeout(5)->get("https://api.clickup.com/api/v2/list/{$proyecto->clickup_list_id}/task", [
-                    'include_closed' => true
-                ]);
-
-                if ($taskResponse->successful()) {
-                    $tasks = $taskResponse->json()['tasks'] ?? [];
-                    $totalTasks = count($tasks);
-
-                    if ($totalTasks > 0) {
-                        $closedTasks = 0;
-                        foreach ($tasks as $task) {
-                            $statusType = strtolower($task['status']['type'] ?? '');
-                            $statusName = strtolower($task['status']['status'] ?? '');
-
-                            if (in_array($statusType, ['closed', 'done']) || in_array($statusName, ['complete', 'closed', 'done', 'completado', 'finalizado'])) {
-                                $closedTasks++;
-                            }
-                        }
-                        $progresoReal = round(($closedTasks / $totalTasks) * 100, 1);
-                    } else {
-                        $progresoReal = 0;
-                    }
-
-                    if ($proyecto->progreso != $progresoReal) {
-                        $proyecto->progreso = $progresoReal;
-                        if ($progresoReal == 100) {
-                            $proyecto->estado = 'Finalizado';
-                        } elseif ($proyecto->estado === 'Prospecto' && $progresoReal > 0) {
-                            $proyecto->estado = 'En Desarrollo';
-                        }
-                        $proyecto->save();
-                        $actualizados++;
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::error("Error sincronizando ClickUp: " . $e->getMessage());
+        if ($request->has('id')) {
+            $proyecto = Project::findOrFail($request->id);
+            if (!$proyecto->clickup_list_id) {
+                return response()->json(['success' => false, 'message' => 'Este proyecto no tiene lista de ClickUp vinculada.'], 400);
             }
+            $result = \App\Http\Controllers\Webhook\ClickUpWebhookController::syncProjectFromClickUpList($proyecto, $proyecto->clickup_list_id);
+            return response()->json([
+                'success' => $result['success'],
+                'progreso' => $result['progreso'] ?? $proyecto->progreso,
+                'message' => $result['success'] ? "Proyecto sincronizado exitosamente ({$result['progreso']}%)." : ($result['error'] ?? 'Error al sincronizar')
+            ]);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => "Sincronización completada. {$actualizados} proyectos actualizados.",
-            'actualizados' => $actualizados
-        ]);
+        return $this->adminSyncAllClickUp();
     }
 
     public function adminProyectosCrear()
@@ -1156,6 +1114,85 @@ class PortalController extends Controller
             ->with('success', $msg)
             ->with('activation_link', $activationUrl)
             ->with('user_name', $user->name);
+    }
+
+    /**
+     * Sincroniza masivamente todos los proyectos vinculados a ClickUp.
+     */
+    public function adminSyncAllClickUp()
+    {
+        $proyectos = Project::whereNotNull('clickup_list_id')
+            ->where('clickup_list_id', '!=', '')
+            ->get();
+
+        $synced = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($proyectos as $proyecto) {
+            $res = \App\Http\Controllers\Webhook\ClickUpWebhookController::syncProjectFromClickUpList(
+                $proyecto,
+                $proyecto->clickup_list_id
+            );
+
+            if ($res['success']) {
+                $synced++;
+            } else {
+                $failed++;
+                $errors[] = "{$proyecto->nombre}: " . ($res['error'] ?? 'Error de conexión');
+            }
+        }
+
+        return back()->with('info', "Sincronización completada: {$synced} proyectos actualizados correctamente" . ($failed > 0 ? " ({$failed} con error)." : "."));
+    }
+
+    /**
+     * Reintenta el procesamiento de un WebhookLog fallido o pendiente.
+     */
+    public function adminRetryWebhook($id)
+    {
+        $log = \App\Models\WebhookLog::findOrFail($id);
+        $log->increment('attempts');
+
+        if (!$log->list_id) {
+            $log->update([
+                'status' => 'ignored',
+                'error_message' => 'No cuenta con list_id válido para reintentar.',
+            ]);
+            return back()->with('error', 'El webhook no tiene un ID de lista válido para reintentar.');
+        }
+
+        $proyecto = $log->project ?? Project::where('clickup_list_id', $log->list_id)->first();
+
+        if (!$proyecto) {
+            $log->update([
+                'status' => 'ignored',
+                'error_message' => "No se encontró proyecto para la lista {$log->list_id}",
+            ]);
+            return back()->with('error', "No se encontró ningún proyecto vinculado a la lista {$log->list_id}.");
+        }
+
+        $result = \App\Http\Controllers\Webhook\ClickUpWebhookController::syncProjectFromClickUpList(
+            $proyecto,
+            $log->list_id
+        );
+
+        if ($result['success']) {
+            $log->update([
+                'status' => 'success',
+                'error_message' => null,
+                'project_id' => $proyecto->id,
+                'processed_at' => now(),
+            ]);
+            return back()->with('success', "Webhook reintentado con éxito. Proyecto '{$proyecto->nombre}' actualizado.");
+        } else {
+            $log->update([
+                'status' => 'failed',
+                'error_message' => $result['error'],
+                'processed_at' => now(),
+            ]);
+            return back()->with('error', 'Fallo al reintentar webhook: ' . $result['error']);
+        }
     }
 }
 

@@ -20,15 +20,30 @@ class Milestone extends Model
         'is_paid',
         'due_date',
         'status',
+        'approval_status',
+        'approved_at',
+        'approved_by',
+        'approval_notes',
+        'approval_ip',
+        'feedback_changes',
+        'feedback_at',
     ];
 
     protected $casts = [
         'due_date' => 'date',
+        'approved_at' => 'datetime',
+        'feedback_at' => 'datetime',
+        'is_paid' => 'boolean',
     ];
 
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function assets()

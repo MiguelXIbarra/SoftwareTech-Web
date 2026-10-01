@@ -2524,5 +2524,24 @@
             }
         });
     }
+
+    function sincronizarClickUp() {
+        const btn = document.getElementById('btnSyncClickUp');
+        const icon = document.getElementById('iconSyncClickUp');
+        if (btn) btn.disabled = true;
+        if (icon) icon.classList.add('fa-spin');
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("admin.proyectos.syncAllClickup") }}';
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = '_token';
+        csrf.value = '{{ csrf_token() }}';
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
 </script>
 @endsection
+

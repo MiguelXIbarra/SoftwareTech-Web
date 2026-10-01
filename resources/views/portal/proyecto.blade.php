@@ -600,12 +600,12 @@
             @endif
         </div>
 
-        {{-- SECCIÓN B: Hitos y Liquidación Financiera con Slider Dinámico --}}
+        {{-- SECCIÓN B: Hitos, Sign-Off de Entregables y Liquidación Financiera con Slider Dinámico --}}
         @if($proyecto->milestones && $proyecto->milestones->count() > 0)
             <div class="mb-5">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="section-title-label mb-0">
-                        <i class="fas fa-file-invoice-dollar"></i> Hitos Financieros y Liquidación
+                        <i class="fas fa-file-invoice-dollar"></i> Hitos Financieros y Aprobación de Entregables
                     </div>
                     @if($proyecto->milestones->count() > 1)
                         <div class="d-flex align-items-center gap-2">
@@ -628,33 +628,86 @@
                             @foreach($proyecto->milestones as $milestone)
                                 <div class="milestone-slide-card">
                                     <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                                        <h6 class="text-white fw-bold mb-0" style="font-size: 0.98rem; letter-spacing: -0.2px;">
-                                            {{ $milestone->name ?? $milestone->title }}
-                                        </h6>
-                                        <span class="badge font-mono badge-transform {{ $milestone->is_paid ? 'badge-paid' : 'badge-pending' }}">
-                                            {{ $milestone->is_paid ? 'Liquidado' : 'Pendiente' }}
-                                        </span>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2" style="border-top: 1px solid rgba(255,255,255,0.04);">
                                         <div>
-                                            <span class="font-mono text-info fw-bold" style="font-size: 1.05rem;">
+                                            <h6 class="text-white fw-bold mb-1" style="font-size: 1rem; letter-spacing: -0.2px;">
+                                                {{ $milestone->name ?? $milestone->title }}
+                                            </h6>
+                                            <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                                {{-- Badge de Pago --}}
+                                                <span class="badge font-mono badge-transform {{ $milestone->is_paid ? 'badge-paid' : 'badge-pending' }}" style="font-size: 0.7rem;">
+                                                    <i class="fas {{ $milestone->is_paid ? 'fa-check-circle' : 'fa-clock' }} me-1"></i>
+                                                    {{ $milestone->is_paid ? 'Liquidado' : 'Pago Pendiente' }}
+                                                </span>
+
+                                                {{-- Badge de Sign-Off / Conformidad --}}
+                                                @if($milestone->approval_status === 'approved')
+                                                    <span class="badge font-mono" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.4); color: #22d3ee; font-size: 0.7rem;">
+                                                        <i class="fas fa-award me-1"></i> Sign-Off Aprobado ({{ $milestone->approved_at?->format('d/m/Y') }})
+                                                    </span>
+                                                @elseif($milestone->approval_status === 'changes_requested')
+                                                    <span class="badge font-mono" style="background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.4); color: #fb923c; font-size: 0.7rem;">
+                                                        <i class="fas fa-tools me-1"></i> Ajustes Solicitados
+                                                    </span>
+                                                @elseif($milestone->approval_status === 'in_review')
+                                                    <span class="badge font-mono" style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4); color: #c084fc; font-size: 0.7rem;">
+                                                        <i class="fas fa-glasses me-1"></i> Listo para tu Revisión
+                                                    </span>
+                                                @else
+                                                    <span class="badge font-mono" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; font-size: 0.7rem;">
+                                                        <i class="fas fa-hourglass-start me-1"></i> En Desarrollo
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="text-end">
+                                            <span class="font-mono text-info fw-bold" style="font-size: 1.15rem;">
                                                 ${{ number_format($milestone->cost, 2) }} USD
                                             </span>
                                             @if($milestone->due_date)
-                                                <span class="font-mono ms-2 d-none d-sm-inline" style="font-size: 0.74rem; color: rgba(255,255,255,0.45);">
-                                                    • Límite: {{ $milestone->due_date->format('d/m/Y') }}
+                                                <div class="font-mono" style="font-size: 0.72rem; color: rgba(255,255,255,0.45);">
+                                                    Límite: {{ $milestone->due_date->format('d/m/Y') }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    @if($milestone->feedback_changes && $milestone->approval_status === 'changes_requested')
+                                        <div class="p-2.5 my-2 rounded-3" style="background: rgba(249,115,22,0.05); border-left: 3px solid #f97316; font-size: 0.78rem;">
+                                            <strong class="text-warning d-block mb-0.5"><i class="fas fa-comment-alt me-1"></i> Solicitud de ajuste enviada:</strong>
+                                            <span class="text-white-50">{{ $milestone->feedback_changes }}</span>
+                                        </div>
+                                    @endif
+
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.04);">
+                                        {{-- Acciones de Sign-off --}}
+                                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                                            @if($milestone->approval_status !== 'approved')
+                                                <button type="button" class="btn btn-sm btn-outline-info font-mono" style="border-radius: 8px; font-size: 0.75rem;" onclick="abrirModalSignOff({{ $milestone->id }}, '{{ addslashes($milestone->name ?? $milestone->title) }}')">
+                                                    <i class="fas fa-signature me-1"></i> Aprobar Entregable (Sign-Off)
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary font-mono" style="border-radius: 8px; font-size: 0.75rem; border-color: rgba(255,255,255,0.15); color: #cbd5e1;" onclick="abrirModalFeedback({{ $milestone->id }}, '{{ addslashes($milestone->name ?? $milestone->title) }}')">
+                                                    <i class="fas fa-edit me-1"></i> Solicitar Ajustes
+                                                </button>
+                                            @else
+                                                <span class="font-mono text-cyan" style="font-size: 0.78rem; color: #22d3ee;">
+                                                    <i class="fas fa-check-double me-1"></i> Aprobación Formal Completada
                                                 </span>
                                             @endif
                                         </div>
-                                        @if($milestone->is_paid)
-                                            <span class="font-mono text-success" style="font-size: 0.78rem; font-weight: 600;">
-                                                <i class="fas fa-check-circle me-1"></i> Acreditado
-                                            </span>
-                                        @else
-                                            <button type="button" class="btn btn-sm btn-pay-now" onclick="abrirModalPago({{ $milestone->id }}, '{{ addslashes($milestone->name ?? $milestone->title) }}', '{{ number_format($milestone->cost, 2, '.', '') }}', 'PROY-{{ $proyecto->id }}-H{{ $milestone->id }}')">
-                                                <i class="fas fa-wallet me-1"></i> Pagar Hito
-                                            </button>
-                                        @endif
+
+                                        {{-- Acciones de Pago y Recibos --}}
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($milestone->is_paid)
+                                                <a href="{{ route('milestones.receiptPdf', $milestone->id) }}" class="btn btn-sm btn-outline-light font-mono" style="border-radius: 8px; font-size: 0.75rem; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.15);" title="Descargar Comprobante Oficial">
+                                                    <i class="fas fa-file-pdf text-danger me-1"></i> Recibo PDF
+                                                </a>
+                                            @else
+                                                <button type="button" class="btn btn-sm btn-pay-now" onclick="abrirModalPago({{ $milestone->id }}, '{{ addslashes($milestone->name ?? $milestone->title) }}', '{{ number_format($milestone->cost, 2, '.', '') }}', 'PROY-{{ $proyecto->id }}-H{{ $milestone->id }}')">
+                                                    <i class="fas fa-wallet me-1"></i> Pagar Hito
+                                                </button>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
@@ -689,7 +742,7 @@
             $fase4Activa = false;
         @endphp
 
-        <div class="milestone-timeline">
+        <div class="milestone-timeline mb-5">
             {{-- Fase 01 --}}
             <div class="milestone-item">
                 <div class="milestone-dot {{ $fase1Completada ? 'dot-completed-cyan' : ($fase1Activa ? 'dot-pulsing-grey' : 'dot-pending-dark') }}"></div>
@@ -783,6 +836,52 @@
                     </p>
                 </div>
             </div>
+        </div>
+
+        {{-- SECCIÓN D: Bitácora de Auditoría y Trazabilidad Operativa --}}
+        <div class="mb-4">
+            <div class="section-title-label">
+                <i class="fas fa-history"></i> Historial de Actividad & Trazabilidad
+            </div>
+
+            @if($proyecto->activityLogs && $proyecto->activityLogs->count() > 0)
+                <div class="p-3 rounded-4" style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="d-flex flex-column gap-3">
+                        @foreach($proyecto->activityLogs->take(10) as $log)
+                            <div class="d-flex align-items-start gap-3 pb-3 {{ !$loop->last ? 'border-bottom border-secondary border-opacity-10' : '' }}">
+                                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25); display: flex; align-items: center; justify-content: center; color: #22d3ee; flex-shrink: 0; font-size: 0.8rem;">
+                                    @if(str_contains($log->action, 'milestone_approved'))
+                                        <i class="fas fa-signature text-success"></i>
+                                    @elseif(str_contains($log->action, 'changes_requested'))
+                                        <i class="fas fa-tools text-warning"></i>
+                                    @elseif(str_contains($log->action, 'paid'))
+                                        <i class="fas fa-check-circle text-info"></i>
+                                    @elseif(str_contains($log->action, 'webhook'))
+                                        <i class="fas fa-sync text-cyan"></i>
+                                    @else
+                                        <i class="fas fa-info-circle"></i>
+                                    @endif
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="font-mono text-white fw-semibold" style="font-size: 0.82rem;">{{ $log->description }}</span>
+                                        <span class="font-mono text-white-50" style="font-size: 0.7rem;">{{ $log->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 mt-1">
+                                        <span style="font-size: 0.68rem; color: #64748b; font-family: monospace;">
+                                            Por: {{ $log->user->name ?? 'Sistema Automatizado' }} &bull; {{ $log->created_at->format('d/m/Y H:i') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="p-3 rounded-3 text-center" style="background: rgba(255,255,255,0.015); border: 1px dashed rgba(255,255,255,0.06); font-size: 0.8rem; color: rgba(255,255,255,0.4);">
+                    <i class="fas fa-clipboard-list me-1"></i> Los eventos de aprobaciones, pagos y entregables quedarán registrados en esta bitácora oficial.
+                </div>
+            @endif
         </div>
 
     </div>
@@ -929,6 +1028,81 @@
     </div>
 </div>
 
+<!-- Modal de Sign-Off / Aprobación Formal de Entregable -->
+<div class="modal fade" id="signOffModal" tabindex="-1" aria-hidden="true" style="z-index: 1065;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+        <div class="modal-content" style="background: #070c18 !important; border: 1px solid rgba(6, 182, 212, 0.3) !important; box-shadow: 0 0 50px rgba(6, 182, 212, 0.2), 0 25px 60px rgba(0, 0, 0, 0.95) !important; border-radius: 20px !important; color: #ffffff !important; overflow: hidden;">
+            <div class="modal-header border-bottom-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-start" style="background: rgba(6, 182, 212, 0.03);">
+                <div>
+                    <span class="font-mono text-info fw-semibold" style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;">ACTA DE CONFORMIDAD</span>
+                    <h5 class="modal-title fw-bold text-white mb-0 mt-1" id="modalSignOffName" style="font-size: 1.15rem;">Aprobación de Entregable</h5>
+                </div>
+                <button type="button" onclick="cerrarModalSignOff()" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="" method="POST" id="signOffForm">
+                @csrf
+                <div class="modal-body px-4 py-3">
+                    <div class="p-3 mb-3 rounded-3" style="background: rgba(6,182,212,0.05); border: 1px solid rgba(6,182,212,0.2); font-size: 0.82rem; color: #cbd5e1; line-height: 1.5;">
+                        <i class="fas fa-info-circle text-info me-1"></i> Al aprobar este hito, confirmas haber revisado los entregables y recursos asociados, otorgando el <strong>Sign-Off formal</strong> para avanzar a las siguientes fases del proyecto.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label modal-label-bright mb-1">Comentarios / Notas de Conformidad (Opcional)</label>
+                        <textarea name="approval_notes" class="form-control form-glass" rows="3" placeholder="Ej: He verificado las funciones y el diseño en staging, todo conforme al requerimiento..."></textarea>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="checkSignOffAccept" required style="background-color: #0f172a; border-color: #06b6d4;">
+                        <label class="form-check-label text-white small" for="checkSignOffAccept">
+                            Doy mi conformidad legal y técnica sobre este hito de entrega.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-info w-100 py-2.5 fw-bold text-white font-mono" style="background: #06b6d4; border: none; border-radius: 12px; box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);">
+                        <i class="fas fa-check-double me-1"></i> Firmar Aprobación (Sign-Off)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Solicitud de Ajustes / Cambios -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true" style="z-index: 1065;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+        <div class="modal-content" style="background: #070c18 !important; border: 1px solid rgba(249, 115, 22, 0.3) !important; box-shadow: 0 0 50px rgba(249, 115, 22, 0.15), 0 25px 60px rgba(0, 0, 0, 0.95) !important; border-radius: 20px !important; color: #ffffff !important; overflow: hidden;">
+            <div class="modal-header border-bottom-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-start" style="background: rgba(249, 115, 22, 0.03);">
+                <div>
+                    <span class="font-mono text-warning fw-semibold" style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;">FEEDBACK OPERATIVO</span>
+                    <h5 class="modal-title fw-bold text-white mb-0 mt-1" id="modalFeedbackName" style="font-size: 1.15rem;">Solicitud de Ajustes</h5>
+                </div>
+                <button type="button" onclick="cerrarModalFeedback()" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="" method="POST" id="feedbackForm">
+                @csrf
+                <div class="modal-body px-4 py-3">
+                    <p class="text-white-50 small mb-3">
+                        Indica con precisión los ajustes, correcciones o detalles que el equipo técnico debe resolver antes de emitir la aprobación formal.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label modal-label-bright mb-1">Detalle de las observaciones / cambios requeridos</label>
+                        <textarea name="feedback_changes" class="form-control form-glass" rows="4" required minlength="10" placeholder="Ej: Favor de revisar el flujo en dispositivos móviles, el botón de checkout presenta un margen desalineado..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2.5 fw-bold text-dark font-mono" style="background: #f97316; border: none; border-radius: 12px; box-shadow: 0 0 20px rgba(249, 115, 22, 0.4); color: #ffffff !important;">
+                        <i class="fas fa-paper-plane me-1"></i> Enviar Observaciones al Equipo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 function abrirModalPago(milestoneId, name, cost, ref) {
     document.getElementById('modalMilestoneName').innerText = name;
@@ -953,6 +1127,60 @@ function abrirModalPago(milestoneId, name, cost, ref) {
         modalEl.classList.add('show');
         modalEl.style.display = 'block';
     }
+}
+
+function abrirModalSignOff(milestoneId, name) {
+    document.getElementById('modalSignOffName').innerText = name;
+    document.getElementById('signOffForm').action = `{{ url('/portal/milestones') }}/${milestoneId}/approve`;
+    const modalEl = document.getElementById('signOffModal');
+    if (window.bootstrap && window.bootstrap.Modal) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    } else {
+        modalEl.classList.add('show');
+        modalEl.style.display = 'block';
+    }
+}
+
+function cerrarModalSignOff() {
+    const modalEl = document.getElementById('signOffModal');
+    if (modalEl) {
+        if (window.bootstrap && window.bootstrap.Modal) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+        }
+        modalEl.classList.remove('show');
+        modalEl.style.display = 'none';
+    }
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+}
+
+function abrirModalFeedback(milestoneId, name) {
+    document.getElementById('modalFeedbackName').innerText = name;
+    document.getElementById('feedbackForm').action = `{{ url('/portal/milestones') }}/${milestoneId}/request-changes`;
+    const modalEl = document.getElementById('feedbackModal');
+    if (window.bootstrap && window.bootstrap.Modal) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    } else {
+        modalEl.classList.add('show');
+        modalEl.style.display = 'block';
+    }
+}
+
+function cerrarModalFeedback() {
+    const modalEl = document.getElementById('feedbackModal');
+    if (modalEl) {
+        if (window.bootstrap && window.bootstrap.Modal) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+        }
+        modalEl.classList.remove('show');
+        modalEl.style.display = 'none';
+    }
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
 }
 
 function cambiarTabPago(tab) {
@@ -1031,6 +1259,8 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         cerrarModalPago();
+        cerrarModalSignOff();
+        cerrarModalFeedback();
     }
 });
 
@@ -1089,3 +1319,4 @@ function moveAssetSlider(direction) {
 }
 </script>
 @endsection
+

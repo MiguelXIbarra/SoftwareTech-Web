@@ -50,4 +50,15 @@ class Project extends Model
     {
         return $this->morphMany(Asset::class, 'assetable');
     }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class)->orderBy('created_at', 'desc');
+    }
+
+    public function webhookLogs()
+    {
+        return $this->hasMany(WebhookLog::class)->orderBy('created_at', 'desc');
+    }
 }
+
