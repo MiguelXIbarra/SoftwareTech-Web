@@ -17,6 +17,16 @@ class ClickUpWebhookController extends Controller
      */
     public function handle(Request $request)
     {
+        $webhookSecret = config('services.clickup.webhook_secret');
+        if (!empty($webhookSecret)) {
+            $headerSignature = $request->header('X-Signature') ?? $request->header('x-signature');
+            $computedSignature = hash_hmac('sha256', $request->getContent(), $webhookSecret);
+            if (!hash_equals((string)$computedSignature, (string)$headerSignature)) {
+                Log::warning('Intento de webhook de ClickUp con firma inválida o no autorizada.');
+                return response()->json(['error' => 'Firma de webhook no válida.'], 401);
+            }
+        }
+
         $tokenClickUp = config('services.clickup.token');
         $payload = $request->all();
 

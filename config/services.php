@@ -38,6 +38,7 @@ return [
     'clickup' => [
         'token' => env('CLICK_UP_API_TOKEN'),
         'folder_id' => env('CLICK_UP_FOLDER_ID'),
+        'webhook_secret' => env('CLICK_UP_WEBHOOK_SECRET'),
     ],
 
     'supabase' => [

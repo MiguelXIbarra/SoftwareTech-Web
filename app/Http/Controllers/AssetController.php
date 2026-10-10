@@ -41,10 +41,22 @@ class AssetController extends Controller
         $originalName = $file->getClientOriginalName();
         $extension = strtolower($file->getClientOriginalExtension());
 
+        // Bloquear terminantemente scripts ejecutables que pongan en riesgo el servidor
+        $disallowedExtensions = ['php', 'phtml', 'phar', 'php3', 'php4', 'php5', 'php7', 'phps', 'sh', 'bash', 'bat', 'cmd', 'exe', 'cgi', 'pl', 'py', 'env', 'htaccess', 'htpasswd', 'config'];
+        if (in_array($extension, $disallowedExtensions)) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Por seguridad, no se permite subir archivos con extensión .' . $extension . '. Si es código o proyecto, empaquétalo en un archivo .ZIP o .RAR.'
+                ], 422);
+            }
+            return back()->withErrors(['archivo' => 'Por seguridad, los archivos ejecutables deben comprimirse en formato .ZIP o .RAR antes de subirlos.']);
+        }
+
         // Determinar el tipo de entregable
         $tipo = $request->tipo;
         if (empty($tipo)) {
-            if (in_array($extension, ['zip', 'rar', '7z', 'tar', 'gz', 'json', 'sql', 'js', 'html', 'css', 'php'])) {
+            if (in_array($extension, ['zip', 'rar', '7z', 'tar', 'gz', 'json', 'sql', 'js', 'html', 'css'])) {
                 $tipo = 'Código / Archivo';
             } elseif (in_array($extension, ['pdf', 'doc', 'docx', 'txt', 'xlsx', 'xls', 'ppt', 'pptx'])) {
                 $tipo = 'Documento';
@@ -152,7 +164,32 @@ class AssetController extends Controller
      */
     public function download($id)
     {
-        $asset = Asset::findOrFail($id);
+        $user = auth()->user();
+        $asset = Asset::with('assetable')->findOrFail($id);
+
+        // Validar permisos de acceso según el recurso propietario (IDOR protection)
+        $tienePermiso = false;
+
+        if (in_array($user->role, ['superadmin', 'admin'])) {
+            $tienePermiso = true;
+        } elseif ($asset->assetable instanceof Project) {
+            $proyecto = $asset->assetable;
+            $tienePermiso = ($proyecto->user_id == $user->id 
+                || $proyecto->developer_id == $user->id 
+                || $proyecto->team()->where('user_id', $user->id)->exists());
+        } elseif ($asset->assetable instanceof Milestone) {
+            $milestone = $asset->assetable;
+            $proyecto = $milestone->project;
+            if ($proyecto) {
+                $tienePermiso = ($proyecto->user_id == $user->id 
+                    || $proyecto->developer_id == $user->id 
+                    || $proyecto->team()->where('user_id', $user->id)->exists());
+            }
+        }
+
+        if (!$tienePermiso) {
+            abort(403, 'No tienes autorización para descargar o visualizar este archivo.');
+        }
 
         if (!Storage::disk('public')->exists($asset->path)) {
             abort(404, 'El archivo solicitado no se encuentra en el almacenamiento.');
